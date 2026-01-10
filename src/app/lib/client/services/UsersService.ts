@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { Me } from '../models/Me';
 import type { MeRequest } from '../models/MeRequest';
 import type { PatchedMeRequest } from '../models/PatchedMeRequest';

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { AxisAnswerRead } from '../models/AxisAnswerRead';
 import type { AxisAnswerUpsertRequest } from '../models/AxisAnswerUpsertRequest';
 import type { CompletedAnswer } from '../models/CompletedAnswer';
