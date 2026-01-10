@@ -1,32 +1,32 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary-hover: var(--secondary-hover);
-  
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted-hover: var(--muted-hover);
-  
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-hover: var(--accent-hover);
-  
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-hover: var(--destructive-hover);
-  
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -117,7 +117,7 @@
   ::before {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
   }
