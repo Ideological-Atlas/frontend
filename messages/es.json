@@ -1,0 +1,48 @@
+{
+  "Common": {
+    "ideological_atlas": "Ideological Atlas",
+    "start_now": "Comenzar Ahora",
+    "learn_more": "Saber Más",
+    "get_started": "Empezar",
+    "sign_in": "Iniciar Sesión",
+    "create_profile": "Crear mi perfil gratis"
+  },
+  "Navigation": {
+    "home": "Inicio",
+    "features": "Funcionalidades",
+    "explore": "Explorar",
+    "about": "Acerca de"
+  },
+  "Hero": {
+    "title": "Descubre tu verdadera posición ideológica",
+    "subtitle": "Más allá de izquierda o derecha. Utiliza nuestro espectro continuo para visualizar tus creencias y explorar nuevas perspectivas con total objetividad."
+  },
+  "Features": {
+    "title": "Explora sin límites",
+    "subtitle": "Nuestra plataforma te ofrece herramientas únicas para entender el panorama político y social sin sesgos.",
+    "cards": {
+      "spectrum": {
+        "title": "Espectro Continuo",
+        "description": "Visualiza matices políticos sin etiquetas rígidas ni categorías binarias, permitiendo una representación fiel de tu pensamiento."
+      },
+      "exploration": {
+        "title": "Exploración Objetiva",
+        "description": "Accede a definiciones neutrales y claras de diversas corrientes de pensamiento para expandir tu conocimiento sin prejuicios."
+      },
+      "analysis": {
+        "title": "Análisis Profundo",
+        "description": "Compara tus resultados con datos históricos y tendencias globales para entender dónde te sitúas en el gran esquema."
+      }
+    }
+  },
+  "CTA": {
+    "title": "¿Listo para encontrar tu lugar?",
+    "text": "Únete a miles de personas que ya están explorando sus ideologías de una manera nueva, transparente y sin ruido."
+  },
+  "Footer": {
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Uso",
+    "contact": "Contacto",
+    "copyright": "Todos los derechos reservados."
+  }
+}
