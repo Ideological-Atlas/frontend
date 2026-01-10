@@ -1,0 +1,9 @@
+packages:
+  - .
+
+ignoredBuiltDependencies:
+  - '@evilmartians/lefthook'
+  - '@parcel/watcher'
+  - '@swc/core'
+  - sharp
+  - unrs-resolver

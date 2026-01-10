@@ -1,0 +1,6 @@
+pre-commit:
+  parallel: true
+  commands:
+
+    validate:
+      run: pnpm run validate
