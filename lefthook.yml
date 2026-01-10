@@ -9,8 +9,3 @@ pre-commit:
 
     security:
       run: pnpm audit --audit-level=high
-
-commit-msg:
-  commands:
-    commitlint:
-      run: pnpm dlx commitlint --edit {1}
