@@ -1,21 +1,32 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
+  
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-
+  --color-primary-hover: var(--primary-hover);
+  
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
+  --color-secondary-hover: var(--secondary-hover);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
+  --color-muted-hover: var(--muted-hover);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
+  
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-
+  
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -23,8 +34,15 @@
 
 @layer base {
   :root {
+    /* === BRAND COLOR CONFIGURATION === */
+    /* Light Mode Green */
+    --primary: #16a34a; /* green-600 */
+    --primary-hover: #15803d; /* green-700 (darker) */
+    --primary-foreground: #ffffff;
+
+    /* Base Colors - Light Mode */
     --background: #ffffff;
-    --foreground: #0f172a; /* slate-900 */
+    --foreground: #0f172a;
 
     --card: #ffffff;
     --card-foreground: #0f172a;
@@ -32,61 +50,75 @@
     --popover: #ffffff;
     --popover-foreground: #0f172a;
 
-    --primary: #2563eb; /* blue-600 */
-    --primary-foreground: #ffffff;
-
-    --secondary: #e2e8f0; /* slate-200 */
+    --secondary: #f1f5f9; /* slate-100 */
+    --secondary-hover: #e2e8f0; /* slate-200 (darker) */
     --secondary-foreground: #0f172a;
 
     --muted: #f8fafc; /* slate-50 */
-    --muted-foreground: #475569; /* slate-600 */
+    --muted-hover: #f1f5f9; /* slate-100 */
+    --muted-foreground: #64748b;
 
-    --accent: #f1f5f9;
+    --accent: #f1f5f9; /* slate-100 */
+    --accent-hover: #e2e8f0; /* slate-200 */
     --accent-foreground: #0f172a;
 
-    --destructive: #ef4444;
+    --destructive: #ef4444; /* red-500 */
+    --destructive-hover: #dc2626; /* red-600 */
     --destructive-foreground: #ffffff;
 
-    --border: #e2e8f0; /* slate-200 */
+    --border: #e2e8f0;
     --input: #e2e8f0;
-    --ring: #2563eb;
+    --ring: #16a34a;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: #0f172a; /* slate-900 */
-    --foreground: #ffffff;
-
-    --card: #1e293b; /* slate-800 */
-    --card-foreground: #ffffff;
-
-    --popover: #1e293b;
-    --popover-foreground: #ffffff;
-
-    --primary: #2563eb;
+    /* === DARK MODE BRAND === */
+    --primary: #338f39;
+    --primary-hover: #2e8033; /* Slightly darker/richer for hover contrast */
     --primary-foreground: #ffffff;
 
+    /* Base Colors - Dark Mode */
+    --background: #020617;
+    --foreground: #f8fafc;
+
+    --card: #0f172a;
+    --card-foreground: #f8fafc;
+
+    --popover: #0f172a;
+    --popover-foreground: #f8fafc;
+
     --secondary: #1e293b; /* slate-800 */
-    --secondary-foreground: #ffffff;
+    --secondary-hover: #334155; /* slate-700 (lighter) */
+    --secondary-foreground: #f8fafc;
 
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8; /* slate-400 */
+    --muted: #1e293b; /* slate-800 */
+    --muted-hover: #334155; /* slate-700 */
+    --muted-foreground: #94a3b8;
 
-    --accent: #1e293b;
-    --accent-foreground: #ffffff;
+    --accent: #1e293b; /* slate-800 */
+    --accent-hover: #334155; /* slate-700 */
+    --accent-foreground: #f8fafc;
 
-    --destructive: #7f1d1d;
-    --destructive-foreground: #ffffff;
+    --destructive: #7f1d1d; /* red-900 */
+    --destructive-hover: #991b1b; /* red-800 (lighter/brighter) */
+    --destructive-foreground: #f8fafc;
 
-    --border: #1e293b; /* slate-800 */
+    --border: #1e293b;
     --input: #1e293b;
-    --ring: #1d4ed8;
+    --ring: #338f39;
   }
 }
 
 @layer base {
+  *,
+  ::after,
+  ::before {
+    @apply border-border;
+  }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 }
