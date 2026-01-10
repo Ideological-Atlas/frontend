@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 interface HomeTemplateProps {
   hero: ReactNode;
@@ -8,7 +8,7 @@ interface HomeTemplateProps {
 
 export function HomeTemplate({ hero, features, cta }: HomeTemplateProps) {
   return (
-    <div className="layout-container flex flex-col w-full">
+    <div className="layout-container flex w-full flex-col">
       <section className="w-full">{hero}</section>
 
       <section className="w-full">{features}</section>

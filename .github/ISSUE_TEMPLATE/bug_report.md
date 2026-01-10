@@ -1,9 +1,9 @@
 ---
 name: 🐛 Bug Report
 about: Create a report to help us improve
-title: "[FIX] "
+title: '[FIX] '
 labels: bug
-assignees: ""
+assignees: ''
 ---
 
 ## Bug Description

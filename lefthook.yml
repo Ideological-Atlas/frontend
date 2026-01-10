@@ -1,0 +1,16 @@
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      run: pnpm tsc --noEmit
+
+    linter:
+      run: pnpm exec lint-staged
+
+    security:
+      run: pnpm audit --audit-level=high
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm dlx commitlint --edit {1}

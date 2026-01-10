@@ -8,11 +8,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "audit": "pnpm audit",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "lint:fix": "eslint . --fix",
+    "format:check": "prettier --check .",
+    "validate": "pnpm run format && pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm audit"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "0.13.10",
@@ -27,16 +30,26 @@
     "zod": "4.3.5"
   },
   "devDependencies": {
-    "@evilmartians/lefthook": "^2.0.13",
+    "@eslint/compat": "2.0.1",
+    "@eslint/eslintrc": "3.3.3",
+    "@eslint/js": "9.39.2",
+    "@evilmartians/lefthook": "2.0.13",
+    "@next/eslint-plugin-next": "16.1.1",
     "@tailwindcss/postcss": "4.1.18",
     "@types/node": "20.19.27",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.1",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "eslint-plugin-next": "0.0.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.0.0",
+    "lint-staged": "16.2.7",
+    "prettier": "3.7.4",
+    "prettier-plugin-tailwindcss": "0.7.2",
     "tailwindcss": "4.1.18",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.52.0"
   }
 }

@@ -1,9 +1,9 @@
 ---
 name: 🧹 Chore
 about: Technical tasks, cleanup, refactoring, or dependencies
-title: "[CHORE] "
+title: '[CHORE] '
 labels: chore
-assignees: ""
+assignees: ''
 ---
 
 ## Task
