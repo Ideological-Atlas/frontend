@@ -11,8 +11,8 @@ export function Header() {
   const navKeys = ['home', 'features', 'explore', 'about'];
 
   return (
-    <header className="bg-background-light dark:bg-background-dark sticky top-0 z-50 flex items-center justify-between border-b border-solid border-slate-200 px-10 py-4 whitespace-nowrap dark:border-slate-800">
-      <div className="flex items-center gap-4 text-slate-900 dark:text-white">
+    <header className="bg-background border-border sticky top-0 z-50 flex items-center justify-between border-b border-solid px-10 py-4 whitespace-nowrap">
+      <div className="text-foreground flex items-center gap-4">
         <div className="relative flex size-8 items-center justify-center">
           <Image src="/logo.png" alt="Ideological Atlas Logo" width={32} height={32} className="object-contain" />
         </div>
@@ -27,9 +27,7 @@ export function Header() {
                 key={key}
                 className={clsx(
                   'text-sm leading-normal transition-colors',
-                  isActive
-                    ? 'text-primary font-bold'
-                    : 'hover:text-primary font-medium text-slate-600 dark:text-slate-300',
+                  isActive ? 'text-primary font-bold' : 'hover:text-primary text-muted-foreground font-medium',
                 )}
                 href="#"
               >
@@ -47,7 +45,7 @@ export function Header() {
           </Button>
         </div>
       </div>
-      <div className="flex items-center text-slate-900 lg:hidden dark:text-white">
+      <div className="text-foreground flex items-center lg:hidden">
         <span className="material-symbols-outlined">menu</span>
       </div>
     </header>

@@ -48,11 +48,10 @@ export function Button({ className, variant = 'primary', children, onClick, ...p
     'relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 transition-colors text-sm font-bold leading-normal tracking-[0.015em] min-w-[84px] select-none';
 
   const variants = {
-    primary: 'bg-primary hover:bg-blue-600 text-white',
-    secondary:
-      'bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white',
+    primary: 'bg-primary hover:bg-blue-600 text-primary-foreground shadow-sm',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
     outline:
-      'bg-transparent border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white h-12 px-6 text-base',
+      'bg-transparent border border-border text-foreground hover:bg-accent hover:text-accent-foreground h-12 px-6 text-base',
   };
 
   return (

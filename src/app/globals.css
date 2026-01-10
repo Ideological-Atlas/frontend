@@ -1,30 +1,92 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primary: #2563eb;
-  --color-primary-foreground: #ffffff;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-background-light: #ffffff;
-  --color-background-dark: #0a0a0a;
-  --color-surface-dark: #171717;
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
-  --font-sans: var(--font-inter);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #0f172a; /* slate-900 */
+
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+
+    --primary: #2563eb; /* blue-600 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #e2e8f0; /* slate-200 */
+    --secondary-foreground: #0f172a;
+
+    --muted: #f8fafc; /* slate-50 */
+    --muted-foreground: #475569; /* slate-600 */
+
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #e2e8f0; /* slate-200 */
+    --input: #e2e8f0;
+    --ring: #2563eb;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: #0f172a; /* slate-900 */
+    --foreground: #ffffff;
+
+    --card: #1e293b; /* slate-800 */
+    --card-foreground: #ffffff;
+
+    --popover: #1e293b;
+    --popover-foreground: #ffffff;
+
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+
+    --secondary: #1e293b; /* slate-800 */
+    --secondary-foreground: #ffffff;
+
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8; /* slate-400 */
+
+    --accent: #1e293b;
+    --accent-foreground: #ffffff;
+
+    --destructive: #7f1d1d;
+    --destructive-foreground: #ffffff;
+
+    --border: #1e293b; /* slate-800 */
+    --input: #1e293b;
+    --ring: #1d4ed8;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-sans);
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
 }

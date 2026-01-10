@@ -20,12 +20,10 @@ export function Hero() {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col gap-4 text-left"
               >
-                <h1 className="text-4xl leading-tight font-black tracking-[-0.033em] text-slate-900 md:text-5xl lg:text-6xl dark:text-white">
+                <h1 className="text-foreground text-4xl leading-tight font-black tracking-[-0.033em] md:text-5xl lg:text-6xl">
                   {t('title')}
                 </h1>
-                <h2 className="text-lg leading-relaxed font-normal text-slate-600 dark:text-slate-300">
-                  {t('subtitle')}
-                </h2>
+                <h2 className="text-muted-foreground text-lg leading-relaxed font-normal">{t('subtitle')}</h2>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -48,7 +46,7 @@ export function Hero() {
                 type: 'spring',
                 bounce: 0.4,
               }}
-              className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl bg-slate-800 shadow-2xl lg:w-1/2"
+              className="bg-card group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:w-1/2"
             >
               <div className="from-primary/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr to-purple-500/20 mix-blend-overlay"></div>
               <motion.div

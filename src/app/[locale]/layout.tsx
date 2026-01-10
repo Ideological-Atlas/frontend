@@ -38,9 +38,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="dark">
-      <body
-        className={`${inter.variable} bg-background-light dark:bg-background-dark overflow-x-hidden font-sans text-slate-900 dark:text-white`}
-      >
+      <body className={`${inter.variable} bg-background text-foreground overflow-x-hidden font-sans`}>
         <NextIntlClientProvider messages={messages}>
           <div className="relative flex min-h-screen flex-col">
             <Header />
