@@ -1,15 +1,12 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+ 
 import type { Me } from '../models/Me';
 import type { MeRequest } from '../models/MeRequest';
 import type { PatchedMeRequest } from '../models/PatchedMeRequest';
-import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
-import type { Register } from '../models/Register';
-import type { RegisterRequest } from '../models/RegisterRequest';
-import type { UserVerification } from '../models/UserVerification';
-import type { UserVerificationRequest } from '../models/UserVerificationRequest';
+import type { PatchedUserSetPasswordRequest } from '../models/PatchedUserSetPasswordRequest';
+import type { UserSetPasswordRequest } from '../models/UserSetPasswordRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -57,60 +54,31 @@ export class UsersService {
     });
   }
   /**
-   * Registrar nuevo usuario
-   * Crea una nueva cuenta de usuario e inicia el proceso de verificación por correo.
+   * Establecer contraseña de usuario
+   * Permite a un usuario autenticado (ej. conectado vía Google) establecer una contraseña para usar el inicio de sesión estándar en el futuro.
    * @param requestBody
-   * @returns Register
+   * @returns Me
    * @throws ApiError
    */
-  public static registerCreate(requestBody: RegisterRequest): CancelablePromise<Register> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/register/',
-      body: requestBody,
-      mediaType: 'application/json',
-    });
-  }
-  /**
-   * Verificar cuenta de usuario
-   * Marca a un usuario como verificado usando su UUID único.
-   * @param uuid El UUID del usuario a verificar
-   * @param requestBody
-   * @returns UserVerification
-   * @throws ApiError
-   */
-  public static usersVerifyUpdate(
-    uuid: string,
-    requestBody: UserVerificationRequest,
-  ): CancelablePromise<UserVerification> {
+  public static mePasswordUpdate(requestBody: UserSetPasswordRequest): CancelablePromise<Me> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/users/verify/{uuid}',
-      path: {
-        uuid: uuid,
-      },
+      url: '/api/me/password/',
       body: requestBody,
       mediaType: 'application/json',
     });
   }
   /**
-   * Verificar cuenta de usuario
-   * Marca a un usuario como verificado usando su UUID único.
-   * @param uuid El UUID del usuario a verificar
+   * Establecer contraseña de usuario
+   * Permite a un usuario autenticado (ej. conectado vía Google) establecer una contraseña para usar el inicio de sesión estándar en el futuro.
    * @param requestBody
-   * @returns UserVerification
+   * @returns Me
    * @throws ApiError
    */
-  public static usersVerifyPartialUpdate(
-    uuid: string,
-    requestBody?: PatchedUserVerificationRequest,
-  ): CancelablePromise<UserVerification> {
+  public static mePasswordPartialUpdate(requestBody?: PatchedUserSetPasswordRequest): CancelablePromise<Me> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: '/api/users/verify/{uuid}',
-      path: {
-        uuid: uuid,
-      },
+      url: '/api/me/password/',
       body: requestBody,
       mediaType: 'application/json',
     });

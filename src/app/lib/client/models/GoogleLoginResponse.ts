@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
  
-export type Region = {
-  readonly id: number;
-  name: string;
-  country: number;
+import type { Me } from './Me';
+export type GoogleLoginResponse = {
+  refresh: string;
+  access: string;
+  user: Me;
 };

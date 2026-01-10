@@ -2,11 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
  
-export type Register = {
-  readonly uuid: string;
-  email: string;
+export type GoogleLoginRequest = {
   /**
-   * Nombre de usuario
+   * Token de ID de Google proporcionado por el frontend.
    */
-  username?: string;
+  token: string;
 };

@@ -16,7 +16,7 @@
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
     "validate": "pnpm run format && pnpm run format:check && pnpm run lint:fix && pnpm run typecheck && pnpm audit",
-    "regenerateClient:local": "curl -s http://localhost:3141/api/schema/ > swagger-temp.yaml && openapi -i swagger-temp.yaml -o src/app/lib/client && rm swagger-temp.yaml & pnpm validate"
+    "regenerateClient:local": "curl -s http://localhost:3141/api/schema/ > swagger-temp.yaml && openapi -i swagger-temp.yaml -o src/app/lib/client && rm swagger-temp.yaml && pnpm validate"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "0.13.10",

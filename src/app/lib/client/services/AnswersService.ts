@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+ 
 import type { AxisAnswerRead } from '../models/AxisAnswerRead';
 import type { AxisAnswerUpsertRequest } from '../models/AxisAnswerUpsertRequest';
 import type { CompletedAnswer } from '../models/CompletedAnswer';
@@ -62,8 +62,8 @@ export class AnswersService {
     });
   }
   /**
-   * Generate completed answer snapshot
-   * Triggers the calculation of the user's current results, saves it as a CompletedAnswer, and returns the structured data.
+   * Generar instantánea de respuesta completada
+   * Inicia el cálculo de los resultados actuales del usuario, lo guarda como una Respuesta Completada y devuelve los datos estructurados.
    * @returns CompletedAnswer
    * @throws ApiError
    */
@@ -74,8 +74,8 @@ export class AnswersService {
     });
   }
   /**
-   * Get latest completed answer
-   * Returns the latest completed answer for the authenticated user as a single object. Returns 404 if no answer exists.
+   * Obtener última respuesta completada
+   * Devuelve la última respuesta completada del usuario autenticado como un objeto único. Devuelve 404 si no existe ninguna respuesta.
    * @returns CompletedAnswer
    * @throws ApiError
    */

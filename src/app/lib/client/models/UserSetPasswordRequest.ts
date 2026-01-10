@@ -2,8 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
  
-export type Region = {
-  readonly id: number;
-  name: string;
-  country: number;
+export type UserSetPasswordRequest = {
+  new_password: string;
 };
