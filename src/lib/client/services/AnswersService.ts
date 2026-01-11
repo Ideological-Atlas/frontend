@@ -1,7 +1,3 @@
-/* generated using openapi-typescript-codegen -- do not edit */
-/* istanbul ignore file */
-/* tslint:disable */
-
 import type { AxisAnswerRead } from '../models/AxisAnswerRead';
 import type { AxisAnswerUpsertRequest } from '../models/AxisAnswerUpsertRequest';
 import type { CompletedAnswer } from '../models/CompletedAnswer';
@@ -13,15 +9,6 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AnswersService {
-  /**
-   * Listar respuestas de eje del usuario por sección
-   * Devuelve las respuestas de eje del usuario filtradas por una sección ideológica específica.
-   * @param sectionUuid UUID of the Ideology Section
-   * @param limit Número de resultados a devolver por página.
-   * @param offset El índice inicial a partir del cual devolver los resultados.
-   * @returns PaginatedAxisAnswerReadList
-   * @throws ApiError
-   */
   public static answersAxisListList(
     sectionUuid: string,
     limit?: number,
@@ -39,14 +26,6 @@ export class AnswersService {
       },
     });
   }
-  /**
-   * Insertar/Actualizar respuesta de eje
-   * Crea o actualiza la respuesta del usuario para un eje específico definido por UUID en la URL.
-   * @param uuid UUID of the Axis to answer
-   * @param requestBody
-   * @returns AxisAnswerRead
-   * @throws ApiError
-   */
   public static answersAxisCreate(
     uuid: string,
     requestBody: AxisAnswerUpsertRequest,
@@ -61,24 +40,12 @@ export class AnswersService {
       mediaType: 'application/json',
     });
   }
-  /**
-   * Generar instantánea de respuesta completada
-   * Inicia el cálculo de los resultados actuales del usuario, lo guarda como una Respuesta Completada y devuelve los datos estructurados.
-   * @returns CompletedAnswer
-   * @throws ApiError
-   */
   public static answersCompletedGenerateCreate(): CancelablePromise<CompletedAnswer> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/answers/completed/generate/',
     });
   }
-  /**
-   * Obtener última respuesta completada
-   * Devuelve la última respuesta completada del usuario autenticado como un objeto único. Devuelve 404 si no existe ninguna respuesta.
-   * @returns CompletedAnswer
-   * @throws ApiError
-   */
   public static answersCompletedLatestRetrieve(): CancelablePromise<CompletedAnswer> {
     return __request(OpenAPI, {
       method: 'GET',
@@ -88,15 +55,6 @@ export class AnswersService {
       },
     });
   }
-  /**
-   * Listar respuestas de condicionador del usuario por complejidad
-   * Devuelve las respuestas de condicionador del usuario filtradas por complejidad de abstracción.
-   * @param complexityUuid UUID of the Abstraction Complexity
-   * @param limit Número de resultados a devolver por página.
-   * @param offset El índice inicial a partir del cual devolver los resultados.
-   * @returns PaginatedConditionerAnswerReadList
-   * @throws ApiError
-   */
   public static answersConditionerListList(
     complexityUuid: string,
     limit?: number,
@@ -114,14 +72,6 @@ export class AnswersService {
       },
     });
   }
-  /**
-   * Insertar/Actualizar respuesta de condicionador
-   * Crea o actualiza la respuesta del usuario para un condicionador específico definido por UUID en la URL.
-   * @param uuid UUID of the Conditioner to answer
-   * @param requestBody
-   * @returns ConditionerAnswerRead
-   * @throws ApiError
-   */
   public static answersConditionerCreate(
     uuid: string,
     requestBody: ConditionerAnswerUpsertRequest,

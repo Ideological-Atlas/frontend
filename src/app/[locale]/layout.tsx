@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Header } from '@/components/organisms/Header';
-import { Footer } from '@/components/organisms/Footer';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
+import { ApiConfigProvider } from '@/providers/ApiConfigProvider';
+import { AppLayout } from '@/providers/AppLayout';
+import { I18nProvider } from '@/providers/I18nProvider';
 import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
@@ -30,22 +28,14 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!['es', 'en'].includes(locale)) {
-    notFound();
-  }
-
-  const messages = await getMessages();
-
   return (
     <html lang={locale} className="dark">
       <body className={`${inter.variable} bg-background text-foreground overflow-x-hidden font-sans`}>
-        <NextIntlClientProvider messages={messages}>
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex flex-1 flex-col">{children}</main>
-            <Footer />
-          </div>
-        </NextIntlClientProvider>
+        <I18nProvider locale={locale}>
+          <ApiConfigProvider>
+            <AppLayout>{children}</AppLayout>
+          </ApiConfigProvider>
+        </I18nProvider>
       </body>
     </html>
   );

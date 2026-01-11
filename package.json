@@ -16,19 +16,21 @@
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
     "validate": "pnpm run format && pnpm run format:check && pnpm run lint:fix && pnpm run typecheck && pnpm audit",
-    "regenerateClient:local": "curl -s http://localhost:3141/api/schema/ > swagger-temp.yaml && openapi -i swagger-temp.yaml -o src/app/lib/client && rm swagger-temp.yaml && pnpm validate"
+    "regenerateClient:local": "curl -s http://localhost:3141/api/schema/ > swagger-temp.yaml && openapi -i swagger-temp.yaml -o src/lib/client && rm swagger-temp.yaml && pnpm validate"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "0.13.10",
     "clsx": "2.1.1",
     "framer-motion": "12.25.0",
+    "js-cookie": "^3.0.5",
     "material-symbols": "0.40.2",
     "next": "16.1.1",
     "next-intl": "4.7.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "3.4.0",
-    "zod": "4.3.5"
+    "zod": "4.3.5",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.3.1",
@@ -39,6 +41,7 @@
     "@evilmartians/lefthook": "2.0.13",
     "@next/eslint-plugin-next": "16.1.1",
     "@tailwindcss/postcss": "4.1.18",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "20.19.27",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
