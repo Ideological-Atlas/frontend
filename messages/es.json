@@ -77,5 +77,15 @@
     "terms": "Términos",
     "contact": "Contacto",
     "copyright": "Todos los derechos reservados."
+  },
+  "Verify": {
+    "title_loading": "Verificando...",
+    "description_loading": "Estamos confirmando tu enlace de verificación.",
+    "title_success": "¡Perfil Verificado!",
+    "description_success": "Tu correo electrónico ha sido confirmado exitosamente. Ahora puedes explorar el Atlas Ideológico sin restricciones.",
+    "title_error": "Enlace no válido",
+    "description_error": "No hemos podido verificar tu cuenta. El enlace puede haber expirado o ser incorrecto.",
+    "go_to_dashboard": "Ir a mi Dashboard",
+    "go_to_login": "Entrar"
   }
 }

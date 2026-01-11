@@ -10,3 +10,5 @@ export const configureOpenAPI = () => {
     return Cookies.get('access_token') || '';
   };
 };
+
+configureOpenAPI();

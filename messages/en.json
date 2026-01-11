@@ -77,5 +77,15 @@
     "terms": "Terms",
     "contact": "Contact",
     "copyright": "All rights reserved."
+  },
+  "Verify": {
+    "title_loading": "Verifying...",
+    "description_loading": "We are confirming your verification link.",
+    "title_success": "Profile Verified!",
+    "description_success": "Your email has been successfully confirmed. You can now explore the Ideological Atlas without restrictions.",
+    "title_error": "Invalid Link",
+    "description_error": "We could not verify your account. The link may have expired or be incorrect.",
+    "go_to_dashboard": "Go to Dashboard",
+    "go_to_login": "Login"
   }
 }
