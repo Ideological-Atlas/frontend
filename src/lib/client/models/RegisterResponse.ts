@@ -2,11 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type Register = {
-  readonly uuid: string;
-  email: string;
-  /**
-   * Username
-   */
-  username?: string;
+import type { Me } from './Me';
+export type RegisterResponse = {
+  access: string;
+  refresh: string;
+  user: Me;
 };

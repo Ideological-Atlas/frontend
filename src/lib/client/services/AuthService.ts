@@ -5,8 +5,8 @@
 import type { GoogleLoginRequest } from '../models/GoogleLoginRequest';
 import type { GoogleLoginResponse } from '../models/GoogleLoginResponse';
 import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
-import type { Register } from '../models/Register';
 import type { RegisterRequest } from '../models/RegisterRequest';
+import type { RegisterResponse } from '../models/RegisterResponse';
 import type { TokenObtainPairRequest } from '../models/TokenObtainPairRequest';
 import type { TokenObtainPairResponse } from '../models/TokenObtainPairResponse';
 import type { TokenRefresh } from '../models/TokenRefresh';
@@ -35,12 +35,12 @@ export class AuthService {
   }
   /**
    * Register new user
-   * Creates a new user account and triggers the verification email process.
+   * Creates a new user account, triggers verification email, and logs the user in automatically.
    * @param requestBody
-   * @returns Register
+   * @returns RegisterResponse
    * @throws ApiError
    */
-  public static registerCreate(requestBody: RegisterRequest): CancelablePromise<Register> {
+  public static registerCreate(requestBody: RegisterRequest): CancelablePromise<RegisterResponse> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/register/',

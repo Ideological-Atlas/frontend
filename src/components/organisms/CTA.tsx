@@ -1,9 +1,11 @@
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
+import Link from 'next/link';
 
 export function CTA() {
   const t = useTranslations('CTA');
   const tCommon = useTranslations('Common');
+  const locale = useLocale();
 
   return (
     <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">
@@ -19,9 +21,11 @@ export function CTA() {
               </p>
             </div>
             <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-              <Button variant="primary" className="h-12 min-w-[200px] px-6 text-base shadow-lg shadow-blue-500/20">
-                {tCommon('create_profile')}
-              </Button>
+              <Link href={`/${locale}/register`}>
+                <Button variant="primary" className="h-12 min-w-[200px] px-6 text-base shadow-lg shadow-blue-500/20">
+                  {tCommon('create_profile')}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

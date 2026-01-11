@@ -165,7 +165,10 @@ export function LoginForm() {
 
       <div className="text-muted-foreground mt-8 text-center text-sm">
         {t('no_account')}{' '}
-        <Link href="/register" className="text-primary hover:text-primary-hover font-semibold hover:underline">
+        <Link
+          href={`/${locale}/register`}
+          className="text-primary hover:text-primary-hover font-semibold hover:underline"
+        >
           {t('register_link')}
         </Link>
       </div>
