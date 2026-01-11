@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { clsx } from 'clsx';
+import confetti from 'canvas-confetti';
 
 import { AuthService } from '@/lib/client/services/AuthService';
 import { ApiError } from '@/lib/client/core/ApiError';
@@ -21,6 +22,50 @@ export function VerifyStatus() {
 
   const [status, setStatus] = useState<VerifyState>('loading');
 
+  const triggerConfetti = () => {
+    const style = getComputedStyle(document.documentElement);
+
+    const getHex = (prop: string) => style.getPropertyValue(prop).trim();
+
+    const colors = [
+      getHex('--primary'),
+      getHex('--accent'),
+      getHex('--secondary'),
+      getHex('--destructive'),
+      getHex('--strong-accent'),
+    ].filter(color => color.startsWith('#')); // Aseguramos que solo pasamos HEX válidos
+
+    const end = Date.now() + 3 * 1000;
+
+    const frame = () => {
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 70,
+        origin: { x: 0, y: 0.6 },
+        colors: colors.length > 0 ? colors : undefined,
+        ticks: 300,
+        gravity: 1.2,
+        scalar: 1.2,
+      });
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 70,
+        origin: { x: 1, y: 0.6 },
+        colors: colors.length > 0 ? colors : undefined,
+        ticks: 300,
+        gravity: 1.2,
+        scalar: 1.2,
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  };
+
   useEffect(() => {
     const verifyUser = async () => {
       const uuid = params.uuid as string;
@@ -32,9 +77,11 @@ export function VerifyStatus() {
       try {
         await AuthService.usersVerifyPartialUpdate(uuid, { is_verified: true });
         setStatus('success');
+        triggerConfetti();
       } catch (error) {
         if (error instanceof ApiError && error.status === 403) {
           setStatus('success');
+          triggerConfetti();
         } else {
           console.error(error);
           setStatus('error');

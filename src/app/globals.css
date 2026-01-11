@@ -66,6 +66,10 @@
     --destructive-hover: #dc2626; /* red-600 */
     --destructive-foreground: #ffffff;
 
+    --strong-accent: #1951ff;
+    --strong-accent-hover: #0d34ae;
+    --strong-accent-foreground: #ffffff;
+
     --border: #e2e8f0;
     --input: #e2e8f0;
     --ring: #16a34a;
