@@ -88,7 +88,7 @@ export function RegisterForm() {
     <div className="bg-card border-border w-full max-w-[480px] rounded-2xl border p-8 shadow-2xl">
       <div className="mb-8 flex flex-col items-center text-center">
         <h1 className="text-foreground text-3xl font-black tracking-tight">{t('register_title') || 'Crear Cuenta'}</h1>
-        <p className="text-muted-foreground mt-2 text-base font-normal leading-relaxed">
+        <p className="text-muted-foreground mt-2 text-base leading-relaxed font-normal">
           {t('register_subtitle') || 'Regístrate para establecer tu perfil ideológico y explorar el espectro.'}
         </p>
       </div>
@@ -134,7 +134,7 @@ export function RegisterForm() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="********"
-                className="pl-10 pr-10"
+                className="pr-10 pl-10"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isLoading}
@@ -180,7 +180,7 @@ export function RegisterForm() {
 
         <Button
           type="submit"
-          className="w-full bg-primary text-base text-primary-foreground hover:bg-primary-hover"
+          className="bg-primary text-primary-foreground hover:bg-primary-hover w-full text-base"
           variant="primary"
           isLoading={isLoading}
           loadingText={t('registering') || 'Registrando...'}
@@ -189,9 +189,9 @@ export function RegisterForm() {
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground mt-8 text-center text-sm">
         {t('has_account') || '¿Ya tienes cuenta?'}{' '}
-        <Link href="/login" className="font-semibold text-primary hover:text-primary-hover hover:underline">
+        <Link href="/login" className="text-primary hover:text-primary-hover font-semibold hover:underline">
           {t('login_link') || 'Iniciar Sesión'}
         </Link>
       </div>
