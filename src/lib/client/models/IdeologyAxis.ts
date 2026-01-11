@@ -6,19 +6,19 @@ import type { IdeologyConditioner } from './IdeologyConditioner';
 export type IdeologyAxis = {
   readonly uuid: string;
   /**
-   * Nombre interno del eje (ej: 'Libertad económica').
+   * Internal name of the axis (e.g., 'Economic Freedom').
    */
   name: string;
   /**
-   * Explicación de lo que mide este eje.
+   * Explanation of what this axis measures.
    */
   description?: string | null;
   /**
-   * Etiqueta para el inicio o valor mínimo del eje (ej: 'Control total').
+   * Label for the start or minimum value of the axis (e.g., 'Total Control').
    */
   left_label: string;
   /**
-   * Etiqueta para el final o valor máximo del eje (ej: 'Libertad total').
+   * Label for the end or maximum value of the axis (e.g., 'Total Liberty').
    */
   right_label: string;
   readonly conditioned_by: IdeologyConditioner;

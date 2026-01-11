@@ -5,11 +5,11 @@
 export type IdeologySection = {
   readonly uuid: string;
   /**
-   * El título de la sección temática (ej: 'Economía', 'Estructura social').
+   * The title of the thematic section (e.g., 'Economics', 'Social Structure').
    */
   name: string;
   /**
-   * Un resumen de los temas y conceptos cubiertos en esta sección.
+   * A summary of the topics and concepts covered in this section.
    */
   description?: string | null;
   readonly icon: string | null;

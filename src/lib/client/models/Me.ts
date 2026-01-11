@@ -6,21 +6,21 @@ import type { AuthProviderEnum } from './AuthProviderEnum';
 export type Me = {
   readonly uuid: string;
   /**
-   * Requerido. 150 carácteres como máximo. Únicamente letras, dígitos y @/./+/-/_
+   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
    */
   username: string;
   readonly email: string;
   first_name?: string;
   last_name?: string;
   /**
-   * Campo que muestra si el usuario está verificado o no.
+   * Field that shows if the user is verified or not.
    */
   readonly is_verified: boolean;
   preferred_language?: string;
   /**
-   * El proveedor utilizado para la autenticación/registro del usuario.
+   * The provider used for the user authentication/registration.
    *
-   * * `internal` - Interno
+   * * `internal` - Internal
    * * `google` - Google
    */
   readonly auth_provider: AuthProviderEnum;

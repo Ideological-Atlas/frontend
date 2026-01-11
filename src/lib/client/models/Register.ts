@@ -6,7 +6,7 @@ export type Register = {
   readonly uuid: string;
   email: string;
   /**
-   * Nombre de usuario
+   * Username
    */
   username?: string;
 };

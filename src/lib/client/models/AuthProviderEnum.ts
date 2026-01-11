@@ -3,7 +3,7 @@
 /* tslint:disable */
 
 /**
- * * `internal` - Interno
+ * * `internal` - Internal
  * * `google` - Google
  */
 export enum AuthProviderEnum {

@@ -6,7 +6,7 @@ export type CompletedAnswer = {
   readonly uuid: string;
   readonly created: string;
   /**
-   * JSON estructurado que contiene el conjunto completo de respuestas proporcionadas por el usuario.
+   * Structured JSON containing the full set of answers provided by the user.
    */
   readonly answers: any;
 };

@@ -6,25 +6,25 @@ import type { TypeEnum } from './TypeEnum';
 export type IdeologyConditioner = {
   readonly uuid: string;
   /**
-   * El nombre del condicionador o variable.
+   * The name of the conditioner or variable.
    */
   name: string;
   /**
-   * Explicación detallada de lo que este condicionador mide o define dentro de una ideología.
+   * Detailed explanation of what this conditioner measures or defines within an ideology.
    */
   description?: string | null;
   /**
-   * Define el formato de los datos esperados para este condicionador.
+   * Defines the format of the data expected for this conditioner.
    *
-   * * `boolean` - Booleano (Sí/No)
-   * * `categorical` - Categórico (Selección)
-   * * `scale` - Escala (Rango numérico)
-   * * `numeric` - Valor numérico
-   * * `text` - Texto libre
+   * * `boolean` - Boolean (Yes/No)
+   * * `categorical` - Categorical (Selection)
+   * * `scale` - Scale (Numeric Range)
+   * * `numeric` - Numeric Value
+   * * `text` - Free Text
    */
   type?: TypeEnum;
   /**
-   * Lista de opciones válidas si el tipo es 'Categórico'. Formato: ['Opción A', 'Opción B'].
+   * List of valid options if the type is 'Categorical'. Format: ['Option A', 'Option B'].
    */
   accepted_values?: any;
 };

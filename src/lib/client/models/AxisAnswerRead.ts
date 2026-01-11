@@ -6,7 +6,7 @@ export type AxisAnswerRead = {
   readonly uuid: string;
   readonly axis_uuid: string;
   /**
-   * La posición en el eje. Debe estar entre -100 (Extrema Izquierda) y 100 (Extrema Derecha).
+   * The position on the axis. Must be between -100 (Extreme Left) and 100 (Extreme Right).
    */
   value: number;
 };

@@ -6,7 +6,7 @@ export type ConditionerAnswerRead = {
   readonly uuid: string;
   readonly conditioner_uuid: string;
   /**
-   * El valor elegido. Debe coincidir con uno de los 'valores aceptados' definidos en el condicionador.
+   * The value chosen. Must match one of the 'accepted_values' defined in the conditioner.
    */
   answer: string;
 };

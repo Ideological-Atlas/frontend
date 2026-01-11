@@ -7,31 +7,31 @@ import type { ConditionerAnswerRead } from './ConditionerAnswerRead';
 export type IdeologyDetail = {
   readonly uuid: string;
   /**
-   * Nombre de la ideología
+   * Ideology Name
    */
   name: string;
   /**
-   * Descripción de la ideología desde el punto de vista de un partidario
+   * Ideology Description from the point of view of a supporter
    */
   description_supporter?: string | null;
   /**
-   * Descripción de la ideología desde el punto de vista de un detractor
+   * Ideology Description the point of view of a detractor
    */
   description_detractor?: string | null;
   /**
-   * Descripción de la ideología desde el punto de vista neutral
+   * Ideology Description the point of view of a neutral
    */
   description_neutral?: string | null;
   /**
-   * Imagen de la bandera de la ideología
+   * Ideology Flag Image
    */
   flag?: string | null;
   /**
-   * Imagen de fondo de la ideología
+   * Ideology Background Image
    */
   background?: string | null;
   /**
-   * Color de la ideología
+   * Ideology Color Image
    */
   color?: string | null;
   readonly axis_definitions: Array<AxisAnswerRead>;

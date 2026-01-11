@@ -1,3 +1,7 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+
 import type { PaginatedIdeologyAbstractionComplexityList } from '../models/PaginatedIdeologyAbstractionComplexityList';
 import type { PaginatedIdeologyAxisList } from '../models/PaginatedIdeologyAxisList';
 import type { PaginatedIdeologyConditionerList } from '../models/PaginatedIdeologyConditionerList';
@@ -6,6 +10,14 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StructureService {
+  /**
+   * List all abstraction complexities
+   * Returns a list of all available complexity levels for the test.
+   * @param limit Number of results to return per page.
+   * @param offset The initial index from which to return the results.
+   * @returns PaginatedIdeologyAbstractionComplexityList
+   * @throws ApiError
+   */
   public static structureComplexitiesList(
     limit?: number,
     offset?: number,
@@ -19,6 +31,15 @@ export class StructureService {
       },
     });
   }
+  /**
+   * List conditioners by complexity
+   * Returns all ideology conditioners associated with a specific abstraction complexity UUID.
+   * @param complexityUuid UUID of the Abstraction Complexity
+   * @param limit Number of results to return per page.
+   * @param offset The initial index from which to return the results.
+   * @returns PaginatedIdeologyConditionerList
+   * @throws ApiError
+   */
   public static structureConditionersList(
     complexityUuid: string,
     limit?: number,
@@ -36,6 +57,15 @@ export class StructureService {
       },
     });
   }
+  /**
+   * List sections by complexity
+   * Returns all sections associated with a specific abstraction complexity UUID.
+   * @param complexityUuid UUID of the Abstraction Complexity
+   * @param limit Number of results to return per page.
+   * @param offset The initial index from which to return the results.
+   * @returns PaginatedIdeologySectionList
+   * @throws ApiError
+   */
   public static structureSectionsList(
     complexityUuid: string,
     limit?: number,
@@ -53,6 +83,15 @@ export class StructureService {
       },
     });
   }
+  /**
+   * List axes by section
+   * Returns all axes (including their conditioners) for a specific section UUID.
+   * @param sectionUuid UUID of the Ideology Section
+   * @param limit Number of results to return per page.
+   * @param offset The initial index from which to return the results.
+   * @returns PaginatedIdeologyAxisList
+   * @throws ApiError
+   */
   public static structureSectionsAxesList(
     sectionUuid: string,
     limit?: number,

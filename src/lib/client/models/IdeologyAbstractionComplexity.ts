@@ -5,15 +5,15 @@
 export type IdeologyAbstractionComplexity = {
   readonly uuid: string;
   /**
-   * La etiqueta para este nivel de abstracción (ej: 'Concreto', 'Teórico', 'Metafísico').
+   * The label for this level of abstraction (e.g., 'Concrete', 'Theoretical', 'Metaphysical').
    */
   name: string;
   /**
-   * Explicación detallada de las características que definen este nivel de complejidad.
+   * Detailed explanation of the characteristics that define this complexity level.
    */
   description?: string | null;
   /**
-   * Un valor numérico utilizado para clasificar y ordenar los niveles de abstracción (ej: 1 para el más bajo, 10 para el más alto).
+   * A numerical value used to rank and order the levels of abstraction (e.g., 1 for lowest, 10 for highest).
    */
   complexity: number;
 };

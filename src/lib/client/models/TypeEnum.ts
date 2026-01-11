@@ -3,11 +3,11 @@
 /* tslint:disable */
 
 /**
- * * `boolean` - Booleano (Sí/No)
- * * `categorical` - Categórico (Selección)
- * * `scale` - Escala (Rango numérico)
- * * `numeric` - Valor numérico
- * * `text` - Texto libre
+ * * `boolean` - Boolean (Yes/No)
+ * * `categorical` - Categorical (Selection)
+ * * `scale` - Scale (Numeric Range)
+ * * `numeric` - Numeric Value
+ * * `text` - Free Text
  */
 export enum TypeEnum {
   BOOLEAN = 'boolean',

@@ -1,3 +1,7 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
 import type { GoogleLoginRequest } from '../models/GoogleLoginRequest';
 import type { GoogleLoginResponse } from '../models/GoogleLoginResponse';
 import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
@@ -14,6 +18,13 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AuthService {
+  /**
+   * Login with Google
+   * Validates a Google ID Token. Registers the user if they don't exist (verified automatically) and returns JWT tokens.
+   * @param requestBody
+   * @returns GoogleLoginResponse
+   * @throws ApiError
+   */
   public static loginGoogleCreate(requestBody: GoogleLoginRequest): CancelablePromise<GoogleLoginResponse> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -22,6 +33,13 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Register new user
+   * Creates a new user account and triggers the verification email process.
+   * @param requestBody
+   * @returns Register
+   * @throws ApiError
+   */
   public static registerCreate(requestBody: RegisterRequest): CancelablePromise<Register> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -30,6 +48,14 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Obtain Token Pair (Login)
+   * Takes a set of user credentials and returns an access and refresh JSON web
+   * token pair to prove the authentication of those credentials.
+   * @param requestBody
+   * @returns TokenObtainPair
+   * @throws ApiError
+   */
   public static tokenLoginCreate(requestBody: TokenObtainPairRequest): CancelablePromise<TokenObtainPair> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -38,6 +64,14 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Refresh Token
+   * Takes a refresh type JSON web token and returns an access type JSON web
+   * token if the refresh token is valid.
+   * @param requestBody
+   * @returns TokenRefresh
+   * @throws ApiError
+   */
   public static tokenRefreshCreate(requestBody: TokenRefreshRequest): CancelablePromise<TokenRefresh> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -46,7 +80,15 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
-  public static tokenVerifyCreate(requestBody: TokenVerifyRequest): CancelablePromise<unknown> {
+  /**
+   * Verify Token
+   * Takes a token and indicates if it is valid.  This view provides no
+   * information about a token's fitness for a particular use.
+   * @param requestBody
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static tokenVerifyCreate(requestBody: TokenVerifyRequest): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/token/verify/',
@@ -54,6 +96,14 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Verify user account
+   * Marks a user as verified using their unique UUID.
+   * @param uuid The UUID of the user to verify
+   * @param requestBody
+   * @returns UserVerification
+   * @throws ApiError
+   */
   public static usersVerifyUpdate(
     uuid: string,
     requestBody: UserVerificationRequest,
@@ -68,6 +118,14 @@ export class AuthService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Verify user account
+   * Marks a user as verified using their unique UUID.
+   * @param uuid The UUID of the user to verify
+   * @param requestBody
+   * @returns UserVerification
+   * @throws ApiError
+   */
   public static usersVerifyPartialUpdate(
     uuid: string,
     requestBody?: PatchedUserVerificationRequest,

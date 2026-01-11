@@ -4,7 +4,7 @@
 
 export type MeRequest = {
   /**
-   * Requerido. 150 carácteres como máximo. Únicamente letras, dígitos y @/./+/-/_
+   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
    */
   username: string;
   first_name?: string;

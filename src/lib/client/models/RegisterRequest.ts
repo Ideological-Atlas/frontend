@@ -5,11 +5,11 @@
 export type RegisterRequest = {
   email: string;
   /**
-   * Contraseña del usuario
+   * Password of the user
    */
   password: string;
   /**
-   * Nombre de usuario
+   * Username
    */
   username?: string;
 };

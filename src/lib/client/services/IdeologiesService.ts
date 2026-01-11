@@ -1,9 +1,26 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+
 import type { IdeologyDetail } from '../models/IdeologyDetail';
 import type { PaginatedIdeologyListList } from '../models/PaginatedIdeologyListList';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class IdeologiesService {
+  /**
+   * List all ideologies
+   * Returns a paginated list of ideologies. Supports filtering by related entities and text search.
+   * @param country Filter by Country ID (Integer)
+   * @param limit Number of results to return per page.
+   * @param offset The initial index from which to return the results.
+   * @param region Filter by Region ID (Integer)
+   * @param religion Filter by Religion UUID
+   * @param search Search by name or descriptions
+   * @param tag Filter by Tag UUID
+   * @returns PaginatedIdeologyListList
+   * @throws ApiError
+   */
   public static ideologiesList(
     country?: number,
     limit?: number,
@@ -27,6 +44,13 @@ export class IdeologiesService {
       },
     });
   }
+  /**
+   * Get ideology details
+   * Returns details of a specific ideology including its definition values (axis and conditioners).
+   * @param uuid
+   * @returns IdeologyDetail
+   * @throws ApiError
+   */
   public static ideologiesRetrieve(uuid: string): CancelablePromise<IdeologyDetail> {
     return __request(OpenAPI, {
       method: 'GET',

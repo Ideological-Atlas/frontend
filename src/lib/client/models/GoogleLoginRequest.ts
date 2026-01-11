@@ -4,7 +4,7 @@
 
 export type GoogleLoginRequest = {
   /**
-   * Token de ID de Google proporcionado por el frontend.
+   * Google ID Token provided by the frontend.
    */
   token: string;
 };

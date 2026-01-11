@@ -4,12 +4,12 @@
 
 export type PatchedUserVerificationRequest = {
   /**
-   * Requerido. 150 carácteres como máximo. Únicamente letras, dígitos y @/./+/-/_
+   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
    */
   username?: string;
   preferred_language?: string;
   /**
-   * Campo que muestra si el usuario está verificado o no.
+   * Field that shows if the user is verified or not.
    */
   is_verified?: boolean;
 };
