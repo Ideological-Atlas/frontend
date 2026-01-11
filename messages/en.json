@@ -86,6 +86,8 @@
     "title_error": "Invalid Link",
     "description_error": "We could not verify your account. The link may have expired or be incorrect.",
     "go_to_dashboard": "Go to Dashboard",
-    "go_to_login": "Login"
+    "go_to_login": "Login",
+    "title_already_verified": "Profile already active",
+    "description_already_verified": "Your account has already been verified. No further action is required."
   }
 }

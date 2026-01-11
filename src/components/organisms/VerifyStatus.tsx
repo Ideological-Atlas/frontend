@@ -12,7 +12,7 @@ import { ApiError } from '@/lib/client/core/ApiError';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/atoms/Button';
 
-type VerifyState = 'loading' | 'success' | 'error';
+type VerifyState = 'loading' | 'success' | 'already_verified' | 'error';
 
 export function VerifyStatus() {
   const t = useTranslations('Verify');
@@ -24,7 +24,6 @@ export function VerifyStatus() {
 
   const triggerConfetti = () => {
     const style = getComputedStyle(document.documentElement);
-
     const getHex = (prop: string) => style.getPropertyValue(prop).trim();
 
     const colors = [
@@ -33,13 +32,13 @@ export function VerifyStatus() {
       getHex('--secondary'),
       getHex('--destructive'),
       getHex('--strong-accent'),
-    ].filter(color => color.startsWith('#')); // Aseguramos que solo pasamos HEX válidos
+    ].filter(color => color.startsWith('#'));
 
     const end = Date.now() + 3 * 1000;
 
     const frame = () => {
       confetti({
-        particleCount: 4,
+        particleCount: colors.length,
         angle: 60,
         spread: 70,
         origin: { x: 0, y: 0.6 },
@@ -49,7 +48,7 @@ export function VerifyStatus() {
         scalar: 1.2,
       });
       confetti({
-        particleCount: 4,
+        particleCount: colors.length,
         angle: 120,
         spread: 70,
         origin: { x: 1, y: 0.6 },
@@ -80,8 +79,7 @@ export function VerifyStatus() {
         triggerConfetti();
       } catch (error) {
         if (error instanceof ApiError && error.status === 403) {
-          setStatus('success');
-          triggerConfetti();
+          setStatus('already_verified');
         } else {
           console.error(error);
           setStatus('error');
@@ -106,6 +104,13 @@ export function VerifyStatus() {
       bgGradient: 'from-green-500/20',
       title: t('title_success'),
       description: t('description_success'),
+    },
+    already_verified: {
+      icon: 'verified',
+      iconColor: 'text-primary',
+      bgGradient: 'from-primary/20',
+      title: t('title_already_verified'),
+      description: t('description_already_verified'),
     },
     error: {
       icon: 'error',

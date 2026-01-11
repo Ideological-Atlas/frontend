@@ -86,6 +86,8 @@
     "title_error": "Enlace no válido",
     "description_error": "No hemos podido verificar tu cuenta. El enlace puede haber expirado o ser incorrecto.",
     "go_to_dashboard": "Ir a mi Dashboard",
-    "go_to_login": "Entrar"
+    "go_to_login": "Entrar",
+    "title_already_verified": "Perfil ya activo",
+    "description_already_verified": "Tu cuenta ya fue verificada anteriormente. No necesitas realizar ninguna acción adicional."
   }
 }
