@@ -1,48 +1,63 @@
 {
   "Common": {
     "ideological_atlas": "Ideological Atlas",
-    "start_now": "Comenzar Ahora",
-    "learn_more": "Saber Más",
     "get_started": "Empezar",
-    "sign_in": "Iniciar Sesión",
-    "create_profile": "Crear mi perfil gratis"
+    "sign_in": "Iniciar sesión",
+    "start_now": "Comenzar ahora",
+    "learn_more": "Saber más",
+    "create_profile": "Crear mi perfil"
   },
   "Navigation": {
     "home": "Inicio",
-    "features": "Funcionalidades",
+    "features": "Características",
     "explore": "Explorar",
-    "about": "Acerca de"
+    "about": "Sobre nosotros"
   },
   "Hero": {
-    "title": "Descubre tu verdadera posición ideológica",
-    "subtitle": "Más allá de izquierda o derecha. Utiliza nuestro espectro continuo para visualizar tus creencias y explorar nuevas perspectivas con total objetividad."
+    "title": "Descubre tu verdadera posición política",
+    "subtitle": "Una herramienta moderna, precisa e imparcial para mapear tu ideología."
   },
   "Features": {
-    "title": "Explora sin límites",
-    "subtitle": "Nuestra plataforma te ofrece herramientas únicas para entender el panorama político y social sin sesgos.",
+    "title": "Entiende tu visión del mundo",
+    "subtitle": "Analizamos múltiples dimensiones para ofrecerte un resultado preciso.",
     "cards": {
       "spectrum": {
-        "title": "Espectro Continuo",
-        "description": "Visualiza matices políticos sin etiquetas rígidas ni categorías binarias, permitiendo una representación fiel de tu pensamiento."
+        "title": "Espectro Multidimensional",
+        "description": "Más allá de izquierda y derecha. Analiza ejes económicos, sociales y civiles."
       },
       "exploration": {
-        "title": "Exploración Objetiva",
-        "description": "Accede a definiciones neutrales y claras de diversas corrientes de pensamiento para expandir tu conocimiento sin prejuicios."
+        "title": "Exploración Profunda",
+        "description": "Descubre matices en tu pensamiento que no sabías que tenías."
       },
       "analysis": {
-        "title": "Análisis Profundo",
-        "description": "Compara tus resultados con datos históricos y tendencias globales para entender dónde te sitúas en el gran esquema."
+        "title": "Análisis de Datos",
+        "description": "Compara tus resultados con tendencias globales y regionales."
       }
     }
   },
   "CTA": {
-    "title": "¿Listo para encontrar tu lugar?",
-    "text": "Únete a miles de personas que ya están explorando sus ideologías de una manera nueva, transparente y sin ruido."
+    "title": "¿Listo para descubrir dónde encajas?",
+    "text": "Únete a miles de usuarios que ya han mapeado su ideología."
   },
   "Footer": {
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Uso",
+    "privacy": "Privacidad",
+    "terms": "Términos",
     "contact": "Contacto",
     "copyright": "Todos los derechos reservados."
+  },
+  "Auth": {
+    "login_title": "Ideological Atlas",
+    "login_subtitle": "Explora el espectro. Define tu postura.",
+    "continue_google": "Continuar con Google",
+    "or": "o",
+    "username_label": "Usuario o correo electrónico",
+    "username_placeholder": "usuario o ejemplo@correo.com",
+    "password_label": "Contraseña",
+    "password_placeholder": "••••••••",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "login_button": "Iniciar sesión",
+    "no_account": "¿No tienes una cuenta?",
+    "register_link": "Regístrate",
+    "copyright": "© 2026 Ideological Atlas."
   }
 }
