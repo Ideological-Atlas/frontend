@@ -19,6 +19,7 @@
     "regenerateClient:local": "curl -s -H 'Accept-Language: en' http://localhost:3141/api/schema/ > swagger-temp.yaml && openapi -i swagger-temp.yaml -o src/lib/client && rm swagger-temp.yaml && pnpm validate"
   },
   "dependencies": {
+    "@react-oauth/google": "0.13.4",
     "@t3-oss/env-nextjs": "0.13.10",
     "clsx": "2.1.1",
     "framer-motion": "12.25.0",

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { ApiConfigProvider } from '@/providers/ApiConfigProvider';
 import { AppLayout } from '@/providers/AppLayout';
 import { I18nProvider } from '@/providers/I18nProvider';
+import { GoogleAuthProvider } from '@/providers/GoogleAuthProvider';
 import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
@@ -33,7 +34,9 @@ export default async function LocaleLayout({
       <body className={`${inter.variable} bg-background text-foreground overflow-x-hidden font-sans`}>
         <I18nProvider locale={locale}>
           <ApiConfigProvider>
-            <AppLayout>{children}</AppLayout>
+            <GoogleAuthProvider>
+              <AppLayout>{children}</AppLayout>
+            </GoogleAuthProvider>
           </ApiConfigProvider>
         </I18nProvider>
       </body>

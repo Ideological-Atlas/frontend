@@ -74,10 +74,6 @@ export function LoginForm() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Google login attempt');
-  };
-
   return (
     <div className="bg-card border-border w-full max-w-[420px] rounded-2xl border p-8 shadow-2xl">
       <div className="mb-8 flex flex-col items-center text-center">
@@ -88,7 +84,7 @@ export function LoginForm() {
         <p className="text-muted-foreground mt-2 text-sm">{t('login_subtitle')}</p>
       </div>
 
-      <GoogleButton onClick={handleGoogleLogin} />
+      <GoogleButton />
 
       <Divider />
 
