@@ -5,7 +5,8 @@
     "sign_in": "Sign In",
     "start_now": "Start Now",
     "learn_more": "Learn More",
-    "create_profile": "Create Profile"
+    "create_profile": "Create Profile",
+    "processing": "Processing..."
   },
   "Navigation": {
     "home": "Home",
@@ -14,20 +15,20 @@
     "about": "About"
   },
   "Hero": {
-    "title": "Discover your true political position",
-    "subtitle": "A modern, accurate, and unbiased tool to map your ideology."
+    "title": "Discover your true ideological position",
+    "subtitle": "A modern, accurate, and detailed political spectrum test based on real data."
   },
   "Features": {
-    "title": "Understand your worldview",
-    "subtitle": "We analyze multiple dimensions to provide you with an accurate result.",
+    "title": "Analyze your political thought",
+    "subtitle": "Our algorithm evaluates multiple dimensions to offer you an accurate result.",
     "cards": {
       "spectrum": {
         "title": "Multidimensional Spectrum",
-        "description": "Beyond left and right. Analyze economic, social, and civil axes."
+        "description": "Beyond left and right. We analyze economic, social, and cultural axes."
       },
       "exploration": {
         "title": "Deep Exploration",
-        "description": "Discover nuances in your thinking you didn't know you had."
+        "description": "Understand the historical and philosophical influences of your ideology."
       },
       "analysis": {
         "title": "Data Analysis",
@@ -36,28 +37,30 @@
     }
   },
   "CTA": {
-    "title": "Ready to discover where you fit?",
+    "title": "Ready to discover your place on the map?",
     "text": "Join thousands of users who have already mapped their ideology."
+  },
+  "Auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Enter your credentials to access your account.",
+    "username_label": "Username or Email",
+    "username_placeholder": "name@example.com",
+    "password_label": "Password",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Forgot password?",
+    "login_button": "Sign In",
+    "logging_in": "Signing in...",
+    "no_account": "Don't have an account?",
+    "register_link": "Sign up",
+    "copyright": "Protected by reCAPTCHA and subject to the Google Privacy Policy and Terms of Service.",
+    "or": "OR CONTINUE WITH",
+    "continue_google": "Google",
+    "continue_google_loading": "Connecting..."
   },
   "Footer": {
     "privacy": "Privacy",
     "terms": "Terms",
     "contact": "Contact",
     "copyright": "All rights reserved."
-  },
-  "Auth": {
-    "login_title": "Ideological Atlas",
-    "login_subtitle": "Explore the spectrum. Define your stance.",
-    "continue_google": "Continue with Google",
-    "or": "or",
-    "username_label": "Username or email",
-    "username_placeholder": "username or example@email.com",
-    "password_label": "Password",
-    "password_placeholder": "••••••••",
-    "forgot_password": "Forgot password?",
-    "login_button": "Log in",
-    "no_account": "Don't have an account?",
-    "register_link": "Sign up",
-    "copyright": "© 2026 Ideological Atlas."
   }
 }

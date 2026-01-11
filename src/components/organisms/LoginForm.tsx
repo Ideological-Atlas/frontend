@@ -54,6 +54,7 @@ export function LoginForm() {
       login({
         access: response.access,
         refresh: response.refresh,
+        user: response.user,
       });
 
       router.push(`/${locale}`);
@@ -150,22 +151,14 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full text-base disabled:cursor-not-allowed disabled:opacity-70"
+          className="w-full text-base"
           variant="primary"
-          disabled={isLoading}
+          isLoading={isLoading}
+          loadingText={t('logging_in')}
         >
           <div className="flex items-center justify-center gap-2">
-            {isLoading ? (
-              <>
-                <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
-                <span>Cargando...</span>
-              </>
-            ) : (
-              <>
-                <span>{t('login_button')}</span>
-                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </>
-            )}
+            <span>{t('login_button')}</span>
+            <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
           </div>
         </Button>
       </form>

@@ -1,33 +1,34 @@
 {
   "Common": {
-    "ideological_atlas": "Ideological Atlas",
+    "ideological_atlas": "Atlas Ideológico",
     "get_started": "Empezar",
     "sign_in": "Iniciar sesión",
     "start_now": "Comenzar ahora",
     "learn_more": "Saber más",
-    "create_profile": "Crear mi perfil"
+    "create_profile": "Crear mi perfil",
+    "processing": "Procesando..."
   },
   "Navigation": {
     "home": "Inicio",
     "features": "Características",
     "explore": "Explorar",
-    "about": "Sobre nosotros"
+    "about": "Acerca de"
   },
   "Hero": {
-    "title": "Descubre tu verdadera posición política",
-    "subtitle": "Una herramienta moderna, precisa e imparcial para mapear tu ideología."
+    "title": "Descubre tu verdadera posición ideológica",
+    "subtitle": "Un test de espectro político moderno, preciso y detallado basado en datos reales."
   },
   "Features": {
-    "title": "Entiende tu visión del mundo",
-    "subtitle": "Analizamos múltiples dimensiones para ofrecerte un resultado preciso.",
+    "title": "Analiza tu pensamiento político",
+    "subtitle": "Nuestro algoritmo evalúa múltiples dimensiones para ofrecerte un resultado preciso.",
     "cards": {
       "spectrum": {
         "title": "Espectro Multidimensional",
-        "description": "Más allá de izquierda y derecha. Analiza ejes económicos, sociales y civiles."
+        "description": "Más allá de izquierda y derecha. Analizamos ejes económicos, sociales y culturales."
       },
       "exploration": {
         "title": "Exploración Profunda",
-        "description": "Descubre matices en tu pensamiento que no sabías que tenías."
+        "description": "Entiende las influencias históricas y filosóficas de tu ideología."
       },
       "analysis": {
         "title": "Análisis de Datos",
@@ -36,28 +37,30 @@
     }
   },
   "CTA": {
-    "title": "¿Listo para descubrir dónde encajas?",
+    "title": "¿Listo para descubrir tu lugar en el mapa?",
     "text": "Únete a miles de usuarios que ya han mapeado su ideología."
+  },
+  "Auth": {
+    "login_title": "Bienvenido de nuevo",
+    "login_subtitle": "Introduce tus credenciales para acceder a tu cuenta.",
+    "username_label": "Usuario o Email",
+    "username_placeholder": "nombre@ejemplo.com",
+    "password_label": "Contraseña",
+    "password_placeholder": "••••••••",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "login_button": "Iniciar Sesión",
+    "logging_in": "Iniciando...",
+    "no_account": "¿No tienes cuenta?",
+    "register_link": "Regístrate",
+    "copyright": "Protegido por reCAPTCHA y sujeto a la Política de Privacidad y Términos de Servicio de Google.",
+    "or": "O CONTINÚA CON",
+    "continue_google": "Google",
+    "continue_google_loading": "Conectando..."
   },
   "Footer": {
     "privacy": "Privacidad",
     "terms": "Términos",
     "contact": "Contacto",
     "copyright": "Todos los derechos reservados."
-  },
-  "Auth": {
-    "login_title": "Ideological Atlas",
-    "login_subtitle": "Explora el espectro. Define tu postura.",
-    "continue_google": "Continuar con Google",
-    "or": "o",
-    "username_label": "Usuario o correo electrónico",
-    "username_placeholder": "usuario o ejemplo@correo.com",
-    "password_label": "Contraseña",
-    "password_placeholder": "••••••••",
-    "forgot_password": "¿Olvidaste tu contraseña?",
-    "login_button": "Iniciar sesión",
-    "no_account": "¿No tienes una cuenta?",
-    "register_link": "Regístrate",
-    "copyright": "© 2026 Ideological Atlas."
   }
 }

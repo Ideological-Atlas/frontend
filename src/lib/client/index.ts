@@ -40,8 +40,8 @@ export type { PatchedUserVerificationRequest } from './models/PatchedUserVerific
 export type { Region } from './models/Region';
 export type { Register } from './models/Register';
 export type { RegisterRequest } from './models/RegisterRequest';
-export type { TokenObtainPair } from './models/TokenObtainPair';
 export type { TokenObtainPairRequest } from './models/TokenObtainPairRequest';
+export type { TokenObtainPairResponse } from './models/TokenObtainPairResponse';
 export type { TokenRefresh } from './models/TokenRefresh';
 export type { TokenRefreshRequest } from './models/TokenRefreshRequest';
 export type { TokenVerifyRequest } from './models/TokenVerifyRequest';

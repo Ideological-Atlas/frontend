@@ -7,8 +7,8 @@ import type { GoogleLoginResponse } from '../models/GoogleLoginResponse';
 import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
 import type { Register } from '../models/Register';
 import type { RegisterRequest } from '../models/RegisterRequest';
-import type { TokenObtainPair } from '../models/TokenObtainPair';
 import type { TokenObtainPairRequest } from '../models/TokenObtainPairRequest';
+import type { TokenObtainPairResponse } from '../models/TokenObtainPairResponse';
 import type { TokenRefresh } from '../models/TokenRefresh';
 import type { TokenRefreshRequest } from '../models/TokenRefreshRequest';
 import type { TokenVerifyRequest } from '../models/TokenVerifyRequest';
@@ -53,10 +53,10 @@ export class AuthService {
    * Takes a set of user credentials and returns an access and refresh JSON web
    * token pair to prove the authentication of those credentials.
    * @param requestBody
-   * @returns TokenObtainPair
+   * @returns TokenObtainPairResponse
    * @throws ApiError
    */
-  public static tokenLoginCreate(requestBody: TokenObtainPairRequest): CancelablePromise<TokenObtainPair> {
+  public static tokenLoginCreate(requestBody: TokenObtainPairRequest): CancelablePromise<TokenObtainPairResponse> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/token/login/',
