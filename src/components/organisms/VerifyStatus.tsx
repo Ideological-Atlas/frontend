@@ -33,8 +33,6 @@ export function VerifyStatus() {
         await AuthService.usersVerifyPartialUpdate(uuid, { is_verified: true });
         setStatus('success');
       } catch (error) {
-        // Si el error es 403, asumimos que el usuario ya estaba verificado (lógica backend)
-        // y lo tratamos como éxito visualmente.
         if (error instanceof ApiError && error.status === 403) {
           setStatus('success');
         } else {
@@ -75,7 +73,6 @@ export function VerifyStatus() {
 
   return (
     <div className="bg-card border-border relative w-full max-w-[420px] overflow-hidden rounded-2xl border p-8 shadow-2xl">
-      {/* Background Glow */}
       <div
         className={clsx(
           'pointer-events-none absolute top-0 left-1/2 h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b opacity-20 blur-[60px] transition-colors duration-500',
