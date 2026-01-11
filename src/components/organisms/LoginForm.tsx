@@ -63,12 +63,12 @@ export function LoginForm() {
       console.error(err);
       if (err instanceof ApiError) {
         if (err.status === 401) {
-          setError('Credenciales incorrectas. Por favor, inténtalo de nuevo.');
+          setError(t('invalid_credentials'));
         } else {
-          setError('Ocurrió un error al iniciar sesión. Inténtalo más tarde.');
+          setError(t('login_error'));
         }
       } else {
-        setError('Error de conexión. Comprueba tu internet.');
+        setError(t('network_error'));
       }
     } finally {
       setIsLoading(false);

@@ -45,7 +45,7 @@ export function RegisterForm() {
     setError(null);
 
     if (formData.password !== formData.confirmPassword) {
-      setError(t('password_mismatch') || 'Las contraseñas no coinciden');
+      setError(t('password_mismatch'));
       setIsLoading(false);
       return;
     }
@@ -56,7 +56,6 @@ export function RegisterForm() {
         password: formData.password,
       });
 
-      // Auto-Login logic
       login({
         access: response.access,
         refresh: response.refresh,
@@ -74,10 +73,10 @@ export function RegisterForm() {
         } else if (errorBody?.password) {
           setError(errorBody.password[0]);
         } else {
-          setError(t('register_error') || 'Error al crear la cuenta. Inténtalo de nuevo.');
+          setError(t('register_error'));
         }
       } else {
-        setError(t('network_error') || 'Error de conexión.');
+        setError(t('network_error'));
       }
     } finally {
       setIsLoading(false);
@@ -87,10 +86,8 @@ export function RegisterForm() {
   return (
     <div className="bg-card border-border w-full max-w-[480px] rounded-2xl border p-8 shadow-2xl">
       <div className="mb-8 flex flex-col items-center text-center">
-        <h1 className="text-foreground text-3xl font-black tracking-tight">{t('register_title') || 'Crear Cuenta'}</h1>
-        <p className="text-muted-foreground mt-2 text-base leading-relaxed font-normal">
-          {t('register_subtitle') || 'Regístrate para establecer tu perfil ideológico y explorar el espectro.'}
-        </p>
+        <h1 className="text-foreground text-3xl font-black tracking-tight">{t('register_title')}</h1>
+        <p className="text-muted-foreground mt-2 text-base leading-relaxed font-normal">{t('register_subtitle')}</p>
       </div>
 
       <GoogleButton />
@@ -105,7 +102,7 @@ export function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="email">{t('email_label') || 'Correo electrónico'}</Label>
+          <Label htmlFor="email">{t('email_label')}</Label>
           <div className="relative">
             <div className="text-muted-foreground pointer-events-none absolute top-0 bottom-0 left-0 flex w-10 items-center justify-center">
               <span className="material-symbols-outlined text-[20px]">mail</span>
@@ -113,7 +110,7 @@ export function RegisterForm() {
             <Input
               id="email"
               type="email"
-              placeholder={t('email_placeholder') || 'correo@ejemplo.com'}
+              placeholder={t('email_placeholder')}
               className="pl-10"
               value={formData.email}
               onChange={handleChange}
@@ -125,7 +122,7 @@ export function RegisterForm() {
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="password">{t('password_label') || 'Contraseña'}</Label>
+            <Label htmlFor="password">{t('password_label')}</Label>
             <div className="relative">
               <div className="text-muted-foreground pointer-events-none absolute top-0 bottom-0 left-0 flex w-10 items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">lock</span>
@@ -154,7 +151,7 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('confirm_password_label') || 'Confirmar'}</Label>
+            <Label htmlFor="confirmPassword">{t('confirm_password_label')}</Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
@@ -172,10 +169,7 @@ export function RegisterForm() {
 
         <div className="flex gap-3 rounded-lg bg-blue-500/10 p-3 text-blue-400">
           <span className="material-symbols-outlined shrink-0 text-[20px]">info</span>
-          <p className="text-xs leading-relaxed">
-            {t('password_requirements') ||
-              'La contraseña debe tener al menos 7 caracteres, no puede ser totalmente numérica ni demasiado común o similar a tus datos.'}
-          </p>
+          <p className="text-xs leading-relaxed">{t('password_requirements')}</p>
         </div>
 
         <Button
@@ -183,16 +177,16 @@ export function RegisterForm() {
           className="bg-primary text-primary-foreground hover:bg-primary-hover w-full text-base"
           variant="primary"
           isLoading={isLoading}
-          loadingText={t('registering') || 'Registrando...'}
+          loadingText={t('registering')}
         >
-          {t('register_button') || 'Registrarse'}
+          {t('register_button')}
         </Button>
       </form>
 
       <div className="text-muted-foreground mt-8 text-center text-sm">
-        {t('has_account') || '¿Ya tienes cuenta?'}{' '}
+        {t('has_account')}{' '}
         <Link href="/login" className="text-primary hover:text-primary-hover font-semibold hover:underline">
-          {t('login_link') || 'Iniciar Sesión'}
+          {t('login_link')}
         </Link>
       </div>
     </div>

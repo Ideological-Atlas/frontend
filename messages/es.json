@@ -68,7 +68,9 @@
     "password_requirements": "La contraseña debe tener al menos 7 caracteres, no puede ser totalmente numérica ni demasiado común o similar a tus datos.",
     "password_mismatch": "Las contraseñas no coinciden",
     "register_error": "Error al crear la cuenta. Inténtalo de nuevo.",
-    "network_error": "Error de conexión."
+    "network_error": "Error de conexión.",
+    "invalid_credentials": "Credenciales incorrectas. Por favor, inténtalo de nuevo.",
+    "login_error": "Ocurrió un error al iniciar sesión. Inténtalo más tarde."
   },
   "Footer": {
     "privacy": "Privacidad",

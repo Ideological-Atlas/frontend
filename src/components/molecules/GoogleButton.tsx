@@ -55,7 +55,7 @@ export function GoogleButton() {
         handleGoogleLogin();
       }}
       isLoading={isLoading}
-      loadingText={t('continue_google_loading') || 'Conectando...'}
+      loadingText={t('continue_google_loading')}
       type="button"
     >
       <div className="flex items-center justify-center gap-3">

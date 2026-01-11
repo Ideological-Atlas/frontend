@@ -68,7 +68,9 @@
     "password_requirements": "Password must be at least 7 characters long, cannot be entirely numeric, and must not be too common or similar to your details.",
     "password_mismatch": "Passwords do not match",
     "register_error": "Error creating account. Please try again.",
-    "network_error": "Connection error."
+    "network_error": "Connection error.",
+    "invalid_credentials": "Invalid credentials. Please try again.",
+    "login_error": "An error occurred during login. Please try again later."
   },
   "Footer": {
     "privacy": "Privacy",
