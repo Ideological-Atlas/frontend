@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Button } from '@/components/atoms/Button';
 import { Divider } from '@/components/molecules/Divider';
 import { GoogleButton } from '@/components/molecules/GoogleButton';
+import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
 
 import { AuthService } from '@/lib/client/services/AuthService';
 import { ApiError } from '@/lib/client/core/ApiError';
@@ -32,10 +34,7 @@ export function RegisterForm() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.id]: e.target.value });
     if (error) setError(null);
   };
 
@@ -56,25 +55,12 @@ export function RegisterForm() {
         password: formData.password,
       });
 
-      login({
-        access: response.access,
-        refresh: response.refresh,
-        user: response.user,
-      });
-
-      router.push(`/${locale}`);
-      router.refresh();
+      login({ access: response.access, refresh: response.refresh, user: response.user });
+      router.push(`/${locale}/welcome`);
     } catch (err) {
-      console.error(err);
       if (err instanceof ApiError) {
         const errorBody = err.body as Record<string, string[]>;
-        if (errorBody?.email) {
-          setError(errorBody.email[0]);
-        } else if (errorBody?.password) {
-          setError(errorBody.password[0]);
-        } else {
-          setError(t('register_error'));
-        }
+        setError(errorBody?.email?.[0] || errorBody?.password?.[0] || t('register_error'));
       } else {
         setError(t('network_error'));
       }
@@ -84,27 +70,34 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="bg-card border-border w-full max-w-[480px] rounded-2xl border p-8 shadow-2xl">
-      <div className="mb-8 flex flex-col items-center text-center">
+    <AuthCard maxWidth="max-w-[480px]">
+      <motion.div variants={itemVariants} className="mb-8 flex flex-col items-center text-center">
         <h1 className="text-foreground text-3xl font-black tracking-tight">{t('register_title')}</h1>
         <p className="text-muted-foreground mt-2 text-base leading-relaxed font-normal">{t('register_subtitle')}</p>
-      </div>
+      </motion.div>
 
-      <GoogleButton />
+      <motion.div variants={itemVariants}>
+        <GoogleButton />
+      </motion.div>
 
-      <Divider />
+      <motion.div variants={itemVariants}>
+        <Divider />
+      </motion.div>
 
       {error && (
-        <div className="bg-destructive/10 text-destructive border-destructive/20 mb-6 rounded-lg border p-3 text-center text-sm">
+        <motion.div
+          variants={itemVariants}
+          className="bg-destructive/10 text-destructive border-destructive/20 mb-6 rounded-lg border p-3 text-center text-sm"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="space-y-2">
+        <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="email">{t('email_label')}</Label>
           <div className="relative">
-            <div className="text-muted-foreground pointer-events-none absolute top-0 bottom-0 left-0 flex w-10 items-center justify-center">
+            <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
               <span className="material-symbols-outlined text-[20px]">mail</span>
             </div>
             <Input
@@ -118,13 +111,13 @@ export function RegisterForm() {
               required
             />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="password">{t('password_label')}</Label>
             <div className="relative">
-              <div className="text-muted-foreground pointer-events-none absolute top-0 bottom-0 left-0 flex w-10 items-center justify-center">
+              <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">lock</span>
               </div>
               <Input
@@ -141,7 +134,7 @@ export function RegisterForm() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
-                className="text-muted-foreground hover:text-foreground absolute top-0 right-0 bottom-0 flex w-10 items-center justify-center focus:outline-none disabled:opacity-50"
+                className="text-muted-foreground hover:text-foreground absolute inset-y-0 right-0 flex w-10 items-center justify-center focus:outline-none"
               >
                 <span className="material-symbols-outlined text-[20px]">
                   {showPassword ? 'visibility_off' : 'visibility'}
@@ -149,46 +142,45 @@ export function RegisterForm() {
               </button>
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">{t('confirm_password_label')}</Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="********"
-                className="pl-4"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
+            <Input
+              id="confirmPassword"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="********"
+              className="pl-4"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+            />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex gap-3 rounded-lg bg-blue-500/10 p-3 text-blue-400">
+        <motion.div variants={itemVariants} className="flex gap-3 rounded-lg bg-blue-500/10 p-3 text-blue-400">
           <span className="material-symbols-outlined shrink-0 text-[20px]">info</span>
           <p className="text-xs leading-relaxed">{t('password_requirements')}</p>
-        </div>
+        </motion.div>
 
-        <Button
-          type="submit"
-          className="bg-primary text-primary-foreground hover:bg-primary-hover w-full text-base"
-          variant="primary"
-          isLoading={isLoading}
-          loadingText={t('registering')}
-        >
-          {t('register_button')}
-        </Button>
+        <motion.div variants={itemVariants}>
+          <Button
+            type="submit"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover w-full text-base"
+            variant="primary"
+            isLoading={isLoading}
+            loadingText={t('registering')}
+          >
+            {t('register_button')}
+          </Button>
+        </motion.div>
       </form>
 
-      <div className="text-muted-foreground mt-8 text-center text-sm">
+      <motion.div variants={itemVariants} className="text-muted-foreground mt-8 text-center text-sm">
         {t('has_account')}{' '}
         <Link href="/login" className="text-primary hover:text-primary-hover font-semibold hover:underline">
           {t('login_link')}
         </Link>
-      </div>
-    </div>
+      </motion.div>
+    </AuthCard>
   );
 }

@@ -70,7 +70,13 @@
     "register_error": "Error creating account. Please try again.",
     "network_error": "Connection error.",
     "invalid_credentials": "Invalid credentials. Please try again.",
-    "login_error": "An error occurred during login. Please try again later."
+    "login_error": "An error occurred during login. Please try again later.",
+    "post_register_title": "Account created successfully!",
+    "post_register_subtitle": "We have sent you a confirmation email. Please check your inbox and follow the link to verify your account and start exploring the atlas.",
+    "status_completed": "Registration completed",
+    "status_pending": "Waiting for email verification...",
+    "explore_button": "Explore Atlas",
+    "dashboard_button": "Go to my Dashboard"
   },
   "Footer": {
     "privacy": "Privacy",

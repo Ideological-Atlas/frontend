@@ -70,7 +70,13 @@
     "register_error": "Error al crear la cuenta. Inténtalo de nuevo.",
     "network_error": "Error de conexión.",
     "invalid_credentials": "Credenciales incorrectas. Por favor, inténtalo de nuevo.",
-    "login_error": "Ocurrió un error al iniciar sesión. Inténtalo más tarde."
+    "login_error": "Ocurrió un error al iniciar sesión. Inténtalo más tarde.",
+    "post_register_title": "¡Cuenta creada con éxito!",
+    "post_register_subtitle": "Te hemos enviado un correo de confirmación. Por favor, revisa tu bandeja de entrada y sigue el enlace para verificar tu cuenta y comenzar a explorar el atlas.",
+    "status_completed": "Registro completado",
+    "status_pending": "Esperando verificación de correo...",
+    "explore_button": "Explorar Atlas",
+    "dashboard_button": "Ir a mi Panel de Control"
   },
   "Footer": {
     "privacy": "Privacidad",
