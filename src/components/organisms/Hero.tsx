@@ -3,14 +3,17 @@
 import { useTranslations } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { motion } from 'framer-motion';
+import { MagneticBackground } from '../molecules/MagneticBackground';
 
 export function Hero() {
   const t = useTranslations('Hero');
   const tCommon = useTranslations('Common');
 
   return (
-    <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">
-      <div className="layout-content-container flex max-w-[1200px] flex-1 flex-col">
+    <div className="relative flex flex-1 justify-center overflow-hidden px-5 py-5 md:px-20 xl:px-40">
+      <MagneticBackground />
+
+      <div className="layout-content-container relative z-10 flex max-w-[1200px] flex-1 flex-col">
         <div className="@container">
           <div className="flex flex-col items-center gap-10 px-4 py-10 lg:flex-row lg:gap-16">
             <div className="flex flex-col justify-center gap-6 lg:w-1/2">
