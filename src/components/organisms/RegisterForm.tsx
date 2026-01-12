@@ -16,7 +16,10 @@ import { useRegister } from '@/hooks/auth/useRegister';
 export function RegisterForm() {
   const t = useTranslations('Auth');
   const { form, globalError, onSubmit, isLoading } = useRegister();
-  const { register, formState: { errors } } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -60,9 +63,7 @@ export function RegisterForm() {
               {...register('email')}
             />
           </div>
-          {errors.email?.message && (
-            <p className="text-destructive text-xs">{t(errors.email.message)}</p>
-          )}
+          {errors.email?.message && <p className="text-destructive text-xs">{t(errors.email.message)}</p>}
         </motion.div>
 
         <motion.div variants={itemVariants} className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -92,9 +93,7 @@ export function RegisterForm() {
                 </span>
               </button>
             </div>
-            {errors.password?.message && (
-              <p className="text-destructive text-xs">{t(errors.password.message)}</p>
-            )}
+            {errors.password?.message && <p className="text-destructive text-xs">{t(errors.password.message)}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">{t('confirm_password_label')}</Label>

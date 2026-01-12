@@ -11,7 +11,7 @@ import { ApiError } from '@/lib/client/core/ApiError';
 export function useRegister() {
   const locale = useLocale();
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const login = useAuthStore(state => state.login);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<RegisterSchema>({
@@ -30,7 +30,7 @@ export function useRegister() {
         email: data.email,
         password: data.password,
       });
-      
+
       login({ access: response.access, refresh: response.refresh, user: response.user });
       router.push(`/${locale}/welcome`);
     } catch (err) {

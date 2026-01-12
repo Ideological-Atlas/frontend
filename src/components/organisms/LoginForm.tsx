@@ -17,7 +17,10 @@ import { useState } from 'react';
 export function LoginForm() {
   const t = useTranslations('Auth');
   const { form, globalError, onSubmit, isLoading } = useLogin();
-  const { register, formState: { errors } } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -64,9 +67,7 @@ export function LoginForm() {
               {...register('username')}
             />
           </div>
-          {errors.username?.message && (
-            <p className="text-destructive text-xs">{t(errors.username.message)}</p>
-          )}
+          {errors.username?.message && <p className="text-destructive text-xs">{t(errors.username.message)}</p>}
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-2">
@@ -100,9 +101,7 @@ export function LoginForm() {
               </span>
             </button>
           </div>
-          {errors.password?.message && (
-            <p className="text-destructive text-xs">{t(errors.password.message)}</p>
-          )}
+          {errors.password?.message && <p className="text-destructive text-xs">{t(errors.password.message)}</p>}
         </motion.div>
 
         <motion.div variants={itemVariants}>
@@ -123,10 +122,7 @@ export function LoginForm() {
 
       <motion.div variants={itemVariants} className="text-muted-foreground mt-8 text-center text-sm">
         {t('no_account')}{' '}
-        <Link
-          href="/register"
-          className="text-primary hover:text-primary-hover font-semibold hover:underline"
-        >
+        <Link href="/register" className="text-primary hover:text-primary-hover font-semibold hover:underline">
           {t('register_link')}
         </Link>
       </motion.div>

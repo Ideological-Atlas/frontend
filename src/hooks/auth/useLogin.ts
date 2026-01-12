@@ -11,7 +11,7 @@ import { ApiError } from '@/lib/client/core/ApiError';
 export function useLogin() {
   const locale = useLocale();
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const login = useAuthStore(state => state.login);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
@@ -26,10 +26,10 @@ export function useLogin() {
     setGlobalError(null);
     try {
       const response = await AuthService.tokenLoginCreate(data);
-      login({ 
-        access: response.access, 
-        refresh: response.refresh, 
-        user: response.user 
+      login({
+        access: response.access,
+        refresh: response.refresh,
+        user: response.user,
       });
       router.push(`/${locale}`);
       router.refresh();
