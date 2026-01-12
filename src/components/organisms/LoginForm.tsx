@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import { Input } from '@/components/atoms/Input';
@@ -13,55 +11,14 @@ import { Button } from '@/components/atoms/Button';
 import { Divider } from '@/components/molecules/Divider';
 import { GoogleButton } from '@/components/molecules/GoogleButton';
 import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
-
-import { AuthService } from '@/lib/client/services/AuthService';
-import { ApiError } from '@/lib/client/core/ApiError';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useLogin } from '@/hooks/auth/useLogin';
+import { useState } from 'react';
 
 export function LoginForm() {
   const t = useTranslations('Auth');
-  const locale = useLocale();
-  const router = useRouter();
-  const login = useAuthStore(state => state.login);
-
+  const { form, globalError, onSubmit, isLoading } = useLogin();
+  const { register, formState: { errors } } = form;
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-    if (error) setError(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await AuthService.tokenLoginCreate({
-        username: formData.username,
-        password: formData.password,
-      });
-
-      login({ access: response.access, refresh: response.refresh, user: response.user });
-      router.push(`/${locale}`);
-      router.refresh();
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.status === 401 ? t('invalid_credentials') : t('login_error'));
-      } else {
-        setError(t('network_error'));
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <AuthCard maxWidth="max-w-[420px]">
@@ -81,16 +38,16 @@ export function LoginForm() {
         <Divider />
       </motion.div>
 
-      {error && (
+      {globalError && (
         <motion.div
           variants={itemVariants}
           className="bg-destructive/10 text-destructive border-destructive/20 mb-6 rounded-lg border p-3 text-center text-sm"
         >
-          {error}
+          {t(globalError)}
         </motion.div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={onSubmit} className="space-y-5">
         <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="username">{t('username_label')}</Label>
           <div className="relative">
@@ -102,12 +59,14 @@ export function LoginForm() {
               type="text"
               placeholder={t('username_placeholder')}
               className="pl-10"
-              value={formData.username}
-              onChange={handleChange}
               disabled={isLoading}
-              required
+              error={!!errors.username}
+              {...register('username')}
             />
           </div>
+          {errors.username?.message && (
+            <p className="text-destructive text-xs">{t(errors.username.message)}</p>
+          )}
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-2">
@@ -126,10 +85,9 @@ export function LoginForm() {
               type={showPassword ? 'text' : 'password'}
               placeholder={t('password_placeholder')}
               className="pr-10 pl-10"
-              value={formData.password}
-              onChange={handleChange}
               disabled={isLoading}
-              required
+              error={!!errors.password}
+              {...register('password')}
             />
             <button
               type="button"
@@ -142,6 +100,9 @@ export function LoginForm() {
               </span>
             </button>
           </div>
+          {errors.password?.message && (
+            <p className="text-destructive text-xs">{t(errors.password.message)}</p>
+          )}
         </motion.div>
 
         <motion.div variants={itemVariants}>
@@ -163,7 +124,7 @@ export function LoginForm() {
       <motion.div variants={itemVariants} className="text-muted-foreground mt-8 text-center text-sm">
         {t('no_account')}{' '}
         <Link
-          href={`/${locale}/register`}
+          href="/register"
           className="text-primary hover:text-primary-hover font-semibold hover:underline"
         >
           {t('register_link')}

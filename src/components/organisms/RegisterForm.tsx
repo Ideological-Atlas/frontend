@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import { Input } from '@/components/atoms/Input';
@@ -12,62 +11,13 @@ import { Button } from '@/components/atoms/Button';
 import { Divider } from '@/components/molecules/Divider';
 import { GoogleButton } from '@/components/molecules/GoogleButton';
 import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
-
-import { AuthService } from '@/lib/client/services/AuthService';
-import { ApiError } from '@/lib/client/core/ApiError';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useRegister } from '@/hooks/auth/useRegister';
 
 export function RegisterForm() {
   const t = useTranslations('Auth');
-  const locale = useLocale();
-  const router = useRouter();
-  const login = useAuthStore(state => state.login);
-
+  const { form, globalError, onSubmit, isLoading } = useRegister();
+  const { register, formState: { errors } } = form;
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-    if (error) setError(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    if (formData.password !== formData.confirmPassword) {
-      setError(t('password_mismatch'));
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await AuthService.registerCreate({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      login({ access: response.access, refresh: response.refresh, user: response.user });
-      router.push(`/${locale}/welcome`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        const errorBody = err.body as Record<string, string[]>;
-        setError(errorBody?.email?.[0] || errorBody?.password?.[0] || t('register_error'));
-      } else {
-        setError(t('network_error'));
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <AuthCard maxWidth="max-w-[480px]">
@@ -84,16 +34,16 @@ export function RegisterForm() {
         <Divider />
       </motion.div>
 
-      {error && (
+      {globalError && (
         <motion.div
           variants={itemVariants}
           className="bg-destructive/10 text-destructive border-destructive/20 mb-6 rounded-lg border p-3 text-center text-sm"
         >
-          {error}
+          {t(globalError)}
         </motion.div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={onSubmit} className="space-y-5">
         <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="email">{t('email_label')}</Label>
           <div className="relative">
@@ -105,12 +55,14 @@ export function RegisterForm() {
               type="email"
               placeholder={t('email_placeholder')}
               className="pl-10"
-              value={formData.email}
-              onChange={handleChange}
               disabled={isLoading}
-              required
+              error={!!errors.email}
+              {...register('email')}
             />
           </div>
+          {errors.email?.message && (
+            <p className="text-destructive text-xs">{t(errors.email.message)}</p>
+          )}
         </motion.div>
 
         <motion.div variants={itemVariants} className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -125,10 +77,9 @@ export function RegisterForm() {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="********"
                 className="pr-10 pl-10"
-                value={formData.password}
-                onChange={handleChange}
                 disabled={isLoading}
-                required
+                error={!!errors.password}
+                {...register('password')}
               />
               <button
                 type="button"
@@ -141,6 +92,9 @@ export function RegisterForm() {
                 </span>
               </button>
             </div>
+            {errors.password?.message && (
+              <p className="text-destructive text-xs">{t(errors.password.message)}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">{t('confirm_password_label')}</Label>
@@ -149,11 +103,13 @@ export function RegisterForm() {
               type={showPassword ? 'text' : 'password'}
               placeholder="********"
               className="pl-4"
-              value={formData.confirmPassword}
-              onChange={handleChange}
               disabled={isLoading}
-              required
+              error={!!errors.confirmPassword}
+              {...register('confirmPassword')}
             />
+            {errors.confirmPassword?.message && (
+              <p className="text-destructive text-xs">{t(errors.confirmPassword.message)}</p>
+            )}
           </div>
         </motion.div>
 
