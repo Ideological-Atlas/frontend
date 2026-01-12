@@ -95,5 +95,12 @@
     "go_to_login": "Login",
     "title_already_verified": "Profile already active",
     "description_already_verified": "Your account has already been verified. No further action is required."
+  },
+  "Atlas": {
+    "title": "Ideological Atlas",
+    "complexity_level": "Abstraction Level",
+    "context_configuration": "Context Configuration",
+    "selector_placeholder": "Selector for {type}",
+    "no_questions": "No questions available in this section."
   }
 }

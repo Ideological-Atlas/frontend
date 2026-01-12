@@ -95,5 +95,12 @@
     "go_to_login": "Entrar",
     "title_already_verified": "Perfil ya activo",
     "description_already_verified": "Tu cuenta ya fue verificada anteriormente. No necesitas realizar ninguna acción adicional."
+  },
+  "Atlas": {
+    "title": "Atlas Ideológico",
+    "complexity_level": "Nivel de Abstracción",
+    "context_configuration": "Configuración de Contexto",
+    "selector_placeholder": "Selector para {type}",
+    "no_questions": "No hay preguntas disponibles en esta sección."
   }
 }

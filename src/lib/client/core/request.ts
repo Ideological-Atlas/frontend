@@ -8,6 +8,51 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
+import Cookies from 'js-cookie';
+
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+const getRefreshToken = async (config: OpenAPIConfig): Promise<string | null> => {
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    const refresh = Cookies.get('refresh_token');
+    if (!refresh) return null;
+
+    try {
+      const response = await fetch(`${config.BASE}/api/token/refresh/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh }),
+      });
+
+      if (!response.ok) throw new Error('Refresh failed');
+
+      const data = await response.json();
+      const newAccess = data.access;
+
+      Cookies.set('access_token', newAccess, { secure: true, sameSite: 'strict' });
+      if (data.refresh) {
+        Cookies.set('refresh_token', data.refresh, { expires: 7, secure: true, sameSite: 'strict' });
+      }
+
+      return newAccess;
+    } catch (error) {
+      Cookies.remove('access_token');
+      Cookies.remove('refresh_token');
+      return null;
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+};
 
 export const isDefined = <T>(value: T | null | undefined): value is Exclude<T, null | undefined> => {
   return value !== undefined && value !== null;
@@ -288,13 +333,6 @@ export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): 
   }
 };
 
-/**
- * Request method
- * @param config The OpenAPI configuration object
- * @param options The request options from the service
- * @returns CancelablePromise<T>
- * @throws ApiError
- */
 export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): CancelablePromise<T> => {
   return new CancelablePromise(async (resolve, reject, onCancel) => {
     try {
@@ -304,7 +342,22 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
       const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
-        const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+        let response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+
+        if (response.status === 401) {
+          const clone = response.clone();
+          try {
+            const errorBody = await clone.json();
+            if (errorBody.code === 'token_not_valid') {
+              const newToken = await getRefreshToken(config);
+              if (newToken) {
+                headers.set('Authorization', `Bearer ${newToken}`);
+                response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+              }
+            }
+          } catch (e) {}
+        }
+
         const responseBody = await getResponseBody(response);
         const responseHeader = getResponseHeader(response, options.responseHeader);
 

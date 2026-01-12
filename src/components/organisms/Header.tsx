@@ -61,7 +61,7 @@ export function Header() {
           })}
         </div>
         <div className="flex gap-2">
-          <Link href={`/${locale}/${mounted && isAuthenticated ? 'profile' : 'register'}`}>
+          <Link href={`/${locale}/atlas`}>
             <Button variant="primary" className="max-w-[480px]">
               {tCommon('get_started')}
             </Button>

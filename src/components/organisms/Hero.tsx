@@ -1,13 +1,15 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { motion } from 'framer-motion';
 import { MagneticBackground } from '../molecules/MagneticBackground';
+import Link from 'next/link';
 
 export function Hero() {
   const t = useTranslations('Hero');
   const tCommon = useTranslations('Common');
+  const locale = useLocale();
 
   return (
     <div className="relative flex flex-1 justify-center overflow-hidden px-5 py-5 md:px-20 xl:px-40">
@@ -34,9 +36,11 @@ export function Hero() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex flex-wrap gap-3"
               >
-                <Button variant="primary" className="h-12 px-6 text-base shadow-lg shadow-blue-900/20">
-                  {tCommon('start_now')}
-                </Button>
+                <Link href={`/${locale}/atlas`}>
+                  <Button variant="primary" className="h-12 px-6 text-base shadow-lg shadow-blue-900/20">
+                    {tCommon('start_now')}
+                  </Button>
+                </Link>
                 <Button variant="outline">{tCommon('learn_more')}</Button>
               </motion.div>
             </div>
