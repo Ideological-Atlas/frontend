@@ -1,11 +1,12 @@
 {
   "Common": {
     "ideological_atlas": "Ideological Atlas",
-    "start_now": "Start Now",
-    "learn_more": "Learn More",
     "get_started": "Get Started",
     "sign_in": "Sign In",
-    "create_profile": "Create my free profile"
+    "start_now": "Start Now",
+    "learn_more": "Learn More",
+    "create_profile": "Create Profile",
+    "processing": "Processing..."
   },
   "Navigation": {
     "home": "Home",
@@ -15,34 +16,84 @@
   },
   "Hero": {
     "title": "Discover your true ideological position",
-    "subtitle": "Beyond left or right. Use our continuous spectrum to visualize your beliefs and explore new perspectives with total objectivity."
+    "subtitle": "A modern, accurate, and detailed political spectrum test based on real data."
   },
   "Features": {
-    "title": "Explore without limits",
-    "subtitle": "Our platform offers unique tools to understand the political and social landscape without bias.",
+    "title": "Analyze your political thought",
+    "subtitle": "Our algorithm evaluates multiple dimensions to offer you an accurate result.",
     "cards": {
       "spectrum": {
-        "title": "Continuous Spectrum",
-        "description": "Visualize political nuances without rigid labels or binary categories, allowing a faithful representation of your thinking."
+        "title": "Multidimensional Spectrum",
+        "description": "Beyond left and right. We analyze economic, social, and cultural axes."
       },
       "exploration": {
-        "title": "Objective Exploration",
-        "description": "Access neutral and clear definitions of various currents of thought to expand your knowledge without prejudice."
+        "title": "Deep Exploration",
+        "description": "Understand the historical and philosophical influences of your ideology."
       },
       "analysis": {
-        "title": "Deep Analysis",
-        "description": "Compare your results with historical data and global trends to understand where you fit in the grand scheme."
+        "title": "Data Analysis",
+        "description": "Compare your results with global and regional trends."
       }
     }
   },
   "CTA": {
-    "title": "Ready to find your place?",
-    "text": "Join thousands of people who are already exploring their ideologies in a new, transparent, and noise-free way."
+    "title": "Ready to discover your place on the map?",
+    "text": "Join thousands of users who have already mapped their ideology."
+  },
+  "Auth": {
+    "login_title": "Sign In",
+    "login_subtitle": "Enter your credentials to access your account.",
+    "username_label": "Username",
+    "username_placeholder": "user123",
+    "password_label": "Password",
+    "password_placeholder": "********",
+    "forgot_password": "Forgot password?",
+    "login_button": "Sign In",
+    "logging_in": "Signing in...",
+    "no_account": "Don't have an account?",
+    "register_link": "Sign up",
+    "copyright": "All rights reserved.",
+    "or": "OR WITH EMAIL",
+    "continue_google": "Continue with Google",
+    "continue_google_loading": "Connecting...",
+    "register_title": "Create Account",
+    "register_subtitle": "Register to establish your ideological profile and explore the spectrum.",
+    "email_label": "Email",
+    "email_placeholder": "email@example.com",
+    "confirm_password_label": "Confirm",
+    "register_button": "Sign Up",
+    "registering": "Registering...",
+    "has_account": "Already have an account?",
+    "login_link": "Sign In",
+    "password_requirements": "Password must be at least 7 characters long, cannot be entirely numeric, and must not be too common or similar to your details.",
+    "password_mismatch": "Passwords do not match",
+    "register_error": "Error creating account. Please try again.",
+    "network_error": "Connection error.",
+    "invalid_credentials": "Invalid credentials. Please try again.",
+    "login_error": "An error occurred during login. Please try again later.",
+    "post_register_title": "Account created successfully!",
+    "post_register_subtitle": "We have sent you a confirmation email. Please check your inbox and follow the link to verify your account and start exploring the atlas.",
+    "status_completed": "Registration completed",
+    "status_pending": "Waiting for email verification...",
+    "explore_button": "Explore Atlas",
+    "dashboard_button": "Go to my Dashboard"
   },
   "Footer": {
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Use",
+    "privacy": "Privacy",
+    "terms": "Terms",
     "contact": "Contact",
     "copyright": "All rights reserved."
+  },
+  "Verify": {
+    "title_loading": "Verifying...",
+    "description_loading": "We are confirming your verification link.",
+    "title_success": "Profile Verified!",
+    "description_success": "Your email has been successfully confirmed. You can now explore the Ideological Atlas without restrictions.",
+    "title_error": "Invalid Link",
+    "description_error": "We could not verify your account. The link may have expired or be incorrect.",
+    "go_to_dashboard": "Go to Dashboard",
+    "go_to_login": "Login",
+    "title_already_verified": "Profile already active",
+    "description_already_verified": "Your account has already been verified. No further action is required."
   }
 }

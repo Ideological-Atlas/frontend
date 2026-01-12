@@ -3,14 +3,17 @@
 import { useTranslations } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { motion } from 'framer-motion';
+import { MagneticBackground } from '../molecules/MagneticBackground';
 
 export function Hero() {
   const t = useTranslations('Hero');
   const tCommon = useTranslations('Common');
 
   return (
-    <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">
-      <div className="layout-content-container flex max-w-[1200px] flex-1 flex-col">
+    <div className="relative flex flex-1 justify-center overflow-hidden px-5 py-5 md:px-20 xl:px-40">
+      <MagneticBackground />
+
+      <div className="layout-content-container relative z-10 flex max-w-[1200px] flex-1 flex-col">
         <div className="@container">
           <div className="flex flex-col items-center gap-10 px-4 py-10 lg:flex-row lg:gap-16">
             <div className="flex flex-col justify-center gap-6 lg:w-1/2">
@@ -20,12 +23,10 @@ export function Hero() {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col gap-4 text-left"
               >
-                <h1 className="text-4xl leading-tight font-black tracking-[-0.033em] text-slate-900 md:text-5xl lg:text-6xl dark:text-white">
+                <h1 className="text-foreground text-4xl leading-tight font-black tracking-[-0.033em] md:text-5xl lg:text-6xl">
                   {t('title')}
                 </h1>
-                <h2 className="text-lg leading-relaxed font-normal text-slate-600 dark:text-slate-300">
-                  {t('subtitle')}
-                </h2>
+                <h2 className="text-muted-foreground text-lg leading-relaxed font-normal">{t('subtitle')}</h2>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -48,7 +49,7 @@ export function Hero() {
                 type: 'spring',
                 bounce: 0.4,
               }}
-              className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl bg-slate-800 shadow-2xl lg:w-1/2"
+              className="bg-card group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:w-1/2"
             >
               <div className="from-primary/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr to-purple-500/20 mix-blend-overlay"></div>
               <motion.div

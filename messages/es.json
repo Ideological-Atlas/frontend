@@ -1,48 +1,99 @@
 {
   "Common": {
-    "ideological_atlas": "Ideological Atlas",
-    "start_now": "Comenzar Ahora",
-    "learn_more": "Saber Más",
+    "ideological_atlas": "Atlas Ideológico",
     "get_started": "Empezar",
-    "sign_in": "Iniciar Sesión",
-    "create_profile": "Crear mi perfil gratis"
+    "sign_in": "Iniciar sesión",
+    "start_now": "Comenzar ahora",
+    "learn_more": "Saber más",
+    "create_profile": "Crear mi perfil",
+    "processing": "Procesando..."
   },
   "Navigation": {
     "home": "Inicio",
-    "features": "Funcionalidades",
+    "features": "Características",
     "explore": "Explorar",
     "about": "Acerca de"
   },
   "Hero": {
     "title": "Descubre tu verdadera posición ideológica",
-    "subtitle": "Más allá de izquierda o derecha. Utiliza nuestro espectro continuo para visualizar tus creencias y explorar nuevas perspectivas con total objetividad."
+    "subtitle": "Un test de espectro político moderno, preciso y detallado basado en datos reales."
   },
   "Features": {
-    "title": "Explora sin límites",
-    "subtitle": "Nuestra plataforma te ofrece herramientas únicas para entender el panorama político y social sin sesgos.",
+    "title": "Analiza tu pensamiento político",
+    "subtitle": "Nuestro algoritmo evalúa múltiples dimensiones para ofrecerte un resultado preciso.",
     "cards": {
       "spectrum": {
-        "title": "Espectro Continuo",
-        "description": "Visualiza matices políticos sin etiquetas rígidas ni categorías binarias, permitiendo una representación fiel de tu pensamiento."
+        "title": "Espectro Multidimensional",
+        "description": "Más allá de izquierda y derecha. Analizamos ejes económicos, sociales y culturales."
       },
       "exploration": {
-        "title": "Exploración Objetiva",
-        "description": "Accede a definiciones neutrales y claras de diversas corrientes de pensamiento para expandir tu conocimiento sin prejuicios."
+        "title": "Exploración Profunda",
+        "description": "Entiende las influencias históricas y filosóficas de tu ideología."
       },
       "analysis": {
-        "title": "Análisis Profundo",
-        "description": "Compara tus resultados con datos históricos y tendencias globales para entender dónde te sitúas en el gran esquema."
+        "title": "Análisis de Datos",
+        "description": "Compara tus resultados con tendencias globales y regionales."
       }
     }
   },
   "CTA": {
-    "title": "¿Listo para encontrar tu lugar?",
-    "text": "Únete a miles de personas que ya están explorando sus ideologías de una manera nueva, transparente y sin ruido."
+    "title": "¿Listo para descubrir tu lugar en el mapa?",
+    "text": "Únete a miles de usuarios que ya han mapeado su ideología."
+  },
+  "Auth": {
+    "login_title": "Iniciar Sesión",
+    "login_subtitle": "Introduce tus credenciales para acceder a tu cuenta.",
+    "username_label": "Nombre de usuario",
+    "username_placeholder": "usuario123",
+    "password_label": "Contraseña",
+    "password_placeholder": "********",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "login_button": "Iniciar Sesión",
+    "logging_in": "Iniciando...",
+    "no_account": "¿No tienes una cuenta?",
+    "register_link": "Regístrate",
+    "copyright": "Todos los derechos reservados.",
+    "or": "O CON CORREO ELECTRÓNICO",
+    "continue_google": "Continuar con Google",
+    "continue_google_loading": "Conectando...",
+    "register_title": "Crear Cuenta",
+    "register_subtitle": "Regístrate para establecer tu perfil ideológico y explorar el espectro.",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "correo@ejemplo.com",
+    "confirm_password_label": "Confirmar",
+    "register_button": "Registrarse",
+    "registering": "Registrando...",
+    "has_account": "¿Ya tienes cuenta?",
+    "login_link": "Iniciar Sesión",
+    "password_requirements": "La contraseña debe tener al menos 7 caracteres, no puede ser totalmente numérica ni demasiado común o similar a tus datos.",
+    "password_mismatch": "Las contraseñas no coinciden",
+    "register_error": "Error al crear la cuenta. Inténtalo de nuevo.",
+    "network_error": "Error de conexión.",
+    "invalid_credentials": "Credenciales incorrectas. Por favor, inténtalo de nuevo.",
+    "login_error": "Ocurrió un error al iniciar sesión. Inténtalo más tarde.",
+    "post_register_title": "¡Cuenta creada con éxito!",
+    "post_register_subtitle": "Te hemos enviado un correo de confirmación. Por favor, revisa tu bandeja de entrada y sigue el enlace para verificar tu cuenta y comenzar a explorar el atlas.",
+    "status_completed": "Registro completado",
+    "status_pending": "Esperando verificación de correo...",
+    "explore_button": "Explorar Atlas",
+    "dashboard_button": "Ir a mi Panel de Control"
   },
   "Footer": {
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Uso",
+    "privacy": "Privacidad",
+    "terms": "Términos",
     "contact": "Contacto",
     "copyright": "Todos los derechos reservados."
+  },
+  "Verify": {
+    "title_loading": "Verificando...",
+    "description_loading": "Estamos confirmando tu enlace de verificación.",
+    "title_success": "¡Perfil Verificado!",
+    "description_success": "Tu correo electrónico ha sido confirmado exitosamente. Ahora puedes explorar el Atlas Ideológico sin restricciones.",
+    "title_error": "Enlace no válido",
+    "description_error": "No hemos podido verificar tu cuenta. El enlace puede haber expirado o ser incorrecto.",
+    "go_to_dashboard": "Ir a mi Dashboard",
+    "go_to_login": "Entrar",
+    "title_already_verified": "Perfil ya activo",
+    "description_already_verified": "Tu cuenta ya fue verificada anteriormente. No necesitas realizar ninguna acción adicional."
   }
 }
