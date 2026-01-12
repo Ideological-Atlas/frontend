@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Slider } from '@/components/atoms/Slider';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 
@@ -12,6 +12,10 @@ interface AxisCardProps {
 
 export function AxisCard({ axis, onSave, defaultValue = 0 }: AxisCardProps) {
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(parseInt(e.target.value));
