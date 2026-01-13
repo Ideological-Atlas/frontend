@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
@@ -30,7 +30,7 @@ export function AtlasView() {
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
       const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setSelectedComplexity(sorted[0].uuid);
     }
   }, [complexities, selectedComplexity]);
@@ -39,7 +39,7 @@ export function AtlasView() {
     if (selectedComplexity) {
       const currentSections = sections[selectedComplexity];
       if (currentSections && currentSections.length > 0 && !selectedSection) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         
         setSelectedSection(currentSections[0].uuid);
       }
     }
@@ -63,6 +63,28 @@ export function AtlasView() {
     saveAnswer(axisUuid, data, isAuthenticated);
   };
 
+  const progressMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    complexities.forEach(c => {
+      const compSections = sections[c.uuid] || [];
+      let totalAxes = 0;
+      let answeredAxes = 0;
+
+      compSections.forEach(s => {
+        const secAxes = axes[s.uuid] || [];
+        totalAxes += secAxes.length;
+        secAxes.forEach(a => {
+          if (answers[a.uuid]) {
+            answeredAxes++;
+          }
+        });
+      });
+
+      map[c.uuid] = totalAxes > 0 ? Math.round((answeredAxes / totalAxes) * 100) : 0;
+    });
+    return map;
+  }, [complexities, sections, axes, answers]);
+
   const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
   const currentSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
   const currentAxes = selectedSection ? axes[selectedSection] || [] : [];
@@ -71,6 +93,9 @@ export function AtlasView() {
   const isLoadingConditioners = selectedComplexity ? !conditioners[selectedComplexity] : true;
   const isLoadingSections = selectedComplexity ? !sections[selectedComplexity] : true;
   const isLoadingAxes = selectedSection ? !axes[selectedSection] : true;
+
+  const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
+  const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
 
   if (isLoadingData) {
     return (
@@ -98,12 +123,29 @@ export function AtlasView() {
           <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
           <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
         </div>
+
         <ComplexitySelector
           complexities={complexities}
           selectedId={selectedComplexity}
           onSelect={handleSelectComplexity}
           isLoading={false}
+          progressMap={progressMap}
         />
+
+        {selectedComplexity && (
+          <div className="bg-card border-border mt-6 flex flex-col gap-3 rounded-2xl border p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm font-medium">Progreso {selectedComplexityObj?.name}</span>
+              <span className="text-primary text-lg font-black">{selectedProgress}%</span>
+            </div>
+            <div className="bg-secondary h-2.5 w-full overflow-hidden rounded-full">
+              <div
+                className="bg-primary h-full rounded-full transition-all duration-700 ease-out"
+                style={{ width: `${selectedProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">

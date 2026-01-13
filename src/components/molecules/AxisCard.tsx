@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { clsx } from 'clsx';
+import { motion } from 'framer-motion';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
@@ -14,6 +16,7 @@ interface AxisCardProps {
 
 export function AxisCard({ axis, onSave, answerData }: AxisCardProps) {
   const getInitialMargin = (m?: number) => (m !== undefined && m !== null ? m : 10);
+  const isAnswered = !!answerData;
 
   const [state, setState] = useState({
     value: answerData?.value ?? 0,
@@ -72,10 +75,26 @@ export function AxisCard({ axis, onSave, answerData }: AxisCardProps) {
   const displayedMargin = state.marginLeft;
 
   return (
-    <div className="bg-card border-border relative z-0 flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-shadow hover:shadow-md">
+    <div
+      className={clsx(
+        'relative z-0 flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
+        isAnswered ? 'border-primary bg-primary/5' : 'bg-card border-border',
+      )}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h4 className="text-foreground text-lg font-bold">{axis.name}</h4>
+          <div className="flex items-center gap-2">
+            <h4 className={clsx('text-lg font-bold', isAnswered ? 'text-primary' : 'text-foreground')}>{axis.name}</h4>
+            {isAnswered && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="flex items-center justify-center rounded-full bg-green-500/20 p-0.5"
+              >
+                <span className="material-symbols-outlined text-[18px] font-bold text-green-600">check</span>
+              </motion.div>
+            )}
+          </div>
           {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
 
