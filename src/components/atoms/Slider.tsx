@@ -35,10 +35,10 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     );
 
     return (
-      <div className={twMerge('flex w-full flex-col gap-5 select-none pt-2', className)}>
-        <div className="relative h-10 flex items-center">
+      <div className={twMerge('flex w-full flex-col gap-5 pt-2 select-none', className)}>
+        <div className="relative flex h-10 items-center">
           <div className="bg-secondary/60 absolute right-0 left-0 h-2 rounded-full" />
-          <div className="absolute right-0 left-0 top-1/2 flex -translate-y-1/2 justify-between px-0.5">
+          <div className="absolute top-1/2 right-0 left-0 flex -translate-y-1/2 justify-between px-0.5">
             <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
             <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
             <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
@@ -52,28 +52,28 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             }}
           />
           <div
-            className="absolute top-1/2 z-10 h-4 w-4 -ml-2 -translate-y-1/2 rounded-full border bg-background shadow-sm transition-transform pointer-events-none"
+            className="bg-background pointer-events-none absolute top-1/2 z-10 -ml-2 h-4 w-4 -translate-y-1/2 rounded-full border shadow-sm transition-transform"
             style={{
               left: `${leftBoundPercent}%`,
               borderColor: 'color-mix(in srgb, var(--strong-accent), transparent 50%)',
             }}
           />
           <div
-            className="absolute top-1/2 z-10 h-4 w-4 -ml-2 -translate-y-1/2 rounded-full border bg-background shadow-sm transition-transform pointer-events-none"
+            className="bg-background pointer-events-none absolute top-1/2 z-10 -ml-2 h-4 w-4 -translate-y-1/2 rounded-full border shadow-sm transition-transform"
             style={{
               left: `${rightBoundPercent}%`,
               borderColor: 'color-mix(in srgb, var(--strong-accent), transparent 50%)',
             }}
           />
           <div
-            className="absolute top-1/2 z-30 h-6 w-6 -ml-3 -translate-y-1/2 rounded-full bg-[var(--strong-accent)] transition-transform pointer-events-none flex items-center justify-center"
+            className="pointer-events-none absolute top-1/2 z-30 -ml-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--strong-accent)] transition-transform"
             style={{
               left: `${centerPercent}%`,
               background: `linear-gradient(to bottom, color-mix(in srgb, var(--strong-accent), white 20%), var(--strong-accent))`,
               boxShadow: '0 10px 15px -3px color-mix(in srgb, var(--strong-accent), transparent 60%)',
             }}
           >
-            <div className="bg-white/30 h-2 w-2 rounded-full blur-[1px]" />
+            <div className="h-2 w-2 rounded-full bg-white/30 blur-[1px]" />
           </div>
           <input
             type="range"
@@ -91,7 +91,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             onTouchEnd={onCommit}
             className={clsx(
               thumbInputStyles,
-              'z-20 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4',
+              'z-20 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4',
             )}
           />
 
@@ -111,7 +111,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             onTouchEnd={onCommit}
             className={clsx(
               thumbInputStyles,
-              'z-20 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4',
+              'z-20 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4',
             )}
           />
 
@@ -124,29 +124,29 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             value={centerVal}
             onChange={e => {
               const newVal = parseInt(e.target.value);
-              
+
               const maxAllowedLeft = newVal + 100;
               const maxAllowedRight = 100 - newVal;
 
               const newMarginLeft = Math.min(marginLeft, maxAllowedLeft);
               const newMarginRight = Math.min(marginRight, maxAllowedRight);
 
-              onChange({ 
+              onChange({
                 value: newVal,
                 marginLeft: newMarginLeft,
-                marginRight: newMarginRight
+                marginRight: newMarginRight,
               });
             }}
             onMouseUp={onCommit}
             onTouchEnd={onCommit}
             className={clsx(
               thumbInputStyles,
-              'z-30 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6',
+              'z-30 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6',
             )}
           />
         </div>
 
-        <div className="flex justify-between text-[10px] font-bold tracking-widest uppercase text-muted-foreground/60 px-1">
+        <div className="text-muted-foreground/60 flex justify-between px-1 text-[10px] font-bold tracking-widest uppercase">
           <span>{leftLabel}</span>
           <span>{rightLabel}</span>
         </div>
