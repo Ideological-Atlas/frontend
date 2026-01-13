@@ -11,6 +11,7 @@ import { ContextGrid } from './ContextGrid';
 import { SectionTabs } from './SectionTabs';
 import { AxisList } from './AxisList';
 import { PageHeader } from '@/components/molecules/PageHeader';
+import { ProgressCard } from '@/components/molecules/ProgressCard';
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
@@ -132,18 +133,11 @@ export function AtlasView() {
         />
 
         {selectedComplexity && (
-          <div className="bg-card border-border mt-6 flex flex-col gap-3 rounded-2xl border p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm font-medium">Progreso {selectedComplexityObj?.name}</span>
-              <span className="text-primary text-lg font-black">{selectedProgress}%</span>
-            </div>
-            <div className="bg-secondary h-2.5 w-full overflow-hidden rounded-full">
-              <div
-                className="bg-primary h-full rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${selectedProgress}%` }}
-              />
-            </div>
-          </div>
+          <ProgressCard
+            label={`Progreso ${selectedComplexityObj?.name || ''}`}
+            percentage={selectedProgress}
+            className="mt-6"
+          />
         )}
       </aside>
 
