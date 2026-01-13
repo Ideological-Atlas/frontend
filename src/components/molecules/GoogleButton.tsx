@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useGoogleLogin } from '@react-oauth/google';
 import { AuthService } from '@/lib/client/services/AuthService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAtlasStore } from '@/store/useAtlasStore';
 import { useRouter } from 'next/navigation';
 
 export function GoogleButton() {
@@ -13,6 +14,7 @@ export function GoogleButton() {
   const locale = useLocale();
   const router = useRouter();
   const login = useAuthStore(state => state.login);
+  const resetAtlas = useAtlasStore(state => state.reset);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,7 +24,7 @@ export function GoogleButton() {
         const response = await AuthService.loginGoogleCreate({
           token: tokenResponse.access_token,
         });
-
+        resetAtlas();
         login({
           access: response.access,
           refresh: response.refresh,

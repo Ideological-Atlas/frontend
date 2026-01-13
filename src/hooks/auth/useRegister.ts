@@ -6,12 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '@/lib/schemas/auth';
 import { AuthService } from '@/lib/client/services/AuthService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAtlasStore } from '@/store/useAtlasStore';
 import { ApiError } from '@/lib/client/core/ApiError';
 
 export function useRegister() {
   const locale = useLocale();
   const router = useRouter();
   const login = useAuthStore(state => state.login);
+  const resetAtlas = useAtlasStore(state => state.reset);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<RegisterSchema>({
@@ -30,7 +32,7 @@ export function useRegister() {
         email: data.email,
         password: data.password,
       });
-
+      resetAtlas();
       login({ access: response.access, refresh: response.refresh, user: response.user });
       router.push(`/${locale}/welcome`);
     } catch (err) {

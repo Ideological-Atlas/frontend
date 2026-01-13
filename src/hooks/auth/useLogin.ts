@@ -6,12 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginSchema } from '@/lib/schemas/auth';
 import { AuthService } from '@/lib/client/services/AuthService';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAtlasStore } from '@/store/useAtlasStore';
 import { ApiError } from '@/lib/client/core/ApiError';
 
 export function useLogin() {
   const locale = useLocale();
   const router = useRouter();
   const login = useAuthStore(state => state.login);
+  const resetAtlas = useAtlasStore(state => state.reset);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
@@ -26,6 +28,7 @@ export function useLogin() {
     setGlobalError(null);
     try {
       const response = await AuthService.tokenLoginCreate(data);
+      resetAtlas();
       login({
         access: response.access,
         refresh: response.refresh,
