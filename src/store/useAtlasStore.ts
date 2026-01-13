@@ -53,7 +53,7 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
       for (const comp of complexities) {
         try {
           const [condRes, secRes] = await Promise.all([
-            StructureService.structureConditionersList(comp.uuid, 100),
+            StructureService.structureConditionersAggregatedList(comp.uuid, 100),
             StructureService.structureSectionsList(comp.uuid, 100),
           ]);
 

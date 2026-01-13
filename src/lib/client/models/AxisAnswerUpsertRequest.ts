@@ -4,4 +4,6 @@
 
 export type AxisAnswerUpsertRequest = {
   value: number;
+  margin_left?: number;
+  margin_right?: number;
 };

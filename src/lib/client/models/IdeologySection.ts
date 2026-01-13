@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { IdeologySectionConditioner } from './IdeologySectionConditioner';
 export type IdeologySection = {
   readonly uuid: string;
   /**
@@ -13,4 +14,5 @@ export type IdeologySection = {
    */
   description?: string | null;
   readonly icon: string | null;
+  readonly condition_rules: Array<IdeologySectionConditioner>;
 };

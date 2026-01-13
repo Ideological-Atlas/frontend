@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { IdeologyConditioner } from './IdeologyConditioner';
+import type { IdeologyAxisConditioner } from './IdeologyAxisConditioner';
 export type IdeologyAxis = {
   readonly uuid: string;
   /**
@@ -21,5 +21,5 @@ export type IdeologyAxis = {
    * Label for the end or maximum value of the axis (e.g., 'Total Liberty').
    */
   right_label: string;
-  readonly conditioned_by: IdeologyConditioner;
+  readonly condition_rules: Array<IdeologyAxisConditioner>;
 };

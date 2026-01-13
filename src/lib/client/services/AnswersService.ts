@@ -90,7 +90,7 @@ export class AnswersService {
   }
   /**
    * List user conditioner answers by complexity
-   * Returns the user's conditioner answers filtered by abstraction complexity.
+   * Returns the user's conditioner answers filtered by abstraction complexity (via sections or axes).
    * @param complexityUuid UUID of the Abstraction Complexity
    * @param limit Number of results to return per page.
    * @param offset The initial index from which to return the results.
