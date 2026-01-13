@@ -1,17 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useAtlasStore } from '@/store/useAtlasStore';
+import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { Skeleton } from '@/components/atoms/Skeleton';
 
 import { ComplexitySelector } from './ComplexitySelector';
 import { ContextGrid } from './ContextGrid';
 import { SectionTabs } from './SectionTabs';
 import { AxisList } from './AxisList';
+import { PageHeader } from '@/components/molecules/PageHeader';
 
 export function AtlasView() {
+  const t = useTranslations('Atlas');
   const locale = useLocale();
   const { isAuthenticated } = useAuthStore();
 
@@ -57,68 +59,78 @@ export function AtlasView() {
     setSelectedSection(uuid);
   };
 
-  const handleSaveAnswer = (axisUuid: string, value: number) => {
-    saveAnswer(axisUuid, value, isAuthenticated);
+  const handleSaveAnswer = (axisUuid: string, data: AnswerUpdatePayload) => {
+    saveAnswer(axisUuid, data, isAuthenticated);
   };
-
-  if (!isInitialized && complexities.length === 0) {
-    return (
-      <div className="flex w-full flex-col gap-8 pb-20">
-        <section className="border-border bg-card/50 border-b px-5 py-4 backdrop-blur-sm">
-          <div className="mx-auto max-w-[1200px]">
-            <Skeleton className="h-10 w-full max-w-md rounded-full" />
-          </div>
-        </section>
-        <div className="layout-content-container mx-auto w-full max-w-[1200px] px-5 md:px-20">
-          <Skeleton className="mb-8 h-40 w-full rounded-xl" />
-          <Skeleton className="mb-8 h-12 w-full rounded-lg" />
-          <div className="flex flex-col gap-6">
-            <Skeleton className="h-32 w-full rounded-xl" />
-            <Skeleton className="h-32 w-full rounded-xl" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
   const currentSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
   const currentAxes = selectedSection ? axes[selectedSection] || [] : [];
 
+  const isLoadingData = !isInitialized && complexities.length === 0;
   const isLoadingConditioners = selectedComplexity ? !conditioners[selectedComplexity] : true;
   const isLoadingSections = selectedComplexity ? !sections[selectedComplexity] : true;
   const isLoadingAxes = selectedSection ? !axes[selectedSection] : true;
 
-  return (
-    <div className="flex w-full flex-col gap-8 pb-20">
-      <ComplexitySelector
-        complexities={complexities}
-        selectedId={selectedComplexity}
-        onSelect={handleSelectComplexity}
-        isLoading={false}
-      />
-
-      <div className="layout-content-container mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-5 md:px-20">
-        <ContextGrid conditioners={currentConditioners} isLoading={isLoadingConditioners} />
-
-        <div className="flex flex-col gap-6">
-          <SectionTabs
-            sections={currentSections}
-            selectedId={selectedSection}
-            onSelect={handleSelectSection}
-            isLoading={isLoadingSections}
-          />
-
-          <AxisList
-            axes={currentAxes}
-            answers={answers}
-            sectionId={selectedSection}
-            onSaveAnswer={handleSaveAnswer}
-            isLoading={isLoadingAxes}
-            isLevelLoading={false}
-          />
-        </div>
+  if (isLoadingData) {
+    return (
+      <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-5 py-8 md:px-10 lg:flex-row">
+        <aside className="w-full lg:w-[280px] lg:shrink-0">
+          <Skeleton className="mb-6 h-8 w-32" />
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+          </div>
+        </aside>
+        <main className="flex-1 space-y-8">
+          <Skeleton className="h-48 w-full rounded-2xl" />
+          <Skeleton className="h-96 w-full rounded-2xl" />
+        </main>
       </div>
+    );
+  }
+
+  return (
+    <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
+      <aside className="w-full lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start">
+        <div className="mb-6 flex flex-col gap-1 px-1">
+          <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
+          <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
+        </div>
+        <ComplexitySelector
+          complexities={complexities}
+          selectedId={selectedComplexity}
+          onSelect={handleSelectComplexity}
+          isLoading={false}
+        />
+      </aside>
+
+      <main className="flex min-w-0 flex-1 flex-col gap-8">
+        <PageHeader title={t('header_title')} description={t('header_description')} />
+
+        <div className="flex flex-col gap-8">
+          <ContextGrid conditioners={currentConditioners} isLoading={isLoadingConditioners} />
+
+          <div className="flex flex-col gap-6">
+            <SectionTabs
+              sections={currentSections}
+              selectedId={selectedSection}
+              onSelect={handleSelectSection}
+              isLoading={isLoadingSections}
+            />
+
+            <AxisList
+              axes={currentAxes}
+              answers={answers}
+              sectionId={selectedSection}
+              onSaveAnswer={handleSaveAnswer}
+              isLoading={isLoadingAxes}
+              isLevelLoading={false}
+            />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -73,7 +73,7 @@ export function VerifyStatus() {
         return;
       }
       try {
-        await AuthService.usersVerifyPartialUpdate(uuid, { is_verified: true });
+        await AuthService.usersVerifyPartialUpdate('-', uuid);
         setStatus('success');
         triggerConfetti();
       } catch (error) {

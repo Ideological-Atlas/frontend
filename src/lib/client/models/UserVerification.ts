@@ -12,5 +12,5 @@ export type UserVerification = {
   /**
    * Field that shows if the user is verified or not.
    */
-  is_verified?: boolean;
+  readonly is_verified: boolean;
 };

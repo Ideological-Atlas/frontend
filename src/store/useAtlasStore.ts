@@ -5,18 +5,31 @@ import type { IdeologyAbstractionComplexity } from '@/lib/client/models/Ideology
 import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
+import type { AxisAnswerUpsertRequest } from '@/lib/client/models/AxisAnswerUpsertRequest';
+
+export interface AnswerData {
+  value: number;
+  margin_left?: number;
+  margin_right?: number;
+}
+
+export interface AnswerUpdatePayload {
+  value?: number;
+  margin_left?: number;
+  margin_right?: number;
+}
 
 interface AtlasState {
   complexities: IdeologyAbstractionComplexity[];
   conditioners: Record<string, IdeologyConditioner[]>;
   sections: Record<string, IdeologySection[]>;
   axes: Record<string, IdeologyAxis[]>;
-  answers: Record<string, number>;
+  answers: Record<string, AnswerData>;
 
   isInitialized: boolean;
 
   fetchAllData: (isAuthenticated: boolean) => Promise<void>;
-  saveAnswer: (axisUuid: string, value: number, isAuthenticated: boolean) => Promise<void>;
+  saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
   reset: () => void;
 }
 
@@ -62,7 +75,11 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
                 const newAnswers = { ...state.answers };
                 if (isAuthenticated) {
                   answersRes.results.forEach(ans => {
-                    newAnswers[ans.axis_uuid] = ans.value;
+                    newAnswers[ans.axis_uuid] = {
+                      value: ans.value,
+                      margin_left: ans.margin_left,
+                      margin_right: ans.margin_right,
+                    };
                   });
                 }
                 return {
@@ -83,14 +100,26 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
     }
   },
 
-  saveAnswer: async (axisUuid, value, isAuthenticated) => {
+  saveAnswer: async (axisUuid, payload, isAuthenticated) => {
+    const current = get().answers[axisUuid] || { value: 0, margin_left: 10, margin_right: 10 };
+
+    const newData: AnswerData = {
+      value: payload.value ?? current.value,
+      margin_left: payload.margin_left ?? current.margin_left ?? 10,
+      margin_right: payload.margin_right ?? current.margin_right ?? 10,
+    };
+
     set(state => ({
-      answers: { ...state.answers, [axisUuid]: value },
+      answers: { ...state.answers, [axisUuid]: newData },
     }));
 
     if (isAuthenticated) {
       try {
-        await AnswersService.answersAxisCreate(axisUuid, { value });
+        await AnswersService.answersAxisCreate(axisUuid, {
+          value: newData.value,
+          margin_left: newData.margin_left,
+          margin_right: newData.margin_right,
+        } as unknown as AxisAnswerUpsertRequest);
       } catch (error) {
         console.error('Failed to save answer remotely:', error);
       }

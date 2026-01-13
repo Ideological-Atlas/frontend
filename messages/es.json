@@ -101,6 +101,9 @@
     "complexity_level": "Nivel de Abstracción",
     "context_configuration": "Configuración de Contexto",
     "selector_placeholder": "Selector para {type}",
-    "no_questions": "No hay preguntas disponibles en esta sección."
+    "no_questions": "No hay preguntas disponibles en esta sección.",
+    "header_title": "Cartografía de tus ideas",
+    "header_description": "Define tu posición en el espectro político ajustando tus respuestas y sus márgenes de tolerancia.",
+    "complexity_subtitle": "Selecciona el nivel de profundidad"
   }
 }

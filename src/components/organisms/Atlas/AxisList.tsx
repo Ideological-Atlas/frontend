@@ -5,12 +5,13 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { Skeleton } from '@/components/atoms/Skeleton';
 import { AxisCard } from '@/components/molecules/AxisCard';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
+import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 
 interface AxisListProps {
   axes: IdeologyAxis[];
-  answers: Record<string, number>;
+  answers: Record<string, AnswerData>;
   sectionId: string | null;
-  onSaveAnswer: (uuid: string, value: number) => void;
+  onSaveAnswer: (uuid: string, data: AnswerUpdatePayload) => void;
   isLoading: boolean;
   isLevelLoading: boolean;
 }
@@ -77,7 +78,7 @@ export function AxisList({ axes, answers, sectionId, onSaveAnswer, isLoading, is
         >
           {axes.map(axis => (
             <motion.div key={axis.uuid} variants={itemVariants}>
-              <AxisCard axis={axis} onSave={onSaveAnswer} defaultValue={answers[axis.uuid] ?? 0} />
+              <AxisCard axis={axis} onSave={onSaveAnswer} answerData={answers[axis.uuid]} />
             </motion.div>
           ))}
         </motion.div>

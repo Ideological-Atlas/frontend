@@ -98,21 +98,24 @@ export class AuthService {
   }
   /**
    * Verify user account
-   * Marks a user as verified using their unique UUID.
-   * @param uuid The UUID of the user to verify
+   * Marks a user as verified using their secret verification token.
+   * @param uuid The verification UUID sent via email
+   * @param verificationUuid
    * @param requestBody
    * @returns UserVerification
    * @throws ApiError
    */
   public static usersVerifyUpdate(
     uuid: string,
+    verificationUuid: string,
     requestBody: UserVerificationRequest,
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/users/verify/{uuid}',
+      url: '/api/users/verify/{verification_uuid}',
       path: {
         uuid: uuid,
+        verification_uuid: verificationUuid,
       },
       body: requestBody,
       mediaType: 'application/json',
@@ -120,21 +123,24 @@ export class AuthService {
   }
   /**
    * Verify user account
-   * Marks a user as verified using their unique UUID.
-   * @param uuid The UUID of the user to verify
+   * Marks a user as verified using their secret verification token.
+   * @param uuid The verification UUID sent via email
+   * @param verificationUuid
    * @param requestBody
    * @returns UserVerification
    * @throws ApiError
    */
   public static usersVerifyPartialUpdate(
     uuid: string,
+    verificationUuid: string,
     requestBody?: PatchedUserVerificationRequest,
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: '/api/users/verify/{uuid}',
+      url: '/api/users/verify/{verification_uuid}',
       path: {
         uuid: uuid,
+        verification_uuid: verificationUuid,
       },
       body: requestBody,
       mediaType: 'application/json',
