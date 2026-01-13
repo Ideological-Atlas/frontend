@@ -30,7 +30,7 @@ export function AtlasView() {
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
       const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
-       
+
       setSelectedComplexity(sorted[0].uuid);
     }
   }, [complexities, selectedComplexity]);
@@ -39,7 +39,6 @@ export function AtlasView() {
     if (selectedComplexity) {
       const currentSections = sections[selectedComplexity];
       if (currentSections && currentSections.length > 0 && !selectedSection) {
-         
         setSelectedSection(currentSections[0].uuid);
       }
     }
