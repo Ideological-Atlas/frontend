@@ -104,6 +104,13 @@
     "no_questions": "No questions available in this section.",
     "header_title": "Cartography of your ideas",
     "header_description": "Define your position in the political spectrum by adjusting your answers and their tolerance margins.",
-    "complexity_subtitle": "Select the depth level"
+    "complexity_subtitle": "Select the depth level",
+    "context_section": "Context",
+    "select_placeholder": "Select",
+    "options_label": "Options",
+    "yes": "Yes",
+    "no": "No",
+    "numeric_placeholder": "Numeric value",
+    "text_placeholder": "Type your answer..."
   }
 }

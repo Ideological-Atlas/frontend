@@ -5,15 +5,21 @@ import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { useMenuAnimation } from '@/hooks/useMenuAnimation';
 
-interface DropdownProps {
-  value: number;
-  options: number[];
-  onChange: (value: number) => void;
+interface DropdownProps<T extends string | number> {
+  value: T;
+  options: T[];
+  onChange: (value: T) => void;
   label?: string;
   suffix?: string;
 }
 
-export function Dropdown({ value, options, onChange, label, suffix = '%' }: DropdownProps) {
+export function Dropdown<T extends string | number>({
+  value,
+  options,
+  onChange,
+  label,
+  suffix = '',
+}: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const scope = useMenuAnimation(isOpen);
 
@@ -64,7 +70,7 @@ export function Dropdown({ value, options, onChange, label, suffix = '%' }: Drop
         <ul className="scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent flex max-h-[240px] flex-col gap-1 overflow-y-auto p-1">
           {options.map(option => (
             <motion.li
-              key={option}
+              key={String(option)}
               className={clsx(
                 'flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-bold transition-colors',
                 value === option

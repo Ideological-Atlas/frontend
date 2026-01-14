@@ -7,19 +7,32 @@ import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { Skeleton } from '@/components/atoms/Skeleton';
 
 import { ComplexitySelector } from './ComplexitySelector';
-import { ContextGrid } from './ContextGrid';
 import { SectionTabs } from './SectionTabs';
 import { AxisList } from './AxisList';
+import { ConditionerList } from './ConditionerList';
 import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProgressCard } from '@/components/molecules/ProgressCard';
+import type { IdeologySection } from '@/lib/client/models/IdeologySection';
+
+const CONTEXT_SECTION_UUID = 'context';
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
   const locale = useLocale();
   const { isAuthenticated } = useAuthStore();
 
-  const { complexities, conditioners, sections, axes, answers, isInitialized, fetchAllData, saveAnswer } =
-    useAtlasStore();
+  const {
+    complexities,
+    conditioners,
+    sections,
+    axes,
+    answers,
+    conditionerAnswers,
+    isInitialized,
+    fetchAllData,
+    saveAnswer,
+    saveConditionerAnswer,
+  } = useAtlasStore();
 
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -31,28 +44,61 @@ export function AtlasView() {
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
       const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
-
       setSelectedComplexity(sorted[0].uuid);
     }
   }, [complexities, selectedComplexity]);
 
-  useEffect(() => {
-    if (selectedComplexity) {
-      const currentSections = sections[selectedComplexity];
-      if (currentSections && currentSections.length > 0 && !selectedSection) {
-        setSelectedSection(currentSections[0].uuid);
-      }
-    }
-  }, [selectedComplexity, sections, selectedSection]);
+  const displaySections: IdeologySection[] = useMemo(() => {
+    const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
+    const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
 
-  const handleSelectComplexity = (uuid: string) => {
-    setSelectedComplexity(uuid);
-    const compSections = sections[uuid] || [];
-    if (compSections.length > 0) {
-      setSelectedSection(compSections[0].uuid);
+    const filteredSections = rawSections.filter(section => {
+      if (!section.condition_rules || section.condition_rules.length === 0) {
+        return true;
+      }
+
+      return section.condition_rules.every(rule => {
+        const userAnswer = conditionerAnswers[rule.conditioner.uuid];
+
+        if (!userAnswer) return false;
+
+        if (Array.isArray(rule.condition_values)) {
+          return rule.condition_values.includes(userAnswer);
+        }
+
+        return rule.condition_values === userAnswer;
+      });
+    });
+
+    if (currentConditioners.length > 0) {
+      const contextSection: IdeologySection = {
+        uuid: CONTEXT_SECTION_UUID,
+        name: t('context_section'),
+        description: null,
+        icon: 'info',
+        condition_rules: [],
+      };
+      return [contextSection, ...filteredSections];
+    }
+
+    return filteredSections;
+  }, [selectedComplexity, sections, conditioners, conditionerAnswers, t]);
+
+  useEffect(() => {
+    if (displaySections.length > 0) {
+      const isSelectedVisible = displaySections.some(s => s.uuid === selectedSection);
+
+      if (!selectedSection || !isSelectedVisible) {
+        setSelectedSection(displaySections[0].uuid);
+      }
     } else {
       setSelectedSection(null);
     }
+  }, [displaySections, selectedSection]);
+
+  const handleSelectComplexity = (uuid: string) => {
+    setSelectedComplexity(uuid);
+    setSelectedSection(null);
   };
 
   const handleSelectSection = (uuid: string) => {
@@ -63,36 +109,49 @@ export function AtlasView() {
     saveAnswer(axisUuid, data, isAuthenticated);
   };
 
+  const handleSaveConditioner = (condUuid: string, value: string) => {
+    saveConditionerAnswer(condUuid, value, isAuthenticated);
+  };
+
   const progressMap = useMemo(() => {
     const map: Record<string, number> = {};
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
-      let totalAxes = 0;
-      let answeredAxes = 0;
+      const compConditioners = conditioners[c.uuid] || [];
+
+      let totalItems = 0;
+      let answeredItems = 0;
 
       compSections.forEach(s => {
         const secAxes = axes[s.uuid] || [];
-        totalAxes += secAxes.length;
+        totalItems += secAxes.length;
         secAxes.forEach(a => {
           if (answers[a.uuid]) {
-            answeredAxes++;
+            answeredItems++;
           }
         });
       });
 
-      map[c.uuid] = totalAxes > 0 ? Math.round((answeredAxes / totalAxes) * 100) : 0;
+      totalItems += compConditioners.length;
+      compConditioners.forEach(c => {
+        if (conditionerAnswers[c.uuid]) {
+          answeredItems++;
+        }
+      });
+
+      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
     return map;
-  }, [complexities, sections, axes, answers]);
+  }, [complexities, sections, axes, answers, conditioners, conditionerAnswers]);
 
   const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-  const currentSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
-  const currentAxes = selectedSection ? axes[selectedSection] || [] : [];
+
+  const currentAxes = selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? axes[selectedSection] || [] : [];
 
   const isLoadingData = !isInitialized && complexities.length === 0;
-  const isLoadingConditioners = selectedComplexity ? !conditioners[selectedComplexity] : true;
   const isLoadingSections = selectedComplexity ? !sections[selectedComplexity] : true;
-  const isLoadingAxes = selectedSection ? !axes[selectedSection] : true;
+
+  const isLoadingAxes = selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? !axes[selectedSection] : false;
 
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
   const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
@@ -144,17 +203,22 @@ export function AtlasView() {
       <main className="flex min-w-0 flex-1 flex-col gap-8">
         <PageHeader title={t('header_title')} description={t('header_description')} />
 
-        <div className="flex flex-col gap-8">
-          <ContextGrid conditioners={currentConditioners} isLoading={isLoadingConditioners} />
+        <div className="flex flex-col gap-6">
+          <SectionTabs
+            sections={displaySections}
+            selectedId={selectedSection}
+            onSelect={handleSelectSection}
+            isLoading={isLoadingSections}
+          />
 
-          <div className="flex flex-col gap-6">
-            <SectionTabs
-              sections={currentSections}
-              selectedId={selectedSection}
-              onSelect={handleSelectSection}
-              isLoading={isLoadingSections}
+          {selectedSection === CONTEXT_SECTION_UUID ? (
+            <ConditionerList
+              conditioners={currentConditioners}
+              answers={conditionerAnswers}
+              onSaveAnswer={handleSaveConditioner}
+              isLoading={false}
             />
-
+          ) : (
             <AxisList
               axes={currentAxes}
               answers={answers}
@@ -163,7 +227,7 @@ export function AtlasView() {
               isLoading={isLoadingAxes}
               isLevelLoading={false}
             />
-          </div>
+          )}
         </div>
       </main>
     </div>

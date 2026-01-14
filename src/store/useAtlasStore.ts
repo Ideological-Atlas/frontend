@@ -6,6 +6,7 @@ import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditione
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AxisAnswerUpsertRequest } from '@/lib/client/models/AxisAnswerUpsertRequest';
+import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
 
 export interface AnswerData {
   value: number;
@@ -24,12 +25,15 @@ interface AtlasState {
   conditioners: Record<string, IdeologyConditioner[]>;
   sections: Record<string, IdeologySection[]>;
   axes: Record<string, IdeologyAxis[]>;
+
   answers: Record<string, AnswerData>;
+  conditionerAnswers: Record<string, string>;
 
   isInitialized: boolean;
 
   fetchAllData: (isAuthenticated: boolean) => Promise<void>;
   saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
+  saveConditionerAnswer: (conditionerUuid: string, value: string, isAuthenticated: boolean) => Promise<void>;
   reset: () => void;
 }
 
@@ -39,6 +43,7 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
   sections: {},
   axes: {},
   answers: {},
+  conditionerAnswers: {},
   isInitialized: false,
 
   fetchAllData: async isAuthenticated => {
@@ -61,6 +66,21 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
             conditioners: { ...state.conditioners, [comp.uuid]: condRes.results },
             sections: { ...state.sections, [comp.uuid]: secRes.results },
           }));
+
+          if (isAuthenticated) {
+            try {
+              const condAnswersRes = await AnswersService.answersConditionerListList(comp.uuid, 100);
+              set(state => {
+                const newCondAnswers = { ...state.conditionerAnswers };
+                condAnswersRes.results.forEach(ans => {
+                  newCondAnswers[ans.conditioner_uuid] = ans.answer;
+                });
+                return { conditionerAnswers: newCondAnswers };
+              });
+            } catch (err) {
+              console.error(`Error loading conditioner answers for complexity ${comp.uuid}`, err);
+            }
+          }
 
           for (const sec of secRes.results) {
             try {
@@ -126,7 +146,23 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
     }
   },
 
+  saveConditionerAnswer: async (conditionerUuid, value, isAuthenticated) => {
+    set(state => ({
+      conditionerAnswers: { ...state.conditionerAnswers, [conditionerUuid]: value },
+    }));
+
+    if (isAuthenticated) {
+      try {
+        await AnswersService.answersConditionerCreate(conditionerUuid, {
+          answer: value,
+        } as ConditionerAnswerUpsertRequest);
+      } catch (error) {
+        console.error('Failed to save conditioner answer remotely:', error);
+      }
+    }
+  },
+
   reset: () => {
-    set({ isInitialized: false, answers: {} });
+    set({ isInitialized: false, answers: {}, conditionerAnswers: {} });
   },
 }));
