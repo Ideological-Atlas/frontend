@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type TokenObtainPairRequest = {
+export type CustomTokenObtainPairRequest = {
   username: string;
   password: string;
 };

@@ -96,9 +96,9 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
                 if (isAuthenticated) {
                   answersRes.results.forEach(ans => {
                     newAnswers[ans.axis_uuid] = {
-                      value: ans.value,
-                      margin_left: ans.margin_left,
-                      margin_right: ans.margin_right,
+                      value: ans.value ?? 0,
+                      margin_left: ans.margin_left ?? 10,
+                      margin_right: ans.margin_right ?? 10,
                     };
                   });
                 }

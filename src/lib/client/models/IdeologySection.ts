@@ -13,6 +13,9 @@ export type IdeologySection = {
    * A summary of the topics and concepts covered in this section.
    */
   description?: string | null;
-  readonly icon: string | null;
+  /**
+   * Visual representation for this section. SVG or PNG formats are recommended.
+   */
+  icon?: string | null;
   readonly condition_rules: Array<IdeologySectionConditioner>;
 };

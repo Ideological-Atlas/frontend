@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type AxisAnswerRead = {
+export type IdeologyAxisDefinition = {
   readonly uuid: string;
   readonly axis_uuid: string;
   value?: number | null;

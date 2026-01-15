@@ -41,7 +41,7 @@ export class AnswersService {
   }
   /**
    * Upsert axis answer
-   * Creates or updates the user's answer for a specific axis defined by UUID in URL.
+   * Creates or updates the user's answer for a specific axis defined by UUID in URL. Allows marking answer as indifferent (null value).
    * @param uuid UUID of the Axis to answer
    * @param requestBody
    * @returns AxisAnswerRead
@@ -49,7 +49,7 @@ export class AnswersService {
    */
   public static answersAxisCreate(
     uuid: string,
-    requestBody: AxisAnswerUpsertRequest,
+    requestBody?: AxisAnswerUpsertRequest,
   ): CancelablePromise<AxisAnswerRead> {
     return __request(OpenAPI, {
       method: 'POST',
@@ -59,6 +59,22 @@ export class AnswersService {
       },
       body: requestBody,
       mediaType: 'application/json',
+    });
+  }
+  /**
+   * Delete axis answer
+   * Deletes the user's answer for the specific axis defined by UUID in URL.
+   * @param uuid UUID of the Axis whose answer you want to delete
+   * @returns void
+   * @throws ApiError
+   */
+  public static answersAxisDeleteDestroy(uuid: string): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: '/api/answers/axis/{uuid}/delete/',
+      path: {
+        uuid: uuid,
+      },
     });
   }
   /**

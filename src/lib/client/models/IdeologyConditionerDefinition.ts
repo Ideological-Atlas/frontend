@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type ConditionerAnswerRead = {
+export type IdeologyConditionerDefinition = {
   readonly uuid: string;
   readonly conditioner_uuid: string;
   answer: string;

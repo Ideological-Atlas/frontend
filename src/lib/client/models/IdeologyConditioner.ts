@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { IdeologyConditionerConditioner } from './IdeologyConditionerConditioner';
 import type { TypeEnum } from './TypeEnum';
 export type IdeologyConditioner = {
   readonly uuid: string;
@@ -27,4 +28,5 @@ export type IdeologyConditioner = {
    * List of valid options if the type is 'Categorical'. Format: ['Option A', 'Option B'].
    */
   accepted_values?: any;
+  readonly condition_rules: Array<IdeologyConditionerConditioner>;
 };
