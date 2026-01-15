@@ -13,31 +13,17 @@ interface ConditionerListProps {
   isLoading: boolean;
 }
 
-const listContainerVariants: Variants = {
-  hidden: { opacity: 0 },
+const itemVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
+    scale: 1,
+    transition: { type: 'spring', stiffness: 300, damping: 24 },
   },
   exit: {
     opacity: 0,
+    scale: 0.95,
     transition: { duration: 0.2 },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 24,
-    },
   },
 };
 
@@ -46,9 +32,9 @@ export function ConditionerList({ conditioners, answers, onSaveAnswer, isLoading
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 w-full rounded-xl" />
+      <div className="grid gap-6 md:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-40 w-full rounded-xl" />
         ))}
       </div>
     );
@@ -63,22 +49,14 @@ export function ConditionerList({ conditioners, answers, onSaveAnswer, isLoading
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <AnimatePresence mode="wait">
-        <motion.div
-          variants={listContainerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          className="grid gap-6 md:grid-cols-2"
-        >
-          {conditioners.map(cond => (
-            <motion.div key={cond.uuid} variants={itemVariants}>
-              <ConditionerCard conditioner={cond} onSave={onSaveAnswer} answer={answers[cond.uuid]} />
-            </motion.div>
-          ))}
-        </motion.div>
+    <motion.div layout className="grid gap-6 md:grid-cols-2">
+      <AnimatePresence mode="popLayout" initial={false}>
+        {conditioners.map(cond => (
+          <motion.div key={cond.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+            <ConditionerCard conditioner={cond} onSave={onSaveAnswer} answer={answers[cond.uuid]} />
+          </motion.div>
+        ))}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

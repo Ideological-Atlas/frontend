@@ -16,6 +16,8 @@ import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 
 const CONTEXT_SECTION_UUID = 'context';
 
+const normalizeUuid = (uuid: string) => uuid.replace(/-/g, '');
+
 export function AtlasView() {
   const t = useTranslations('Atlas');
   const locale = useLocale();
@@ -50,7 +52,7 @@ export function AtlasView() {
 
   const displaySections: IdeologySection[] = useMemo(() => {
     const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
-    const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+    const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
 
     const filteredSections = rawSections.filter(section => {
       if (!section.condition_rules || section.condition_rules.length === 0) {
@@ -58,7 +60,8 @@ export function AtlasView() {
       }
 
       return section.condition_rules.every(rule => {
-        const userAnswer = conditionerAnswers[rule.conditioner.uuid];
+        const sourceUuid = normalizeUuid(rule.conditioner.uuid);
+        const userAnswer = conditionerAnswers[sourceUuid];
 
         if (!userAnswer) return false;
 
@@ -70,7 +73,7 @@ export function AtlasView() {
       });
     });
 
-    if (currentConditioners.length > 0) {
+    if (rawConditioners.length > 0) {
       const contextSection: IdeologySection = {
         uuid: CONTEXT_SECTION_UUID,
         name: t('context_section'),
@@ -144,7 +147,23 @@ export function AtlasView() {
     return map;
   }, [complexities, sections, axes, answers, conditioners, conditionerAnswers]);
 
-  const currentConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+  const currentConditioners = useMemo(() => {
+    const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+
+    return raw.filter(cond => {
+      if (!cond.condition_rules || cond.condition_rules.length === 0) return true;
+      return cond.condition_rules.every(rule => {
+        const normalizedSourceUuid = normalizeUuid(rule.source_conditioner_uuid);
+        const sourceAnswer = conditionerAnswers[normalizedSourceUuid];
+        if (!sourceAnswer) return false;
+        const accepted = rule.condition_values;
+        if (Array.isArray(accepted)) {
+          return accepted.includes(sourceAnswer);
+        }
+        return accepted === sourceAnswer;
+      });
+    });
+  }, [selectedComplexity, conditioners, conditionerAnswers]);
 
   const currentAxes = selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? axes[selectedSection] || [] : [];
 

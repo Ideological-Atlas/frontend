@@ -35,45 +35,44 @@ export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCard
   };
 
   const renderInput = () => {
+    if (conditioner.type === TypeEnum.BOOLEAN) {
+      return (
+        <div className="flex gap-4">
+          <Button
+            variant={value === 'true' ? 'primary' : 'secondary'}
+            onClick={() => handleChange('true')}
+            className="w-24"
+          >
+            {t('yes')}
+          </Button>
+          <Button
+            variant={value === 'false' ? 'primary' : 'secondary'}
+            onClick={() => handleChange('false')}
+            className="w-24"
+          >
+            {t('no')}
+          </Button>
+        </div>
+      );
+    }
+    const hasOptions = Array.isArray(conditioner.accepted_values) && conditioner.accepted_values.length > 0;
+
+    if (hasOptions) {
+      return (
+        <div className="w-full max-w-xs">
+          <Dropdown
+            value={value || t('select_placeholder')}
+            options={conditioner.accepted_values}
+            onChange={val => handleChange(String(val))}
+            label={t('options_label')}
+            suffix=""
+            onOpenChange={setIsDropdownOpen}
+            align="end"
+          />
+        </div>
+      );
+    }
     switch (conditioner.type) {
-      case TypeEnum.CATEGORICAL: {
-        const options = Array.isArray(conditioner.accepted_values) ? conditioner.accepted_values : [];
-
-        return (
-          <div className="w-full max-w-xs">
-            <Dropdown
-              value={value || t('select_placeholder')}
-              options={options}
-              onChange={val => handleChange(String(val))}
-              label={t('options_label')}
-              suffix=""
-              onOpenChange={setIsDropdownOpen}
-              align="end"
-            />
-          </div>
-        );
-      }
-
-      case TypeEnum.BOOLEAN:
-        return (
-          <div className="flex gap-4">
-            <Button
-              variant={value === 'true' ? 'primary' : 'secondary'}
-              onClick={() => handleChange('true')}
-              className="w-24"
-            >
-              {t('yes')}
-            </Button>
-            <Button
-              variant={value === 'false' ? 'primary' : 'secondary'}
-              onClick={() => handleChange('false')}
-              className="w-24"
-            >
-              {t('no')}
-            </Button>
-          </div>
-        );
-
       case TypeEnum.NUMERIC:
       case TypeEnum.SCALE:
         return (
