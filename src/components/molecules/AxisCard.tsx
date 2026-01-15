@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
@@ -15,8 +16,11 @@ interface AxisCardProps {
 }
 
 export function AxisCard({ axis, onSave, answerData }: AxisCardProps) {
+  const t = useTranslations('Atlas');
   const getInitialMargin = (m?: number) => (m !== undefined && m !== null ? m : 10);
   const isAnswered = !!answerData;
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [state, setState] = useState({
     value: answerData?.value ?? 0,
@@ -77,8 +81,9 @@ export function AxisCard({ axis, onSave, answerData }: AxisCardProps) {
   return (
     <div
       className={clsx(
-        'relative z-0 flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
+        'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
         isAnswered ? 'border-primary bg-primary/5' : 'bg-card border-border',
+        isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
       <div className="flex items-start justify-between gap-4">
@@ -98,8 +103,15 @@ export function AxisCard({ axis, onSave, answerData }: AxisCardProps) {
           {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
 
-        <div className="relative z-20">
-          <Dropdown value={displayedMargin} options={marginOptions} onChange={handleDropdownChange} label="Margen" />
+        <div className="relative z-20 min-w-[120px]">
+          <Dropdown
+            value={displayedMargin}
+            options={marginOptions}
+            onChange={handleDropdownChange}
+            label={t('margin_label')}
+            align="end"
+            onOpenChange={setIsDropdownOpen}
+          />
         </div>
       </div>
 

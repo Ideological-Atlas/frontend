@@ -6,7 +6,8 @@
     "start_now": "Start Now",
     "learn_more": "Learn More",
     "create_profile": "Create Profile",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "current": "Current"
   },
   "Navigation": {
     "home": "Home",
@@ -111,6 +112,7 @@
     "yes": "Yes",
     "no": "No",
     "numeric_placeholder": "Numeric value",
-    "text_placeholder": "Type your answer..."
+    "text_placeholder": "Type your answer...",
+    "margin_label": "Margin"
   }
 }

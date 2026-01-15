@@ -19,6 +19,7 @@ interface ConditionerCardProps {
 export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCardProps) {
   const t = useTranslations('Atlas');
   const [value, setValue] = useState(answer || '');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isAnswered = !!answer;
 
   useEffect(() => {
@@ -46,6 +47,8 @@ export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCard
               onChange={val => handleChange(String(val))}
               label={t('options_label')}
               suffix=""
+              onOpenChange={setIsDropdownOpen}
+              align="end"
             />
           </div>
         );
@@ -101,8 +104,9 @@ export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCard
   return (
     <div
       className={clsx(
-        'relative z-0 flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
+        'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
         isAnswered ? 'border-primary bg-primary/5' : 'bg-card border-border',
+        isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
       <div className="flex flex-col gap-1">
