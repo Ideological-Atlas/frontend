@@ -1,11 +1,11 @@
 export function WavyBackground() {
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden rounded-xl bg-gradient-to-br from-[var(--strong-accent)]/5 via-transparent to-purple-500/5">
+    <div className="from-accent-strong/5 to-accent/5 absolute inset-0 z-0 overflow-hidden rounded-xl bg-gradient-to-br via-transparent">
       <svg className="absolute top-0 left-0 h-full w-full opacity-30" preserveAspectRatio="none" viewBox="0 0 1000 200">
         <defs>
           <linearGradient id="lineGradient" x1="0%" x2="100%" y1="0%" y2="0%">
             <stop offset="0%" stopColor="transparent" />
-            <stop offset="50%" stopColor="var(--strong-accent)" />
+            <stop offset="50%" stopColor="rgba(var(--strong-accent))" />
             <stop offset="100%" stopColor="transparent" />
           </linearGradient>
         </defs>

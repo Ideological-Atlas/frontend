@@ -37,7 +37,7 @@ export function Hero() {
                 className="flex flex-wrap gap-3"
               >
                 <Link href={`/${locale}/atlas`}>
-                  <Button variant="primary" className="h-12 px-6 text-base shadow-lg shadow-blue-900/20">
+                  <Button variant="primary" className="shadow-primary/20 h-12 px-6 text-base shadow-lg">
                     {tCommon('start_now')}
                   </Button>
                 </Link>
@@ -55,7 +55,7 @@ export function Hero() {
               }}
               className="bg-card group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:w-1/2"
             >
-              <div className="from-primary/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr to-purple-500/20 mix-blend-overlay"></div>
+              <div className="from-primary/20 to-accent/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr mix-blend-overlay"></div>
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.6, type: 'spring', bounce: 0.3 }}

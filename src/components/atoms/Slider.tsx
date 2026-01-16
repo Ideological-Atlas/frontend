@@ -76,7 +76,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
           </div>
           <div
-            className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full bg-[var(--strong-accent)] transition-all"
+            className="bg-accent-strong absolute top-1/2 h-2 -translate-y-1/2 rounded-full transition-all"
             style={{
               left: `${leftBoundPercent}%`,
               width: `${rightBoundPercent - leftBoundPercent}%`,
@@ -98,7 +98,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             }}
           />
           <div
-            className="pointer-events-none absolute top-1/2 z-30 -ml-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--strong-accent)] transition-transform"
+            className="bg-accent-strong pointer-events-none absolute top-1/2 z-30 -ml-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-transform"
             style={{
               left: `${centerPercent}%`,
               background: `linear-gradient(to bottom, color-mix(in srgb, var(--strong-accent), white 20%), var(--strong-accent))`,
