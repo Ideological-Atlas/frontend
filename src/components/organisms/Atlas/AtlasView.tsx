@@ -229,7 +229,7 @@ export function AtlasView() {
 
         {selectedComplexity && (
           <ProgressCard
-            label={`Progreso ${selectedComplexityObj?.name || ''}`}
+            label={t('progress_label', { name: selectedComplexityObj?.name || '' })}
             percentage={selectedProgress}
             className="mt-6"
           />

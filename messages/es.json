@@ -118,6 +118,7 @@
     "reset_label": "Restablecer respuesta",
     "conditioned_label": "CONDICIONADA",
     "depends_on_label": "Depende de",
-    "asymmetric_label": "ASIMÉTRICO"
+    "asymmetric_label": "ASIMÉTRICO",
+    "progress_label": "Progreso {name}"
   }
 }
