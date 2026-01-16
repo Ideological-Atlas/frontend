@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
+import { DependencyBadge } from '@/components/atoms/DependencyBadge';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 
@@ -117,6 +118,8 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
   };
 
   const marginOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50];
+  const isSymmetric = marginLeft === marginRight;
+  const marginDisplayValue = isSymmetric ? marginLeft : t('asymmetric_label');
 
   return (
     <div
@@ -127,6 +130,8 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
+      <DependencyBadge rules={axis.condition_rules} />
+
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
@@ -158,7 +163,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
           {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pr-4 md:pr-0">
           {isAnswered && (
             <button
               onClick={handleReset}
@@ -171,10 +176,10 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
 
           {!isIndifferent && (
             <div className="relative z-20 min-w-[120px]">
-              <Dropdown
-                value={marginLeft}
+              <Dropdown<number | string>
+                value={marginDisplayValue}
                 options={marginOptions}
-                onChange={handleDropdownChange}
+                onChange={val => handleDropdownChange(val as number)}
                 label={t('margin_label')}
                 align="end"
                 onOpenChange={setIsDropdownOpen}

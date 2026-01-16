@@ -115,6 +115,9 @@
     "text_placeholder": "Type your answer...",
     "margin_label": "Margin",
     "indifferent_label": "Mark as indifferent",
-    "reset_label": "Reset answer"
+    "reset_label": "Reset answer",
+    "conditioned_label": "CONDITIONED",
+    "depends_on_label": "Depends on",
+    "asymmetric_label": "ASYMMETRIC"
   }
 }

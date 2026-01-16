@@ -115,6 +115,9 @@
     "text_placeholder": "Escribe tu respuesta...",
     "margin_label": "Margen",
     "indifferent_label": "Marcar como indiferente",
-    "reset_label": "Restablecer respuesta"
+    "reset_label": "Restablecer respuesta",
+    "conditioned_label": "CONDICIONADA",
+    "depends_on_label": "Depende de",
+    "asymmetric_label": "ASIMÉTRICO"
   }
 }

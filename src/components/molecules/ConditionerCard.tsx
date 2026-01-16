@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
+import { DependencyBadge } from '@/components/atoms/DependencyBadge';
 import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
 
@@ -118,6 +119,8 @@ export function ConditionerCard({ conditioner, onSave, onReset, answer }: Condit
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
+      <DependencyBadge rules={conditioner.condition_rules} />
+
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
@@ -143,7 +146,7 @@ export function ConditionerCard({ conditioner, onSave, onReset, answer }: Condit
           <button
             onClick={handleReset}
             title={t('reset_label')}
-            className="text-muted-foreground hover:bg-secondary hover:text-foreground flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+            className="text-muted-foreground hover:bg-secondary hover:text-foreground mr-8 flex h-8 w-8 items-center justify-center rounded-full transition-colors md:mr-0"
           >
             <span className="material-symbols-outlined text-[20px]">restart_alt</span>
           </button>
