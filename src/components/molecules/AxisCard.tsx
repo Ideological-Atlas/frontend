@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -22,6 +22,8 @@ const getInitialMargin = (m?: number | null) => (m !== undefined && m !== null ?
 export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [value, setValue] = useState(answerData?.value ?? 0);
   const [marginLeft, setMarginLeft] = useState(getInitialMargin(answerData?.margin_left));
@@ -86,6 +88,38 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
       margin_right: safeMargin,
       is_indifferent: false,
     });
+  };
+
+  const handleThumbWheel = (delta: number) => {
+    if (isIndifferent) return;
+
+    let newMl = marginLeft + delta;
+    let newMr = marginRight + delta;
+
+    if (newMl < 0) newMl = 0;
+    if (newMr < 0) newMr = 0;
+
+    const maxMl = value + 100;
+    const maxMr = 100 - value;
+
+    if (newMl > maxMl) newMl = maxMl;
+    if (newMr > maxMr) newMr = maxMr;
+
+    setMarginLeft(newMl);
+    setMarginRight(newMr);
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      onSave(axis.uuid, {
+        value,
+        margin_left: newMl,
+        margin_right: newMr,
+        is_indifferent: false,
+      });
+    }, 500);
   };
 
   const toggleIndifferent = () => {
@@ -225,6 +259,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
           marginRight={marginRight}
           onChange={handleSliderChange}
           onCommit={handleCommit}
+          onThumbWheel={handleThumbWheel}
         />
       </div>
     </div>

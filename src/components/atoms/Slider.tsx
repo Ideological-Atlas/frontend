@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -12,18 +12,50 @@ interface SliderProps {
   marginRight: number;
   onChange: (updates: { value?: number; marginLeft?: number; marginRight?: number }) => void;
   onCommit: () => void;
+  onThumbWheel?: (delta: number) => void;
   className?: string;
 }
 
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(
-  ({ className, leftLabel, rightLabel, value, marginLeft, marginRight, onChange, onCommit }, ref) => {
-    const toPercent = (val: number) => ((val + 100) / 200) * 100;
+  ({ className, leftLabel, rightLabel, value, marginLeft, marginRight, onChange, onCommit, onThumbWheel }, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
 
+    const toPercent = (val: number) => ((val + 100) / 200) * 100;
     const centerVal = value;
+    const centerPercent = toPercent(centerVal);
+
+    useEffect(() => {
+      const container = containerRef.current;
+      if (!container || !onThumbWheel) return;
+
+      const handleWheel = (e: WheelEvent) => {
+        const rect = container.getBoundingClientRect();
+
+        const mouseX = e.clientX - rect.left;
+
+        const thumbX = (centerPercent / 100) * rect.width;
+
+        const hitRadius = 25;
+
+        if (Math.abs(mouseX - thumbX) <= hitRadius) {
+          e.preventDefault();
+
+          const step = 1;
+          const delta = e.deltaY < 0 ? step : -step;
+          onThumbWheel(delta);
+        }
+      };
+
+      container.addEventListener('wheel', handleWheel, { passive: false });
+
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }, [centerPercent, onThumbWheel]);
+
     const leftBoundVal = Math.max(-100, value - marginLeft);
     const rightBoundVal = Math.min(100, value + marginRight);
 
-    const centerPercent = toPercent(centerVal);
     const leftBoundPercent = toPercent(leftBoundVal);
     const rightBoundPercent = toPercent(rightBoundVal);
 
@@ -36,7 +68,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
 
     return (
       <div className={twMerge('flex w-full flex-col gap-5 pt-2 select-none', className)}>
-        <div className="relative flex h-10 items-center">
+        <div ref={containerRef} className="relative flex h-10 items-center">
           <div className="bg-secondary/60 absolute right-0 left-0 h-2 rounded-full" />
           <div className="absolute top-1/2 right-0 left-0 flex -translate-y-1/2 justify-between px-0.5">
             <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
