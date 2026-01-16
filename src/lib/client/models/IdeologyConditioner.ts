@@ -22,6 +22,7 @@ export type IdeologyConditioner = {
    * * `scale` - Scale (Numeric Range)
    * * `numeric` - Numeric Value
    * * `text` - Free Text
+   * * `axis_range` - Derived from Axis Range
    */
   type?: TypeEnum;
   /**
@@ -29,4 +30,13 @@ export type IdeologyConditioner = {
    */
   accepted_values?: any;
   readonly condition_rules: Array<IdeologyConditionerConditioner>;
+  readonly source_axis_uuid: string | null;
+  /**
+   * Condition is met if user value >= this.
+   */
+  axis_min_value?: number | null;
+  /**
+   * Condition is met if user value <= this.
+   */
+  axis_max_value?: number | null;
 };

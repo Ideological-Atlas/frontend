@@ -113,6 +113,8 @@
     "no": "No",
     "numeric_placeholder": "Numeric value",
     "text_placeholder": "Type your answer...",
-    "margin_label": "Margin"
+    "margin_label": "Margin",
+    "indifferent_label": "Mark as indifferent",
+    "reset_label": "Reset answer"
   }
 }

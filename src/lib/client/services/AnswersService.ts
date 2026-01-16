@@ -152,4 +152,20 @@ export class AnswersService {
       mediaType: 'application/json',
     });
   }
+  /**
+   * Delete conditioner answer
+   * Deletes the user's answer for the specific conditioner defined by UUID in URL.
+   * @param uuid UUID of the Conditioner whose answer you want to delete
+   * @returns void
+   * @throws ApiError
+   */
+  public static answersConditionerDeleteDestroy(uuid: string): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: '/api/answers/conditioner/{uuid}/delete/',
+      path: {
+        uuid: uuid,
+      },
+    });
+  }
 }

@@ -33,7 +33,7 @@ export class StructureService {
   }
   /**
    * List all relevant conditioners by complexity
-   * Returns ALL conditioners relevant for a complexity level. This includes conditioners attached to sections AND conditioners attached to axes within those sections.
+   * Returns ALL conditioners relevant for a complexity level. This includes conditioners attached to sections, axes, AND recursive dependencies (conditioners required by other conditioners).
    * @param complexityUuid UUID of the Abstraction Complexity
    * @param limit Number of results to return per page.
    * @param offset The initial index from which to return the results.

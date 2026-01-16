@@ -8,6 +8,7 @@
  * * `scale` - Scale (Numeric Range)
  * * `numeric` - Numeric Value
  * * `text` - Free Text
+ * * `axis_range` - Derived from Axis Range
  */
 export enum TypeEnum {
   BOOLEAN = 'boolean',
@@ -15,4 +16,5 @@ export enum TypeEnum {
   SCALE = 'scale',
   NUMERIC = 'numeric',
   TEXT = 'text',
+  AXIS_RANGE = 'axis_range',
 }

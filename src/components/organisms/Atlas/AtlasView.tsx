@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
@@ -13,10 +13,15 @@ import { ConditionerList } from './ConditionerList';
 import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProgressCard } from '@/components/molecules/ProgressCard';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
+import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySectionConditioner';
+import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
+import type { IdeologyConditionerConditioner } from '@/lib/client/models/IdeologyConditionerConditioner';
 
 const CONTEXT_SECTION_UUID = 'context';
 
-const normalizeUuid = (uuid: string) => uuid.replace(/-/g, '');
+const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
+
+type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | IdeologyConditionerConditioner;
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
@@ -33,6 +38,7 @@ export function AtlasView() {
     isInitialized,
     fetchAllData,
     saveAnswer,
+    deleteAnswer,
     saveConditionerAnswer,
   } = useAtlasStore();
 
@@ -50,28 +56,34 @@ export function AtlasView() {
     }
   }, [complexities, selectedComplexity]);
 
-  const displaySections: IdeologySection[] = useMemo(() => {
-    const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
-    const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+  const checkVisibility = useCallback(
+    (rules: ConditionRule[]) => {
+      if (!rules || rules.length === 0) return true;
 
-    const filteredSections = rawSections.filter(section => {
-      if (!section.condition_rules || section.condition_rules.length === 0) {
-        return true;
-      }
+      return rules.every(rule => {
+        // @ts-expect-error - Different API models share structure but TS needs strict union discrimination which is complex here
+        const rawSourceUuid = rule.source_conditioner_uuid || rule.conditioner?.uuid;
+        const sourceUuid = normalizeUuid(rawSourceUuid);
 
-      return section.condition_rules.every(rule => {
-        const sourceUuid = normalizeUuid(rule.conditioner.uuid);
         const userAnswer = conditionerAnswers[sourceUuid];
 
         if (!userAnswer) return false;
 
-        if (Array.isArray(rule.condition_values)) {
-          return rule.condition_values.includes(userAnswer);
+        const accepted = rule.condition_values;
+        if (Array.isArray(accepted)) {
+          return accepted.includes(userAnswer);
         }
-
-        return rule.condition_values === userAnswer;
+        return accepted === userAnswer;
       });
-    });
+    },
+    [conditionerAnswers],
+  );
+
+  const displaySections: IdeologySection[] = useMemo(() => {
+    const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
+    const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+
+    const filteredSections = rawSections.filter(section => checkVisibility(section.condition_rules));
 
     if (rawConditioners.length > 0) {
       const contextSection: IdeologySection = {
@@ -85,12 +97,11 @@ export function AtlasView() {
     }
 
     return filteredSections;
-  }, [selectedComplexity, sections, conditioners, conditionerAnswers, t]);
+  }, [selectedComplexity, sections, conditioners, checkVisibility, t]);
 
   useEffect(() => {
     if (displaySections.length > 0) {
       const isSelectedVisible = displaySections.some(s => s.uuid === selectedSection);
-
       if (!selectedSection || !isSelectedVisible) {
         setSelectedSection(displaySections[0].uuid);
       }
@@ -112,12 +123,17 @@ export function AtlasView() {
     saveAnswer(axisUuid, data, isAuthenticated);
   };
 
+  const handleDeleteAnswer = (axisUuid: string) => {
+    deleteAnswer(axisUuid, isAuthenticated);
+  };
+
   const handleSaveConditioner = (condUuid: string, value: string) => {
     saveConditionerAnswer(condUuid, value, isAuthenticated);
   };
 
   const progressMap = useMemo(() => {
     const map: Record<string, number> = {};
+
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       const compConditioners = conditioners[c.uuid] || [];
@@ -125,51 +141,47 @@ export function AtlasView() {
       let totalItems = 0;
       let answeredItems = 0;
 
-      compSections.forEach(s => {
-        const secAxes = axes[s.uuid] || [];
-        totalItems += secAxes.length;
-        secAxes.forEach(a => {
-          if (answers[a.uuid]) {
+      compConditioners.forEach(cond => {
+        if (checkVisibility(cond.condition_rules)) {
+          totalItems++;
+          if (conditionerAnswers[cond.uuid]) {
             answeredItems++;
           }
-        });
+        }
       });
 
-      totalItems += compConditioners.length;
-      compConditioners.forEach(c => {
-        if (conditionerAnswers[c.uuid]) {
-          answeredItems++;
+      compSections.forEach(sec => {
+        if (checkVisibility(sec.condition_rules)) {
+          const secAxes = axes[sec.uuid] || [];
+          secAxes.forEach(axis => {
+            if (checkVisibility(axis.condition_rules)) {
+              totalItems++;
+              if (answers[axis.uuid]) {
+                answeredItems++;
+              }
+            }
+          });
         }
       });
 
       map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
     return map;
-  }, [complexities, sections, axes, answers, conditioners, conditionerAnswers]);
+  }, [complexities, sections, axes, answers, conditioners, conditionerAnswers, checkVisibility]);
 
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+    return raw.filter(cond => checkVisibility(cond.condition_rules));
+  }, [selectedComplexity, conditioners, checkVisibility]);
 
-    return raw.filter(cond => {
-      if (!cond.condition_rules || cond.condition_rules.length === 0) return true;
-      return cond.condition_rules.every(rule => {
-        const normalizedSourceUuid = normalizeUuid(rule.source_conditioner_uuid);
-        const sourceAnswer = conditionerAnswers[normalizedSourceUuid];
-        if (!sourceAnswer) return false;
-        const accepted = rule.condition_values;
-        if (Array.isArray(accepted)) {
-          return accepted.includes(sourceAnswer);
-        }
-        return accepted === sourceAnswer;
-      });
-    });
-  }, [selectedComplexity, conditioners, conditionerAnswers]);
-
-  const currentAxes = selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? axes[selectedSection] || [] : [];
+  const currentAxes = useMemo(() => {
+    if (!selectedSection || selectedSection === CONTEXT_SECTION_UUID) return [];
+    const rawAxes = axes[selectedSection] || [];
+    return rawAxes.filter(axis => checkVisibility(axis.condition_rules));
+  }, [selectedSection, axes, checkVisibility]);
 
   const isLoadingData = !isInitialized && complexities.length === 0;
   const isLoadingSections = selectedComplexity ? !sections[selectedComplexity] : true;
-
   const isLoadingAxes = selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? !axes[selectedSection] : false;
 
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
@@ -241,8 +253,8 @@ export function AtlasView() {
             <AxisList
               axes={currentAxes}
               answers={answers}
-              sectionId={selectedSection}
               onSaveAnswer={handleSaveAnswer}
+              onDeleteAnswer={handleDeleteAnswer}
               isLoading={isLoadingAxes}
               isLevelLoading={false}
             />

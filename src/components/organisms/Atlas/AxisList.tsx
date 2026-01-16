@@ -10,26 +10,12 @@ import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 interface AxisListProps {
   axes: IdeologyAxis[];
   answers: Record<string, AnswerData>;
-  sectionId: string | null;
+  sectionId?: string | null;
   onSaveAnswer: (uuid: string, data: AnswerUpdatePayload) => void;
+  onDeleteAnswer: (uuid: string) => void;
   isLoading: boolean;
   isLevelLoading: boolean;
 }
-
-const listContainerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 0.2 },
-  },
-};
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -42,9 +28,14 @@ const itemVariants: Variants = {
       damping: 24,
     },
   },
+  exit: {
+    opacity: 0,
+    scale: 0.98,
+    transition: { duration: 0.2 },
+  },
 };
 
-export function AxisList({ axes, answers, sectionId, onSaveAnswer, isLoading, isLevelLoading }: AxisListProps) {
+export function AxisList({ axes, answers, onSaveAnswer, onDeleteAnswer, isLoading, isLevelLoading }: AxisListProps) {
   const t = useTranslations('Atlas');
 
   if (isLoading) {
@@ -66,23 +57,14 @@ export function AxisList({ axes, answers, sectionId, onSaveAnswer, isLoading, is
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={sectionId}
-          variants={listContainerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          className="grid gap-6"
-        >
-          {axes.map(axis => (
-            <motion.div key={axis.uuid} variants={itemVariants}>
-              <AxisCard axis={axis} onSave={onSaveAnswer} answerData={answers[axis.uuid]} />
-            </motion.div>
-          ))}
-        </motion.div>
+    <motion.div layout className="flex flex-col gap-6">
+      <AnimatePresence mode="popLayout" initial={false}>
+        {axes.map(axis => (
+          <motion.div key={axis.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+            <AxisCard axis={axis} onSave={onSaveAnswer} onDelete={onDeleteAnswer} answerData={answers[axis.uuid]} />
+          </motion.div>
+        ))}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

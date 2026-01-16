@@ -113,6 +113,8 @@
     "no": "No",
     "numeric_placeholder": "Valor numérico",
     "text_placeholder": "Escribe tu respuesta...",
-    "margin_label": "Margen"
+    "margin_label": "Margen",
+    "indifferent_label": "Marcar como indiferente",
+    "reset_label": "Restablecer respuesta"
   }
 }

@@ -9,15 +9,17 @@ import type { AxisAnswerUpsertRequest } from '@/lib/client/models/AxisAnswerUpse
 import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
 
 export interface AnswerData {
-  value: number;
-  margin_left?: number;
-  margin_right?: number;
+  value: number | null;
+  margin_left?: number | null;
+  margin_right?: number | null;
+  is_indifferent?: boolean;
 }
 
 export interface AnswerUpdatePayload {
-  value?: number;
-  margin_left?: number;
-  margin_right?: number;
+  value?: number | null;
+  margin_left?: number | null;
+  margin_right?: number | null;
+  is_indifferent?: boolean;
 }
 
 interface AtlasState {
@@ -33,6 +35,7 @@ interface AtlasState {
 
   fetchAllData: (isAuthenticated: boolean) => Promise<void>;
   saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
+  deleteAnswer: (axisUuid: string, isAuthenticated: boolean) => Promise<void>;
   saveConditionerAnswer: (conditionerUuid: string, value: string, isAuthenticated: boolean) => Promise<void>;
   reset: () => void;
 }
@@ -96,9 +99,10 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
                 if (isAuthenticated) {
                   answersRes.results.forEach(ans => {
                     newAnswers[ans.axis_uuid] = {
-                      value: ans.value ?? 0,
-                      margin_left: ans.margin_left ?? 10,
-                      margin_right: ans.margin_right ?? 10,
+                      value: ans.value ?? null,
+                      margin_left: ans.margin_left,
+                      margin_right: ans.margin_right,
+                      is_indifferent: ans.is_indifferent,
                     };
                   });
                 }
@@ -121,12 +125,43 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
   },
 
   saveAnswer: async (axisUuid, payload, isAuthenticated) => {
+    if (payload.is_indifferent) {
+      const indifferentData: AnswerData = {
+        value: null,
+        margin_left: null,
+        margin_right: null,
+        is_indifferent: true,
+      };
+
+      set(state => ({
+        answers: { ...state.answers, [axisUuid]: indifferentData },
+      }));
+
+      if (isAuthenticated) {
+        try {
+          await AnswersService.answersAxisCreate(axisUuid, {
+            value: null,
+            margin_left: null,
+            margin_right: null,
+            is_indifferent: true,
+          });
+        } catch (error) {
+          console.error('Failed to save indifferent answer remotely:', error);
+        }
+      }
+      return;
+    }
+
     const current = get().answers[axisUuid] || { value: 0, margin_left: 10, margin_right: 10 };
+    const baseValue = current.value ?? 0;
+    const baseMarginLeft = current.margin_left ?? 10;
+    const baseMarginRight = current.margin_right ?? 10;
 
     const newData: AnswerData = {
-      value: payload.value ?? current.value,
-      margin_left: payload.margin_left ?? current.margin_left ?? 10,
-      margin_right: payload.margin_right ?? current.margin_right ?? 10,
+      value: payload.value ?? baseValue,
+      margin_left: payload.margin_left ?? baseMarginLeft,
+      margin_right: payload.margin_right ?? baseMarginRight,
+      is_indifferent: false,
     };
 
     set(state => ({
@@ -139,9 +174,26 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
           value: newData.value,
           margin_left: newData.margin_left,
           margin_right: newData.margin_right,
+          is_indifferent: false,
         } as unknown as AxisAnswerUpsertRequest);
       } catch (error) {
         console.error('Failed to save answer remotely:', error);
+      }
+    }
+  },
+
+  deleteAnswer: async (axisUuid, isAuthenticated) => {
+    set(state => {
+      const newAnswers = { ...state.answers };
+      delete newAnswers[axisUuid];
+      return { answers: newAnswers };
+    });
+
+    if (isAuthenticated) {
+      try {
+        await AnswersService.answersAxisDeleteDestroy(axisUuid);
+      } catch (error) {
+        console.error('Failed to delete answer remotely:', error);
       }
     }
   },
