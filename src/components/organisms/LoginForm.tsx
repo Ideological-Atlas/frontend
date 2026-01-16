@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +13,6 @@ import { Divider } from '@/components/molecules/Divider';
 import { GoogleButton } from '@/components/molecules/GoogleButton';
 import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
 import { useLogin } from '@/hooks/auth/useLogin';
-import { useState } from 'react';
 
 export function LoginForm() {
   const t = useTranslations('Auth');
@@ -53,20 +53,15 @@ export function LoginForm() {
       <form onSubmit={onSubmit} className="space-y-5">
         <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="username">{t('username_label')}</Label>
-          <div className="relative">
-            <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">person</span>
-            </div>
-            <Input
-              id="username"
-              type="text"
-              placeholder={t('username_placeholder')}
-              className="pl-10"
-              disabled={isLoading}
-              error={!!errors.username}
-              {...register('username')}
-            />
-          </div>
+          <Input
+            id="username"
+            type="text"
+            placeholder={t('username_placeholder')}
+            disabled={isLoading}
+            error={!!errors.username}
+            startIcon={<span className="material-symbols-outlined text-[20px]">person</span>}
+            {...register('username')}
+          />
           {errors.username?.message && <p className="text-destructive text-xs">{t(errors.username.message)}</p>}
         </motion.div>
 
@@ -77,41 +72,32 @@ export function LoginForm() {
               {t('forgot_password')}
             </Link>
           </div>
-          <div className="relative">
-            <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">lock</span>
-            </div>
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('password_placeholder')}
-              className="pr-10 pl-10"
-              disabled={isLoading}
-              error={!!errors.password}
-              {...register('password')}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              disabled={isLoading}
-              className="text-muted-foreground hover:text-foreground absolute inset-y-0 right-0 flex w-10 items-center justify-center focus:outline-none"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {showPassword ? 'visibility_off' : 'visibility'}
-              </span>
-            </button>
-          </div>
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder={t('password_placeholder')}
+            disabled={isLoading}
+            error={!!errors.password}
+            startIcon={<span className="material-symbols-outlined text-[20px]">lock</span>}
+            endIcon={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+                className="text-muted-foreground hover:text-foreground flex items-center justify-center focus:outline-none"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {showPassword ? 'visibility_off' : 'visibility'}
+                </span>
+              </button>
+            }
+            {...register('password')}
+          />
           {errors.password?.message && <p className="text-destructive text-xs">{t(errors.password.message)}</p>}
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Button
-            type="submit"
-            className="w-full text-base"
-            variant="primary"
-            isLoading={isLoading}
-            loadingText={t('logging_in')}
-          >
+          <Button type="submit" className="w-full" size="lg" isLoading={isLoading} loadingText={t('logging_in')}>
             <div className="flex items-center justify-center gap-2">
               <span>{t('login_button')}</span>
               <span className="material-symbols-outlined text-[20px]">arrow_forward</span>

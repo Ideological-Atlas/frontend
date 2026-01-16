@@ -1,26 +1,38 @@
 'use client';
 
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import * as React from 'react';
+import { tv, type VariantProps } from 'tailwind-variants';
 import { motion, AnimatePresence, type HTMLMotionProps } from 'framer-motion';
-import { useState, type MouseEvent } from 'react';
 import { useTranslations } from 'next-intl';
 
-interface ButtonProps extends HTMLMotionProps<'button'> {
-  variant?: 'primary' | 'secondary' | 'outline';
+const button = tv({
+  base: 'relative inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none overflow-hidden tracking-[0.015em] active:scale-95',
+  variants: {
+    variant: {
+      primary: 'bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm',
+      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary-hover',
+      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+      ghost: 'hover:bg-accent hover:text-accent-foreground',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+    },
+    size: {
+      default: 'h-10 px-4 py-2 min-w-[84px]',
+      sm: 'h-9 rounded-md px-3',
+      lg: 'h-12 rounded-lg px-8 text-base',
+      icon: 'h-10 w-10 min-w-0',
+    },
+  },
+  defaultVariants: {
+    variant: 'primary',
+    size: 'default',
+  },
+});
+
+export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>, VariantProps<typeof button> {
+  children: React.ReactNode;
   isLoading?: boolean;
   loadingText?: string;
-}
-
-interface Ripple {
-  x: number;
-  y: number;
-  size: number;
-  id: number;
-}
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  asChild?: boolean;
 }
 
 function Spinner() {
@@ -36,108 +48,75 @@ function Spinner() {
   );
 }
 
-export function Button({
-  className,
-  variant = 'primary',
-  children,
-  onClick,
-  isLoading = false,
-  loadingText,
-  disabled,
-  ...props
-}: ButtonProps) {
-  const t = useTranslations('Common');
-  const [ripples, setRipples] = useState<Ripple[]>([]);
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, children, isLoading = false, loadingText, onClick, ...props }, ref) => {
+    const t = useTranslations('Common');
+    const [ripples, setRipples] = React.useState<{ x: number; y: number; size: number; id: number }[]>([]);
 
-  const effectiveLoadingText = loadingText || t('processing');
+    const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (isLoading || props.disabled) return;
+      const btn = event.currentTarget;
+      const rect = btn.getBoundingClientRect();
+      const s = Math.max(btn.clientWidth, btn.clientHeight);
+      setRipples(prev => [
+        ...prev,
+        { x: event.clientX - rect.left - s / 2, y: event.clientY - rect.top - s / 2, size: s, id: Date.now() },
+      ]);
+      onClick?.(event);
+    };
 
-  const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
-    if (isLoading || disabled) return;
+    return (
+      <motion.button
+        ref={ref}
+        className={button({ variant, size, className })}
+        onClick={createRipple}
+        disabled={props.disabled || isLoading}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+        {...props}
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          {isLoading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center justify-center gap-2"
+            >
+              <Spinner />
+              <span>{loadingText || t('processing')}</span>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="relative z-10 flex items-center justify-center gap-2"
+            >
+              {children}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {ripples.map(r => (
+            <motion.span
+              key={r.id}
+              initial={{ transform: 'scale(0)', opacity: 0.35 }}
+              animate={{ transform: 'scale(2)', opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              onAnimationComplete={() => setRipples(prev => prev.filter(rip => rip.id !== r.id))}
+              className="pointer-events-none absolute rounded-full bg-current"
+              style={{ left: r.x, top: r.y, width: r.size, height: r.size }}
+            />
+          ))}
+        </AnimatePresence>
+      </motion.button>
+    );
+  },
+);
+Button.displayName = 'Button';
 
-    const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(button.clientWidth, button.clientHeight);
-
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-
-    const newRipple = { x, y, size, id: Date.now() };
-
-    setRipples(prev => [...prev, newRipple]);
-
-    if (onClick) {
-      onClick(event);
-    }
-  };
-
-  const removeRipple = (id: number) => {
-    setRipples(prev => prev.filter(ripple => ripple.id !== id));
-  };
-
-  const baseStyles =
-    'relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 transition-colors text-sm font-bold leading-normal tracking-[0.015em] min-w-[84px] select-none';
-
-  const variants = {
-    primary: 'bg-primary hover:bg-primary-hover text-primary-foreground shadow-sm',
-    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary-hover',
-    outline: 'bg-accent hover:bg-accent-hover h-12 px-6 text-base',
-  };
-
-  return (
-    <motion.button
-      className={cn(baseStyles, variants[variant], className)}
-      onClick={createRipple}
-      disabled={disabled || isLoading}
-      layout
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-      {...props}
-    >
-      <AnimatePresence mode="popLayout" initial={false}>
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0, y: -25 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 25 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className="flex items-center justify-center gap-2"
-          >
-            <Spinner />
-            <span>{effectiveLoadingText}</span>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0, y: -25 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 25 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className="pointer-events-none relative z-10 flex items-center justify-center gap-2 truncate"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {ripples.map(ripple => (
-          <motion.span
-            key={ripple.id}
-            initial={{ transform: 'scale(0)', opacity: 0.35 }}
-            animate={{ transform: 'scale(2)', opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            onAnimationComplete={() => removeRipple(ripple.id)}
-            className="pointer-events-none absolute rounded-full bg-current"
-            style={{
-              left: ripple.x,
-              top: ripple.y,
-              width: ripple.size,
-              height: ripple.size,
-            }}
-          />
-        ))}
-      </AnimatePresence>
-    </motion.button>
-  );
-}
+export { Button, button };
