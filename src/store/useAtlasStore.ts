@@ -7,6 +7,9 @@ import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AxisAnswerUpsertRequest } from '@/lib/client/models/AxisAnswerUpsertRequest';
 import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
+import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySectionConditioner';
+import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
+import type { IdeologyConditionerConditioner } from '@/lib/client/models/IdeologyConditionerConditioner';
 
 export interface AnswerData {
   value: number | null;
@@ -37,8 +40,40 @@ interface AtlasState {
   saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
   deleteAnswer: (axisUuid: string, isAuthenticated: boolean) => Promise<void>;
   saveConditionerAnswer: (conditionerUuid: string, value: string, isAuthenticated: boolean) => Promise<void>;
+  deleteConditionerAnswer: (conditionerUuid: string, isAuthenticated: boolean) => Promise<void>;
   reset: () => void;
 }
+
+type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | IdeologyConditionerConditioner;
+
+const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
+
+const checkVisibility = (rules: ConditionRule[], currentAnswers: Record<string, string>): boolean => {
+  if (!rules || rules.length === 0) return true;
+
+  return rules.every(rule => {
+    let rawSourceUuid: string | undefined;
+
+    if ('source_conditioner_uuid' in rule) {
+      rawSourceUuid = rule.source_conditioner_uuid;
+    } else if ('conditioner' in rule) {
+      rawSourceUuid = rule.conditioner.uuid;
+    }
+
+    if (!rawSourceUuid) return true;
+
+    const sourceUuid = normalizeUuid(rawSourceUuid);
+    const userAnswer = currentAnswers[sourceUuid];
+
+    if (!userAnswer) return false;
+
+    const accepted = rule.condition_values;
+    if (Array.isArray(accepted)) {
+      return accepted.includes(userAnswer);
+    }
+    return accepted === userAnswer;
+  });
+};
 
 export const useAtlasStore = create<AtlasState>((set, get) => ({
   complexities: [],
@@ -210,6 +245,75 @@ export const useAtlasStore = create<AtlasState>((set, get) => ({
         } as ConditionerAnswerUpsertRequest);
       } catch (error) {
         console.error('Failed to save conditioner answer remotely:', error);
+      }
+    }
+  },
+
+  deleteConditionerAnswer: async (conditionerUuid, isAuthenticated) => {
+    const state = get();
+
+    const currentCondAnswers = { ...state.conditionerAnswers };
+    const currentAxisAnswers = { ...state.answers };
+
+    delete currentCondAnswers[conditionerUuid];
+
+    const condsToRemoveRemote: string[] = [];
+    const axesToRemoveRemote: string[] = [];
+
+    let changed = true;
+
+    const allConditioners = Object.values(state.conditioners).flat();
+    const allSections = Object.values(state.sections).flat();
+
+    while (changed) {
+      changed = false;
+
+      for (const cond of allConditioners) {
+        if (currentCondAnswers[cond.uuid]) {
+          if (!checkVisibility(cond.condition_rules, currentCondAnswers)) {
+            delete currentCondAnswers[cond.uuid];
+            condsToRemoveRemote.push(cond.uuid);
+            changed = true;
+          }
+        }
+      }
+
+      for (const sec of allSections) {
+        const isSectionVisible = checkVisibility(sec.condition_rules, currentCondAnswers);
+        const sectionAxes = state.axes[sec.uuid] || [];
+
+        for (const axis of sectionAxes) {
+          if (currentAxisAnswers[axis.uuid]) {
+            const isAxisVisible = isSectionVisible && checkVisibility(axis.condition_rules, currentCondAnswers);
+
+            if (!isAxisVisible) {
+              delete currentAxisAnswers[axis.uuid];
+              axesToRemoveRemote.push(axis.uuid);
+              changed = true;
+            }
+          }
+        }
+      }
+    }
+
+    set({
+      conditionerAnswers: currentCondAnswers,
+      answers: currentAxisAnswers,
+    });
+
+    if (isAuthenticated) {
+      try {
+        await AnswersService.answersConditionerDeleteDestroy(conditionerUuid);
+
+        for (const uuid of condsToRemoveRemote) {
+          await AnswersService.answersConditionerDeleteDestroy(uuid);
+        }
+
+        for (const uuid of axesToRemoveRemote) {
+          await AnswersService.answersAxisDeleteDestroy(uuid);
+        }
+      } catch (error) {
+        console.error('Failed to cascade delete answers remotely:', error);
       }
     }
   },

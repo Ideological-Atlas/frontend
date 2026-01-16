@@ -13,10 +13,11 @@ import { TypeEnum } from '@/lib/client/models/TypeEnum';
 interface ConditionerCardProps {
   conditioner: IdeologyConditioner;
   onSave: (uuid: string, value: string) => void;
+  onReset?: (uuid: string) => void;
   answer?: string;
 }
 
-export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCardProps) {
+export function ConditionerCard({ conditioner, onSave, onReset, answer }: ConditionerCardProps) {
   const t = useTranslations('Atlas');
   const [value, setValue] = useState(answer || '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,12 +27,21 @@ export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCard
     if (answer !== undefined) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setValue(answer);
+    } else {
+      setValue('');
     }
   }, [answer]);
 
   const handleChange = (newValue: string) => {
     setValue(newValue);
     onSave(conditioner.uuid, newValue);
+  };
+
+  const handleReset = () => {
+    setValue('');
+    if (onReset) {
+      onReset(conditioner.uuid);
+    }
   };
 
   const renderInput = () => {
@@ -108,23 +118,35 @@ export function ConditionerCard({ conditioner, onSave, answer }: ConditionerCard
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <h4 className={clsx('text-lg font-bold', isAnswered ? 'text-primary' : 'text-foreground')}>
-            {conditioner.name}
-          </h4>
-          {isAnswered && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="flex items-center justify-center rounded-full bg-green-500/20 p-0.5"
-            >
-              <span className="material-symbols-outlined text-[18px] font-bold text-green-600">check</span>
-            </motion.div>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <h4 className={clsx('text-lg font-bold', isAnswered ? 'text-primary' : 'text-foreground')}>
+              {conditioner.name}
+            </h4>
+            {isAnswered && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="flex items-center justify-center rounded-full bg-green-500/20 p-0.5"
+              >
+                <span className="material-symbols-outlined text-[18px] font-bold text-green-600">check</span>
+              </motion.div>
+            )}
+          </div>
+          {conditioner.description && (
+            <p className="text-muted-foreground text-sm leading-relaxed">{conditioner.description}</p>
           )}
         </div>
-        {conditioner.description && (
-          <p className="text-muted-foreground text-sm leading-relaxed">{conditioner.description}</p>
+
+        {isAnswered && (
+          <button
+            onClick={handleReset}
+            title={t('reset_label')}
+            className="text-muted-foreground hover:bg-secondary hover:text-foreground flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">restart_alt</span>
+          </button>
         )}
       </div>
 

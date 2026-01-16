@@ -10,6 +10,7 @@ interface ConditionerListProps {
   conditioners: IdeologyConditioner[];
   answers: Record<string, string>;
   onSaveAnswer: (uuid: string, value: string) => void;
+  onResetAnswer: (uuid: string) => void;
   isLoading: boolean;
 }
 
@@ -27,7 +28,13 @@ const itemVariants: Variants = {
   },
 };
 
-export function ConditionerList({ conditioners, answers, onSaveAnswer, isLoading }: ConditionerListProps) {
+export function ConditionerList({
+  conditioners,
+  answers,
+  onSaveAnswer,
+  onResetAnswer,
+  isLoading,
+}: ConditionerListProps) {
   const t = useTranslations('Atlas');
 
   if (isLoading) {
@@ -53,7 +60,12 @@ export function ConditionerList({ conditioners, answers, onSaveAnswer, isLoading
       <AnimatePresence mode="popLayout" initial={false}>
         {conditioners.map(cond => (
           <motion.div key={cond.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
-            <ConditionerCard conditioner={cond} onSave={onSaveAnswer} answer={answers[cond.uuid]} />
+            <ConditionerCard
+              conditioner={cond}
+              onSave={onSaveAnswer}
+              onReset={onResetAnswer}
+              answer={answers[cond.uuid]}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

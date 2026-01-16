@@ -40,6 +40,7 @@ export function AtlasView() {
     saveAnswer,
     deleteAnswer,
     saveConditionerAnswer,
+    deleteConditionerAnswer,
   } = useAtlasStore();
 
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
@@ -129,6 +130,10 @@ export function AtlasView() {
 
   const handleSaveConditioner = (condUuid: string, value: string) => {
     saveConditionerAnswer(condUuid, value, isAuthenticated);
+  };
+
+  const handleDeleteConditioner = (condUuid: string) => {
+    deleteConditionerAnswer(condUuid, isAuthenticated);
   };
 
   const progressMap = useMemo(() => {
@@ -247,6 +252,7 @@ export function AtlasView() {
               conditioners={currentConditioners}
               answers={conditionerAnswers}
               onSaveAnswer={handleSaveConditioner}
+              onResetAnswer={handleDeleteConditioner}
               isLoading={false}
             />
           ) : (
