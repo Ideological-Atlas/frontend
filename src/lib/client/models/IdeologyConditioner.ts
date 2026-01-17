@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { IdeologyConditionerConditioner } from './IdeologyConditionerConditioner';
 import type { TypeEnum } from './TypeEnum';
 export type IdeologyConditioner = {
   readonly uuid: string;
@@ -21,10 +22,21 @@ export type IdeologyConditioner = {
    * * `scale` - Scale (Numeric Range)
    * * `numeric` - Numeric Value
    * * `text` - Free Text
+   * * `axis_range` - Derived from Axis Range
    */
   type?: TypeEnum;
   /**
    * List of valid options if the type is 'Categorical'. Format: ['Option A', 'Option B'].
    */
   accepted_values?: any;
+  readonly condition_rules: Array<IdeologyConditionerConditioner>;
+  readonly source_axis_uuid: string | null;
+  /**
+   * Condition is met if user value >= this.
+   */
+  axis_min_value?: number | null;
+  /**
+   * Condition is met if user value <= this.
+   */
+  axis_max_value?: number | null;
 };

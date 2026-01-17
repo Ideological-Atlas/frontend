@@ -49,50 +49,42 @@ export function RegisterForm() {
       <form onSubmit={onSubmit} className="space-y-5">
         <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="email">{t('email_label')}</Label>
-          <div className="relative">
-            <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">mail</span>
-            </div>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t('email_placeholder')}
-              className="pl-10"
-              disabled={isLoading}
-              error={!!errors.email}
-              {...register('email')}
-            />
-          </div>
+          <Input
+            id="email"
+            type="email"
+            placeholder={t('email_placeholder')}
+            disabled={isLoading}
+            error={!!errors.email}
+            startIcon={<span className="material-symbols-outlined text-[20px]">mail</span>}
+            {...register('email')}
+          />
           {errors.email?.message && <p className="text-destructive text-xs">{t(errors.email.message)}</p>}
         </motion.div>
 
         <motion.div variants={itemVariants} className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="password">{t('password_label')}</Label>
-            <div className="relative">
-              <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">lock</span>
-              </div>
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="********"
-                className="pr-10 pl-10"
-                disabled={isLoading}
-                error={!!errors.password}
-                {...register('password')}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-                className="text-muted-foreground hover:text-foreground absolute inset-y-0 right-0 flex w-10 items-center justify-center focus:outline-none"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {showPassword ? 'visibility_off' : 'visibility'}
-                </span>
-              </button>
-            </div>
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="********"
+              disabled={isLoading}
+              error={!!errors.password}
+              startIcon={<span className="material-symbols-outlined text-[20px]">lock</span>}
+              endIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                  className="text-muted-foreground hover:text-foreground flex items-center justify-center focus:outline-none"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
+              }
+              {...register('password')}
+            />
             {errors.password?.message && <p className="text-destructive text-xs">{t(errors.password.message)}</p>}
           </div>
           <div className="space-y-2">
@@ -118,13 +110,7 @@ export function RegisterForm() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Button
-            type="submit"
-            className="bg-primary text-primary-foreground hover:bg-primary-hover w-full text-base"
-            variant="primary"
-            isLoading={isLoading}
-            loadingText={t('registering')}
-          >
+          <Button type="submit" className="w-full" size="lg" isLoading={isLoading} loadingText={t('registering')}>
             {t('register_button')}
           </Button>
         </motion.div>

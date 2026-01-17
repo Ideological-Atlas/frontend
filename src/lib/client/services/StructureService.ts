@@ -32,22 +32,22 @@ export class StructureService {
     });
   }
   /**
-   * List conditioners by complexity
-   * Returns all ideology conditioners associated with a specific abstraction complexity UUID.
+   * List all relevant conditioners by complexity
+   * Returns ALL conditioners relevant for a complexity level. This includes conditioners attached to sections, axes, AND recursive dependencies (conditioners required by other conditioners).
    * @param complexityUuid UUID of the Abstraction Complexity
    * @param limit Number of results to return per page.
    * @param offset The initial index from which to return the results.
    * @returns PaginatedIdeologyConditionerList
    * @throws ApiError
    */
-  public static structureConditionersList(
+  public static structureConditionersAggregatedList(
     complexityUuid: string,
     limit?: number,
     offset?: number,
   ): CancelablePromise<PaginatedIdeologyConditionerList> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/structure/conditioners/{complexity_uuid}/',
+      url: '/api/structure/conditioners/{complexity_uuid}/aggregated/',
       path: {
         complexity_uuid: complexityUuid,
       },

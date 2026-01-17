@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { clsx } from 'clsx';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAtlasStore } from '@/store/useAtlasStore';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -16,6 +17,7 @@ export function Header() {
   const router = useRouter();
 
   const { isAuthenticated, logout } = useAuthStore();
+  const resetAtlas = useAtlasStore(state => state.reset);
 
   const [mounted, setMounted] = useState(false);
 
@@ -26,6 +28,7 @@ export function Header() {
 
   const handleLogout = () => {
     logout();
+    resetAtlas();
     router.refresh();
     router.replace(`/${locale}`);
   };
@@ -61,7 +64,7 @@ export function Header() {
           })}
         </div>
         <div className="flex gap-2">
-          <Link href={`/${locale}/${mounted && isAuthenticated ? 'profile' : 'register'}`}>
+          <Link href={`/${locale}/atlas`}>
             <Button variant="primary" className="max-w-[480px]">
               {tCommon('get_started')}
             </Button>

@@ -8,8 +8,4 @@ export type PatchedUserVerificationRequest = {
    */
   username?: string;
   preferred_language?: string;
-  /**
-   * Field that shows if the user is verified or not.
-   */
-  is_verified?: boolean;
 };

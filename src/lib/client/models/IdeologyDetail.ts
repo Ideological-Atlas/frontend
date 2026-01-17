@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { AxisAnswerRead } from './AxisAnswerRead';
-import type { ConditionerAnswerRead } from './ConditionerAnswerRead';
+import type { IdeologyAxisDefinition } from './IdeologyAxisDefinition';
+import type { IdeologyConditionerDefinition } from './IdeologyConditionerDefinition';
 export type IdeologyDetail = {
   readonly uuid: string;
   /**
@@ -34,6 +34,6 @@ export type IdeologyDetail = {
    * Ideology Color Image
    */
   color?: string | null;
-  readonly axis_definitions: Array<AxisAnswerRead>;
-  readonly conditioner_definitions: Array<ConditionerAnswerRead>;
+  readonly axis_definitions: Array<IdeologyAxisDefinition>;
+  readonly conditioner_definitions: Array<IdeologyConditionerDefinition>;
 };

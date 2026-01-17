@@ -4,14 +4,15 @@ import { useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '@/lib/schemas/auth';
-import { AuthService } from '@/lib/client/services/AuthService';
+import { registerAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ApiError } from '@/lib/client/core/ApiError';
+import { useAtlasStore } from '@/store/useAtlasStore';
 
 export function useRegister() {
   const locale = useLocale();
   const router = useRouter();
-  const login = useAuthStore(state => state.login);
+  const loginSuccess = useAuthStore(state => state.loginSuccess);
+  const resetAtlas = useAtlasStore(state => state.reset);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<RegisterSchema>({
@@ -25,26 +26,21 @@ export function useRegister() {
 
   const onSubmit = async (data: RegisterSchema) => {
     setGlobalError(null);
-    try {
-      const response = await AuthService.registerCreate({
-        email: data.email,
-        password: data.password,
-      });
 
-      login({ access: response.access, refresh: response.refresh, user: response.user });
+    const result = await registerAction(data);
+
+    if (result.success && result.user) {
+      resetAtlas();
+      loginSuccess(result.user);
       router.push(`/${locale}/welcome`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        const errorBody = err.body as Record<string, string[]>;
-        if (errorBody?.email?.[0]) {
-          form.setError('email', { type: 'manual', message: errorBody.email[0] });
-        } else if (errorBody?.password?.[0]) {
-          form.setError('password', { type: 'manual', message: errorBody.password[0] });
-        } else {
-          setGlobalError('register_error');
-        }
+    } else {
+      const errorBody = result.errorBody as Record<string, string[]>;
+      if (errorBody?.email?.[0]) {
+        form.setError('email', { type: 'manual', message: errorBody.email[0] });
+      } else if (errorBody?.password?.[0]) {
+        form.setError('password', { type: 'manual', message: errorBody.password[0] });
       } else {
-        setGlobalError('network_error');
+        setGlobalError('register_error');
       }
     }
   };

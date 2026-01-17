@@ -6,7 +6,8 @@
     "start_now": "Start Now",
     "learn_more": "Learn More",
     "create_profile": "Create Profile",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "current": "Current"
   },
   "Navigation": {
     "home": "Home",
@@ -95,5 +96,29 @@
     "go_to_login": "Login",
     "title_already_verified": "Profile already active",
     "description_already_verified": "Your account has already been verified. No further action is required."
+  },
+  "Atlas": {
+    "title": "Ideological Atlas",
+    "complexity_level": "Abstraction Level",
+    "context_configuration": "Context Configuration",
+    "selector_placeholder": "Selector for {type}",
+    "no_questions": "No questions available in this section.",
+    "header_title": "Cartography of your ideas",
+    "header_description": "Define your position in the political spectrum by adjusting your answers and their tolerance margins.",
+    "complexity_subtitle": "Select the depth level",
+    "context_section": "Context",
+    "select_placeholder": "Select",
+    "options_label": "Options",
+    "yes": "Yes",
+    "no": "No",
+    "numeric_placeholder": "Numeric value",
+    "text_placeholder": "Type your answer...",
+    "margin_label": "Margin",
+    "indifferent_label": "Mark as indifferent",
+    "reset_label": "Reset answer",
+    "conditioned_label": "CONDITIONED",
+    "depends_on_label": "Depends on",
+    "asymmetric_label": "ASYMMETRIC",
+    "progress_label": "{name} Progress"
   }
 }

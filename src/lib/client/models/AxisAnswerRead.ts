@@ -5,8 +5,11 @@
 export type AxisAnswerRead = {
   readonly uuid: string;
   readonly axis_uuid: string;
+  value?: number | null;
+  margin_left?: number | null;
+  margin_right?: number | null;
   /**
-   * The position on the axis. Must be between -100 (Extreme Left) and 100 (Extreme Right).
+   * If true, the value is irrelevant/indifferent.
    */
-  value: number;
+  is_indifferent?: boolean;
 };

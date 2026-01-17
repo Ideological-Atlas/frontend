@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CustomTokenObtainPairRequest } from '../models/CustomTokenObtainPairRequest';
 import type { GoogleLoginRequest } from '../models/GoogleLoginRequest';
 import type { GoogleLoginResponse } from '../models/GoogleLoginResponse';
 import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
 import type { RegisterRequest } from '../models/RegisterRequest';
 import type { RegisterResponse } from '../models/RegisterResponse';
-import type { TokenObtainPairRequest } from '../models/TokenObtainPairRequest';
 import type { TokenObtainPairResponse } from '../models/TokenObtainPairResponse';
 import type { TokenRefresh } from '../models/TokenRefresh';
 import type { TokenRefreshRequest } from '../models/TokenRefreshRequest';
@@ -35,7 +35,7 @@ export class AuthService {
   }
   /**
    * Register new user
-   * Creates a new user account, triggers verification email, and logs the user in automatically.
+   * Creates a new user account, triggers verification email via Service, and logs the user in automatically.
    * @param requestBody
    * @returns RegisterResponse
    * @throws ApiError
@@ -56,7 +56,9 @@ export class AuthService {
    * @returns TokenObtainPairResponse
    * @throws ApiError
    */
-  public static tokenLoginCreate(requestBody: TokenObtainPairRequest): CancelablePromise<TokenObtainPairResponse> {
+  public static tokenLoginCreate(
+    requestBody: CustomTokenObtainPairRequest,
+  ): CancelablePromise<TokenObtainPairResponse> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/token/login/',
@@ -98,21 +100,24 @@ export class AuthService {
   }
   /**
    * Verify user account
-   * Marks a user as verified using their unique UUID.
-   * @param uuid The UUID of the user to verify
+   * Marks a user as verified using their secret verification token.
+   * @param uuid The verification UUID sent via email
+   * @param verificationUuid
    * @param requestBody
    * @returns UserVerification
    * @throws ApiError
    */
   public static usersVerifyUpdate(
     uuid: string,
+    verificationUuid: string,
     requestBody: UserVerificationRequest,
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/users/verify/{uuid}',
+      url: '/api/users/verify/{verification_uuid}',
       path: {
         uuid: uuid,
+        verification_uuid: verificationUuid,
       },
       body: requestBody,
       mediaType: 'application/json',
@@ -120,21 +125,24 @@ export class AuthService {
   }
   /**
    * Verify user account
-   * Marks a user as verified using their unique UUID.
-   * @param uuid The UUID of the user to verify
+   * Marks a user as verified using their secret verification token.
+   * @param uuid The verification UUID sent via email
+   * @param verificationUuid
    * @param requestBody
    * @returns UserVerification
    * @throws ApiError
    */
   public static usersVerifyPartialUpdate(
     uuid: string,
+    verificationUuid: string,
     requestBody?: PatchedUserVerificationRequest,
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: '/api/users/verify/{uuid}',
+      url: '/api/users/verify/{verification_uuid}',
       path: {
         uuid: uuid,
+        verification_uuid: verificationUuid,
       },
       body: requestBody,
       mediaType: 'application/json',

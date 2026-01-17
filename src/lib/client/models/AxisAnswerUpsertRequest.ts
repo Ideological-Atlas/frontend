@@ -3,5 +3,8 @@
 /* tslint:disable */
 
 export type AxisAnswerUpsertRequest = {
-  value: number;
+  value?: number | null;
+  margin_left?: number | null;
+  margin_right?: number | null;
+  is_indifferent?: boolean;
 };

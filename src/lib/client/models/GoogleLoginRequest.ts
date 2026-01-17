@@ -3,8 +3,5 @@
 /* tslint:disable */
 
 export type GoogleLoginRequest = {
-  /**
-   * Google ID Token provided by the frontend.
-   */
   token: string;
 };
