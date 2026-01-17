@@ -77,6 +77,7 @@ export function AtlasView() {
               onSaveAnswer={actions.saveConditioner}
               onResetAnswer={actions.deleteConditioner}
               isLoading={false}
+              dependencyNameMap={state.dependencyNameMap}
             />
           ) : (
             <AxisList
@@ -86,6 +87,7 @@ export function AtlasView() {
               onDeleteAnswer={actions.deleteAnswer}
               isLoading={loading.isAxesLoading}
               isLevelLoading={false}
+              dependencyNameMap={state.dependencyNameMap}
             />
           )}
         </div>

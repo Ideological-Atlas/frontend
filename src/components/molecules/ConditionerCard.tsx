@@ -16,9 +16,10 @@ interface ConditionerCardProps {
   onSave: (uuid: string, value: string) => void;
   onReset?: (uuid: string) => void;
   answer?: string;
+  dependencyNames: string[];
 }
 
-export function ConditionerCard({ conditioner, onSave, onReset, answer }: ConditionerCardProps) {
+export function ConditionerCard({ conditioner, onSave, onReset, answer, dependencyNames }: ConditionerCardProps) {
   const t = useTranslations('Atlas');
   const [value, setValue] = useState(answer || '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -119,7 +120,7 @@ export function ConditionerCard({ conditioner, onSave, onReset, answer }: Condit
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
-      <DependencyBadge rules={conditioner.condition_rules} />
+      <DependencyBadge names={dependencyNames} />
 
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">

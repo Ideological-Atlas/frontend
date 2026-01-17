@@ -12,6 +12,7 @@ interface ConditionerListProps {
   onSaveAnswer: (uuid: string, value: string) => void;
   onResetAnswer: (uuid: string) => void;
   isLoading: boolean;
+  dependencyNameMap: Record<string, string>;
 }
 
 const itemVariants: Variants = {
@@ -34,6 +35,7 @@ export function ConditionerList({
   onSaveAnswer,
   onResetAnswer,
   isLoading,
+  dependencyNameMap,
 }: ConditionerListProps) {
   const t = useTranslations('Atlas');
 
@@ -58,16 +60,24 @@ export function ConditionerList({
   return (
     <motion.div layout className="grid gap-6 md:grid-cols-2">
       <AnimatePresence mode="popLayout" initial={false}>
-        {conditioners.map(cond => (
-          <motion.div key={cond.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
-            <ConditionerCard
-              conditioner={cond}
-              onSave={onSaveAnswer}
-              onReset={onResetAnswer}
-              answer={answers[cond.uuid]}
-            />
-          </motion.div>
-        ))}
+        {conditioners.map(cond => {
+          // FIX: IdeologyConditionerConditioner usa UUIDs planos, usamos el mapa para buscar el nombre
+          const names = cond.condition_rules.map(rule => {
+            return dependencyNameMap[rule.source_conditioner_uuid] || 'Unknown';
+          });
+
+          return (
+            <motion.div key={cond.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+              <ConditionerCard
+                conditioner={cond}
+                onSave={onSaveAnswer}
+                onReset={onResetAnswer}
+                answer={answers[cond.uuid]}
+                dependencyNames={names}
+              />
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </motion.div>
   );

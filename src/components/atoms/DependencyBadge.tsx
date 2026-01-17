@@ -1,43 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useAtlasStore } from '@/store/useAtlasStore';
-import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
-import type { IdeologyConditionerConditioner } from '@/lib/client/models/IdeologyConditionerConditioner';
-
-type DependencyRule = IdeologyAxisConditioner | IdeologyConditionerConditioner;
 
 interface DependencyBadgeProps {
-  rules: DependencyRule[];
+  names: string[];
 }
 
-export function DependencyBadge({ rules }: DependencyBadgeProps) {
+export function DependencyBadge({ names }: DependencyBadgeProps) {
   const t = useTranslations('Atlas');
-  const { conditioners } = useAtlasStore();
 
-  const dependencyNames = useMemo(() => {
-    if (!rules || rules.length === 0) return [];
-
-    const allConditioners = Object.values(conditioners).flat();
-
-    return rules
-      .map(rule => {
-        if ('conditioner' in rule && rule.conditioner?.name) {
-          return rule.conditioner.name;
-        }
-
-        if ('source_conditioner_uuid' in rule) {
-          const found = allConditioners.find(c => c.uuid === rule.source_conditioner_uuid);
-          return found?.name || rule.source_conditioner_uuid;
-        }
-
-        return 'Unknown';
-      })
-      .filter(Boolean);
-  }, [rules, conditioners]);
-
-  if (dependencyNames.length === 0) return null;
+  if (!names || names.length === 0) return null;
 
   return (
     <div className="group absolute top-0 right-0 z-40">
@@ -54,7 +26,7 @@ export function DependencyBadge({ rules }: DependencyBadgeProps) {
         </div>
 
         <ul className="flex flex-col gap-2">
-          {dependencyNames.map((name, i) => (
+          {names.map((name, i) => (
             <li key={i} className="flex items-start gap-2 text-xs font-medium text-zinc-100">
               <span className="bg-accent-strong mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full text-current" />
               <span className="leading-tight">{name}</span>

@@ -162,6 +162,16 @@ export function useAtlasController(contextSectionLabel: string) {
     return map;
   }, [complexities, sections, axes, answers, conditioners, conditionerAnswers, checkVisibility]);
 
+  const dependencyNameMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    Object.values(conditioners)
+      .flat()
+      .forEach(cond => {
+        map[cond.uuid] = cond.name;
+      });
+    return map;
+  }, [conditioners]);
+
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
     return raw.filter(cond => checkVisibility(cond.condition_rules));
@@ -195,6 +205,7 @@ export function useAtlasController(contextSectionLabel: string) {
       progressMap,
       selectedComplexityObj,
       selectedProgress,
+      dependencyNameMap,
       CONTEXT_SECTION_UUID,
     },
     loading: loadingState,

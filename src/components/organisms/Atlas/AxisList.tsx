@@ -15,6 +15,7 @@ interface AxisListProps {
   onDeleteAnswer: (uuid: string) => void;
   isLoading: boolean;
   isLevelLoading: boolean;
+  dependencyNameMap: Record<string, string>;
 }
 
 const itemVariants: Variants = {
@@ -22,11 +23,7 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 24,
-    },
+    transition: { type: 'spring', stiffness: 300, damping: 24 },
   },
   exit: {
     opacity: 0,
@@ -59,11 +56,24 @@ export function AxisList({ axes, answers, onSaveAnswer, onDeleteAnswer, isLoadin
   return (
     <motion.div layout className="flex flex-col gap-6">
       <AnimatePresence mode="popLayout" initial={false}>
-        {axes.map(axis => (
-          <motion.div key={axis.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
-            <AxisCard axis={axis} onSave={onSaveAnswer} onDelete={onDeleteAnswer} answerData={answers[axis.uuid]} />
-          </motion.div>
-        ))}
+        {axes.map(axis => {
+          // FIX: IdeologyAxisConditioner siempre tiene el objeto 'conditioner' completo
+          const names = axis.condition_rules.map(rule => {
+            return rule.conditioner?.name || 'Unknown';
+          });
+
+          return (
+            <motion.div key={axis.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+              <AxisCard
+                axis={axis}
+                onSave={onSaveAnswer}
+                onDelete={onDeleteAnswer}
+                answerData={answers[axis.uuid]}
+                dependencyNames={names}
+              />
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </motion.div>
   );

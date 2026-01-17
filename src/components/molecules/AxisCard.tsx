@@ -15,11 +15,12 @@ interface AxisCardProps {
   onSave: (uuid: string, data: AnswerUpdatePayload) => void;
   onDelete: (uuid: string) => void;
   answerData?: AnswerData;
+  dependencyNames: string[];
 }
 
 const getInitialMargin = (m?: number | null) => (m !== undefined && m !== null ? m : 10);
 
-export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) {
+export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -164,7 +165,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData }: AxisCardProps) 
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
-      <DependencyBadge rules={axis.condition_rules} />
+      <DependencyBadge names={dependencyNames} />
 
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
