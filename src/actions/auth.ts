@@ -77,3 +77,40 @@ export async function logoutAction() {
   cookieStore.delete('refresh_token');
   return { success: true };
 }
+
+export async function refreshAuthTokenAction() {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get('refresh_token')?.value;
+
+  if (!refreshToken) {
+    return { success: false };
+  }
+
+  try {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/api/token/refresh/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      await logoutAction();
+      return { success: false };
+    }
+
+    const data = await response.json();
+
+    const newAccess = data.access;
+    const newRefresh = data.refresh || refreshToken;
+
+    await setAuthCookies(newAccess, newRefresh);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    await logoutAction();
+    return { success: false };
+  }
+}
