@@ -44,6 +44,14 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
       redirect: 'manual',
     });
 
+    if (response.status === 204) {
+      return new NextResponse(null, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: new Headers(response.headers),
+      });
+    }
+
     const responseData = await response.arrayBuffer();
 
     const nextResponse = new NextResponse(responseData, {
