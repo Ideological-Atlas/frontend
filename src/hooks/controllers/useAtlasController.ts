@@ -1,5 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useLocale } from 'next-intl';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
@@ -13,7 +12,6 @@ const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | IdeologyConditionerConditioner;
 
 export function useAtlasController(contextSectionLabel: string) {
-  const locale = useLocale();
   const { isAuthenticated } = useAuthStore();
 
   const {
@@ -35,8 +33,10 @@ export function useAtlasController(contextSectionLabel: string) {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchAllData(isAuthenticated);
-  }, [locale, isAuthenticated, fetchAllData]);
+    if (!isInitialized) {
+      fetchAllData(isAuthenticated);
+    }
+  }, [isInitialized, isAuthenticated, fetchAllData]);
 
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {

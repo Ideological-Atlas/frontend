@@ -17,14 +17,13 @@ export interface AnswerUpdatePayload {
   is_indifferent?: boolean;
 }
 
-export interface AtlasState {
+export interface InitialServerData {
   complexities: IdeologyAbstractionComplexity[];
   conditioners: Record<string, IdeologyConditioner[]>;
   sections: Record<string, IdeologySection[]>;
   axes: Record<string, IdeologyAxis[]>;
   answers: Record<string, AnswerData>;
   conditionerAnswers: Record<string, string>;
-  isInitialized: boolean;
 }
 
 export interface StructureSlice {
@@ -34,6 +33,7 @@ export interface StructureSlice {
   axes: Record<string, IdeologyAxis[]>;
   isInitialized: boolean;
   fetchAllData: (isAuthenticated: boolean) => Promise<void>;
+  initializeStructure: (data: InitialServerData) => void;
   resetStructure: () => void;
 }
 

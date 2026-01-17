@@ -27,7 +27,7 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
       const compsResponse = await StructureService.structureComplexitiesList(100);
       const complexities = compsResponse.results;
 
-      set({ complexities, isInitialized: true });
+      set({ complexities });
 
       await Promise.all(
         complexities.map(async comp => {
@@ -64,7 +64,7 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
 
                 set(state => {
                   const newAnswers = { ...state.answers };
-                  if (isAuthenticated) {
+                  if (isAuthenticated && answersRes.results) {
                     answersRes.results.forEach(ans => {
                       newAnswers[ans.axis_uuid] = {
                         value: ans.value ?? null,
@@ -82,12 +82,26 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
               }),
             );
           } catch (err) {
-            console.error(err);
+            console.error('Error fetching deep structure:', err);
           }
         }),
       );
+
+      set({ isInitialized: true });
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching complexities:', error);
     }
+  },
+
+  initializeStructure: data => {
+    set({
+      complexities: data.complexities,
+      conditioners: data.conditioners,
+      sections: data.sections,
+      axes: data.axes,
+      answers: { ...get().answers, ...data.answers },
+      conditionerAnswers: { ...get().conditionerAnswers, ...data.conditionerAnswers },
+      isInitialized: true,
+    });
   },
 });
