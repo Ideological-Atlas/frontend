@@ -60,53 +60,48 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     const rightBoundPercent = toPercent(rightBoundVal);
 
     const thumbInputStyles = clsx(
-      'absolute inset-0 h-full w-full appearance-none bg-transparent pointer-events-none z-20',
+      'absolute inset-0 h-full w-full appearance-none bg-transparent pointer-events-none z-30',
       'focus:outline-none',
-      '[&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110',
-      '[&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:active:cursor-grabbing [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:hover:scale-110',
+      '[&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:w-8',
+      '[&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:active:cursor-grabbing [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:w-8',
     );
 
     return (
-      <div className={twMerge('flex w-full flex-col gap-5 pt-2 select-none', className)}>
-        <div ref={containerRef} className="relative flex h-10 items-center">
-          <div className="bg-secondary/60 absolute right-0 left-0 h-2 rounded-full" />
-          <div className="absolute top-1/2 right-0 left-0 flex -translate-y-1/2 justify-between px-0.5">
-            <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
-            <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
-            <div className="bg-foreground/10 h-1 w-0.5 rounded-full" />
-          </div>
+      <div className={twMerge('flex w-full flex-col gap-5 pt-4 pb-2 select-none', className)}>
+        <div ref={containerRef} className="relative flex h-8 items-center">
+          <div className="bg-secondary/40 absolute right-0 left-0 h-1.5 w-full rounded-full" />
+
           <div
-            className="bg-accent-strong absolute top-1/2 h-2 -translate-y-1/2 rounded-full transition-all"
+            className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full transition-all duration-75 ease-out"
             style={{
               left: `${leftBoundPercent}%`,
               width: `${rightBoundPercent - leftBoundPercent}%`,
-              boxShadow: '0 0 15px color-mix(in srgb, var(--strong-accent), transparent 60%)',
+              backgroundColor: 'var(--strong-accent)',
+              boxShadow: '0 0 12px 1px color-mix(in srgb, var(--strong-accent), transparent 40%)',
             }}
           />
+
           <div
-            className="bg-background pointer-events-none absolute top-1/2 z-10 -ml-2 h-4 w-4 -translate-y-1/2 rounded-full border shadow-sm transition-transform"
-            style={{
-              left: `${leftBoundPercent}%`,
-              borderColor: 'color-mix(in srgb, var(--strong-accent), transparent 50%)',
-            }}
+            className="bg-card border-accent-strong absolute top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-sm transition-transform"
+            style={{ left: `${leftBoundPercent}%` }}
           />
+
           <div
-            className="bg-background pointer-events-none absolute top-1/2 z-10 -ml-2 h-4 w-4 -translate-y-1/2 rounded-full border shadow-sm transition-transform"
-            style={{
-              left: `${rightBoundPercent}%`,
-              borderColor: 'color-mix(in srgb, var(--strong-accent), transparent 50%)',
-            }}
+            className="bg-card border-accent-strong absolute top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-sm transition-transform"
+            style={{ left: `${rightBoundPercent}%` }}
           />
+
           <div
-            className="bg-accent-strong pointer-events-none absolute top-1/2 z-30 -ml-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-transform"
+            className="absolute top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-transform"
             style={{
               left: `${centerPercent}%`,
-              background: `linear-gradient(to bottom, color-mix(in srgb, var(--strong-accent), white 20%), var(--strong-accent))`,
-              boxShadow: '0 10px 15px -3px color-mix(in srgb, var(--strong-accent), transparent 60%)',
+              backgroundColor: 'var(--strong-accent)',
+              boxShadow: '0 0 20px 4px color-mix(in srgb, var(--strong-accent), transparent 50%)',
             }}
           >
-            <div className="h-2 w-2 rounded-full bg-white/30 blur-[1px]" />
+            <div className="h-2 w-2 rounded-full bg-white/50 blur-[0.5px]" />
           </div>
+
           <input
             type="range"
             min="-100"
@@ -115,16 +110,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             value={leftBoundVal}
             onChange={e => {
               const newVal = parseInt(e.target.value);
-              if (newVal <= centerVal) {
-                onChange({ marginLeft: centerVal - newVal });
-              }
+              if (newVal <= centerVal) onChange({ marginLeft: centerVal - newVal });
             }}
             onMouseUp={onCommit}
             onTouchEnd={onCommit}
-            className={clsx(
-              thumbInputStyles,
-              'z-20 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4',
-            )}
+            className={thumbInputStyles}
           />
 
           <input
@@ -135,16 +125,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             value={rightBoundVal}
             onChange={e => {
               const newVal = parseInt(e.target.value);
-              if (newVal >= centerVal) {
-                onChange({ marginRight: newVal - centerVal });
-              }
+              if (newVal >= centerVal) onChange({ marginRight: newVal - centerVal });
             }}
             onMouseUp={onCommit}
             onTouchEnd={onCommit}
-            className={clsx(
-              thumbInputStyles,
-              'z-20 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4',
-            )}
+            className={thumbInputStyles}
           />
 
           <input
@@ -162,19 +147,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
 
               const newMarginLeft = Math.min(marginLeft, maxAllowedLeft);
               const newMarginRight = Math.min(marginRight, maxAllowedRight);
-
-              onChange({
-                value: newVal,
-                marginLeft: newMarginLeft,
-                marginRight: newMarginRight,
-              });
+              onChange({ value: newVal, marginLeft: newMarginLeft, marginRight: newMarginRight });
             }}
             onMouseUp={onCommit}
             onTouchEnd={onCommit}
-            className={clsx(
-              thumbInputStyles,
-              'z-30 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6',
-            )}
+            className={thumbInputStyles}
           />
         </div>
 

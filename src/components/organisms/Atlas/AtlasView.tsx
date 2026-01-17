@@ -60,7 +60,10 @@ export function AtlasView() {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">
-        <PageHeader title={t('header_title')} description={t('header_description')} />
+        <PageHeader
+          title={state.selectedComplexityObj?.name || t('header_title')}
+          description={state.selectedComplexityObj?.description || t('header_description')}
+        />
 
         <div className="flex flex-col gap-6">
           <SectionTabs
