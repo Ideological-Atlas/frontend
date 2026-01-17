@@ -4,15 +4,14 @@ import { useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginSchema } from '@/lib/schemas/auth';
-import { AuthService } from '@/lib/client/services/AuthService';
+import { loginAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
-import { ApiError } from '@/lib/client/core/ApiError';
 
 export function useLogin() {
   const locale = useLocale();
   const router = useRouter();
-  const login = useAuthStore(state => state.login);
+  const loginSuccess = useAuthStore(state => state.loginSuccess);
   const resetAtlas = useAtlasStore(state => state.reset);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
@@ -26,22 +25,16 @@ export function useLogin() {
 
   const onSubmit = async (data: LoginSchema) => {
     setGlobalError(null);
-    try {
-      const response = await AuthService.tokenLoginCreate(data);
+
+    const result = await loginAction(data);
+
+    if (result.success && result.user) {
       resetAtlas();
-      login({
-        access: response.access,
-        refresh: response.refresh,
-        user: response.user,
-      });
+      loginSuccess(result.user);
       router.push(`/${locale}`);
       router.refresh();
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setGlobalError(err.status === 401 ? 'invalid_credentials' : 'login_error');
-      } else {
-        setGlobalError('network_error');
-      }
+    } else {
+      setGlobalError('invalid_credentials');
     }
   };
 

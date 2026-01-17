@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/atoms/Button';
 import { useTranslations, useLocale } from 'next-intl';
 import { useGoogleLogin } from '@react-oauth/google';
-import { AuthService } from '@/lib/client/services/AuthService';
+import { googleLoginAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,7 @@ export function GoogleButton() {
   const t = useTranslations('Auth');
   const locale = useLocale();
   const router = useRouter();
-  const login = useAuthStore(state => state.login);
+  const loginSuccess = useAuthStore(state => state.loginSuccess);
   const resetAtlas = useAtlasStore(state => state.reset);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -21,18 +21,17 @@ export function GoogleButton() {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async tokenResponse => {
       try {
-        const response = await AuthService.loginGoogleCreate({
-          token: tokenResponse.access_token,
-        });
-        resetAtlas();
-        login({
-          access: response.access,
-          refresh: response.refresh,
-          user: response.user,
-        });
+        const result = await googleLoginAction(tokenResponse.access_token);
 
-        router.push(`/${locale}`);
-        router.refresh();
+        if (result.success && result.user) {
+          resetAtlas();
+          loginSuccess(result.user);
+          router.push(`/${locale}`);
+          router.refresh();
+        } else {
+          console.error('Google login server error');
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Error in Google Login:', error);
         setIsLoading(false);
@@ -61,6 +60,7 @@ export function GoogleButton() {
       type="button"
     >
       <div className="flex items-center justify-center gap-3">
+        {/* SVG Icon remains the same, simplified for brevity in this cat block, but effectively the same */}
         <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
           <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
             <path
