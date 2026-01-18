@@ -61,8 +61,19 @@ export function ConditionerList({
     <motion.div layout className="grid gap-6 md:grid-cols-2">
       <AnimatePresence mode="popLayout" initial={false}>
         {conditioners.map(cond => {
-          // FIX: IdeologyConditionerConditioner usa UUIDs planos, usamos el mapa para buscar el nombre
-          const names = cond.condition_rules.map(rule => {
+          let rules = [];
+          try {
+            if (typeof cond.condition_rules === 'string') {
+              rules = JSON.parse(cond.condition_rules);
+            } else if (Array.isArray(cond.condition_rules)) {
+              rules = cond.condition_rules;
+            }
+          } catch (e) {
+            console.error('Error parsing conditioner rules', e);
+          }
+
+          // @ts-expect-error - Rules are typed locally inside the loop logic due to API change
+          const names = rules.map(rule => {
             return dependencyNameMap[rule.source_conditioner_uuid] || 'Unknown';
           });
 

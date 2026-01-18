@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type AxisAnswerUpsertRequest = {
+export type UserAxisAnswerUpsertRequest = {
   value?: number | null;
   margin_left?: number | null;
   margin_right?: number | null;

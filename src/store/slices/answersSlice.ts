@@ -1,7 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { AtlasStore, AnswersSlice, AnswerData } from '@/types/atlas';
 import { AnswersService } from '@/lib/client/services/AnswersService';
-import type { AxisAnswerUpsertRequest } from '@/lib/client/models/AxisAnswerUpsertRequest';
+import type { UserAxisAnswerUpsertRequest } from '@/lib/client/models/UserAxisAnswerUpsertRequest';
 import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
 import { calculateCascadingDeletions } from '@/lib/domain/atlas-logic';
 
@@ -39,7 +39,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
 
     if (isAuthenticated) {
       try {
-        await AnswersService.answersAxisCreate(axisUuid, newData as unknown as AxisAnswerUpsertRequest);
+        await AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest);
       } catch (error) {
         console.error(error);
       }

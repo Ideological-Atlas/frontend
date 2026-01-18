@@ -24,4 +24,8 @@ export type Me = {
    * * `google` - Google
    */
   readonly auth_provider: AuthProviderEnum;
+  /**
+   * User bio
+   */
+  bio?: string | null;
 };

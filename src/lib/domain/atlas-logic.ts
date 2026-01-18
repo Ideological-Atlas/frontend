@@ -1,24 +1,46 @@
 import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySectionConditioner';
 import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
-import type { IdeologyConditionerConditioner } from '@/lib/client/models/IdeologyConditionerConditioner';
 import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 
-type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | IdeologyConditionerConditioner;
+interface LocalConditionerRule {
+  uuid?: string;
+  source_conditioner_uuid: string;
+  condition_values: string | number | boolean | (string | number | boolean)[];
+  conditioner?: IdeologyConditioner;
+}
+
+type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | LocalConditionerRule;
 
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
-export const checkVisibility = (rules: ConditionRule[], currentAnswers: Record<string, string>): boolean => {
+const parseRules = (rules: string | unknown[]): ConditionRule[] => {
+  if (Array.isArray(rules)) return rules as ConditionRule[];
+  if (typeof rules === 'string') {
+    try {
+      return JSON.parse(rules) as ConditionRule[];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
+export const checkVisibility = (
+  rulesInput: string | ConditionRule[],
+  currentAnswers: Record<string, string>,
+): boolean => {
+  const rules = parseRules(rulesInput);
   if (!rules || rules.length === 0) return true;
 
   return rules.every(rule => {
     let rawSourceUuid: string | undefined;
 
-    if ('source_conditioner_uuid' in rule) {
+    if ('source_conditioner_uuid' in rule && rule.source_conditioner_uuid) {
       rawSourceUuid = rule.source_conditioner_uuid;
     } else if ('conditioner' in rule) {
-      rawSourceUuid = rule.conditioner.uuid;
+      rawSourceUuid = rule.conditioner?.uuid;
     }
 
     if (!rawSourceUuid) return true;

@@ -2,14 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-export type PatchedMeRequest = {
+export type SimpleUser = {
+  readonly uuid: string;
   /**
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
    */
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  preferred_language?: string;
+  username: string;
   /**
    * User bio
    */

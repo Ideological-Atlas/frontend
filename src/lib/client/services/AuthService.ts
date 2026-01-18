@@ -35,7 +35,7 @@ export class AuthService {
   }
   /**
    * Register new user
-   * Creates a new user account, triggers verification email via Service, and logs the user in automatically.
+   * Creates a new user account, triggers verification email via Manager, and logs the user in automatically.
    * @param requestBody
    * @returns RegisterResponse
    * @throws ApiError
@@ -114,7 +114,7 @@ export class AuthService {
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/users/verify/{verification_uuid}',
+      url: '/api/users/verify/{verification_uuid}/',
       path: {
         uuid: uuid,
         verification_uuid: verificationUuid,
@@ -139,7 +139,7 @@ export class AuthService {
   ): CancelablePromise<UserVerification> {
     return __request(OpenAPI, {
       method: 'PATCH',
-      url: '/api/users/verify/{verification_uuid}',
+      url: '/api/users/verify/{verification_uuid}/',
       path: {
         uuid: uuid,
         verification_uuid: verificationUuid,
