@@ -50,9 +50,7 @@ export function ShareModal({ isOpen, onClose, shareUrl }: ShareModalProps) {
             </div>
 
             <div className="p-6">
-              <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
-                {t('share_posture_description')}
-              </p>
+              <p className="text-muted-foreground mb-6 text-sm leading-relaxed">{t('share_posture_description')}</p>
 
               <div className="mb-2">
                 <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
@@ -72,7 +70,7 @@ export function ShareModal({ isOpen, onClose, shareUrl }: ShareModalProps) {
                   <span className="material-symbols-outlined mr-2 text-[18px]">
                     {copied ? 'check' : 'content_copy'}
                   </span>
-                  {copied ? t('copied'): t('copy')}
+                  {copied ? t('copied') : t('copy')}
                 </Button>
               </div>
 
