@@ -3,7 +3,7 @@ import type { AtlasStore, AnswersSlice, AnswerData } from '@/types/atlas';
 import { AnswersService } from '@/lib/client/services/AnswersService';
 import type { UserAxisAnswerUpsertRequest } from '@/lib/client/models/UserAxisAnswerUpsertRequest';
 import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
-import { calculateCascadingDeletions } from '@/lib/domain/atlas-logic';
+import { calculateCascadingDeletions, calculateGlobalCleanup } from '@/lib/domain/atlas-logic';
 
 export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> = (set, get) => ({
   answers: {},
@@ -33,13 +33,33 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       };
     }
 
-    set(state => ({
-      answers: { ...state.answers, [axisUuid]: newData },
-    }));
+    const { conditioners, sections, axes, conditionerAnswers, answers } = get();
+    const allConditioners = Object.values(conditioners).flat();
+    const allSections = Object.values(sections).flat();
+
+    const proposedAnswers = { ...answers, [axisUuid]: newData };
+
+    const { nextCondAnswers, nextAxisAnswers, condsToRemoveRemote, axesToRemoveRemote } = calculateGlobalCleanup(
+      proposedAnswers,
+      conditionerAnswers,
+      allConditioners,
+      allSections,
+      axes,
+    );
+
+    set({
+      answers: nextAxisAnswers,
+      conditionerAnswers: nextCondAnswers,
+    });
 
     if (isAuthenticated) {
       try {
-        await AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest);
+        const promises = [
+          AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest),
+          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
+          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
+        ];
+        await Promise.all(promises);
       } catch (error) {
         console.error(error);
       }
@@ -47,15 +67,33 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
   },
 
   deleteAnswer: async (axisUuid, isAuthenticated) => {
-    set(state => {
-      const newAnswers = { ...state.answers };
-      delete newAnswers[axisUuid];
-      return { answers: newAnswers };
+    const { conditioners, sections, axes, conditionerAnswers, answers } = get();
+    const allConditioners = Object.values(conditioners).flat();
+    const allSections = Object.values(sections).flat();
+
+    const proposedAnswers = { ...answers };
+    delete proposedAnswers[axisUuid];
+
+    const { nextCondAnswers, nextAxisAnswers, condsToRemoveRemote, axesToRemoveRemote } = calculateGlobalCleanup(
+      proposedAnswers,
+      conditionerAnswers,
+      allConditioners,
+      allSections,
+      axes,
+    );
+
+    set({
+      answers: nextAxisAnswers,
+      conditionerAnswers: nextCondAnswers,
     });
 
     if (isAuthenticated) {
       try {
         await AnswersService.answersAxisDeleteDestroy(axisUuid);
+        await Promise.all([
+          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
+          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
+        ]);
       } catch (error) {
         console.error(error);
       }
@@ -63,15 +101,35 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
   },
 
   saveConditionerAnswer: async (conditionerUuid, value, isAuthenticated) => {
-    set(state => ({
-      conditionerAnswers: { ...state.conditionerAnswers, [conditionerUuid]: value },
-    }));
+    const { conditioners, sections, axes, conditionerAnswers, answers } = get();
+    const allConditioners = Object.values(conditioners).flat();
+    const allSections = Object.values(sections).flat();
+
+    const proposedCondAnswers = { ...conditionerAnswers, [conditionerUuid]: value };
+
+    const { nextCondAnswers, nextAxisAnswers, condsToRemoveRemote, axesToRemoveRemote } = calculateGlobalCleanup(
+      answers,
+      proposedCondAnswers,
+      allConditioners,
+      allSections,
+      axes,
+    );
+
+    set({
+      conditionerAnswers: nextCondAnswers,
+      answers: nextAxisAnswers,
+    });
 
     if (isAuthenticated) {
       try {
-        await AnswersService.answersConditionerCreate(conditionerUuid, {
-          answer: value,
-        } as ConditionerAnswerUpsertRequest);
+        const promises = [
+          AnswersService.answersConditionerCreate(conditionerUuid, {
+            answer: value,
+          } as ConditionerAnswerUpsertRequest),
+          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
+          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
+        ];
+        await Promise.all(promises);
       } catch (error) {
         console.error(error);
       }

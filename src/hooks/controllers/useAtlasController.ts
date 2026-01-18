@@ -6,6 +6,8 @@ import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySec
 import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
 import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
+import { AnswersService } from '@/lib/client/services/AnswersService';
+import type { CompletedAnswerRequest } from '@/lib/client/models/CompletedAnswerRequest';
 
 interface LocalConditionerRule {
   uuid?: string;
@@ -51,6 +53,10 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
+
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [isGeneratingShare, setIsGeneratingShare] = useState(false);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -198,6 +204,42 @@ export function useAtlasController(contextSectionLabel: string) {
     setSelectedSection(uuid);
   };
 
+  const handleShare = async () => {
+    setIsGeneratingShare(true);
+    try {
+      let requestBody: CompletedAnswerRequest | undefined = undefined;
+
+      if (!isAuthenticated) {
+        const axisList = Object.entries(answers).map(([uuid, data]) => ({
+          uuid,
+          value: data.value,
+          margin_left: data.margin_left ?? 0,
+          margin_right: data.margin_right ?? 0,
+        }));
+
+        const conditionersList = Object.entries(conditionerAnswers).map(([uuid, value]) => ({
+          uuid,
+          value,
+        }));
+
+        requestBody = {
+          axis: axisList,
+          conditioners: conditionersList,
+        };
+      }
+
+      const response = await AnswersService.answersCompletedGenerateCreate(requestBody);
+      const origin = window.location.origin;
+      const url = `${origin}/answers/${response.uuid}`;
+      setShareUrl(url);
+      setIsShareModalOpen(true);
+    } catch (error) {
+      console.error('Error generating completed answer:', error);
+    } finally {
+      setIsGeneratingShare(false);
+    }
+  };
+
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
       saveAnswer(axisUuid, data, isAuthenticated);
@@ -213,6 +255,8 @@ export function useAtlasController(contextSectionLabel: string) {
     },
     selectComplexity: handleSelectComplexity,
     selectSection: handleSelectSection,
+    share: handleShare,
+    closeShareModal: () => setIsShareModalOpen(false),
   };
 
   const progressMap = useMemo(() => {
@@ -282,6 +326,7 @@ export function useAtlasController(contextSectionLabel: string) {
     isGlobalLoading: !isInitialized && complexities.length === 0,
     isSectionLoading: selectedComplexity ? !sections[selectedComplexity] : true,
     isAxesLoading: selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? !axes[selectedSection] : false,
+    isGeneratingShare,
   };
 
   return {
@@ -299,6 +344,8 @@ export function useAtlasController(contextSectionLabel: string) {
       selectedProgress,
       dependencyNameMap,
       CONTEXT_SECTION_UUID,
+      isShareModalOpen,
+      shareUrl,
     },
     loading: loadingState,
     actions: handlers,

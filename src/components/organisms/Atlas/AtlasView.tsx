@@ -8,6 +8,7 @@ import { AxisList } from './AxisList';
 import { ConditionerList } from './ConditionerList';
 import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProgressCard } from '@/components/molecules/ProgressCard';
+import { ShareModal } from '@/components/molecules/ShareModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
 
 export function AtlasView() {
@@ -35,66 +36,72 @@ export function AtlasView() {
   }
 
   return (
-    <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
-      <aside className="w-full lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start">
-        <div className="mb-6 flex flex-col gap-1 px-1">
-          <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
-          <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
-        </div>
+    <>
+      <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
 
-        <ComplexitySelector
-          complexities={state.complexities}
-          selectedId={state.selectedComplexity}
-          onSelect={actions.selectComplexity}
-          isLoading={false}
-          progressMap={state.progressMap}
-        />
+      <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
+        <aside className="w-full lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start">
+          <div className="mb-6 flex flex-col gap-1 px-1">
+            <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
+            <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
+          </div>
 
-        {state.selectedComplexity && (
-          <ProgressCard
-            label={t('progress_label', { name: state.selectedComplexityObj?.name || '' })}
-            percentage={state.selectedProgress}
-            className="mt-6"
-          />
-        )}
-      </aside>
-
-      <main className="flex min-w-0 flex-1 flex-col gap-8">
-        <PageHeader
-          title={state.selectedComplexityObj?.name || t('header_title')}
-          description={state.selectedComplexityObj?.description || t('header_description')}
-        />
-
-        <div className="flex flex-col gap-6">
-          <SectionTabs
-            sections={state.displaySections}
-            selectedId={state.selectedSection}
-            onSelect={actions.selectSection}
-            isLoading={loading.isSectionLoading}
+          <ComplexitySelector
+            complexities={state.complexities}
+            selectedId={state.selectedComplexity}
+            onSelect={actions.selectComplexity}
+            isLoading={false}
+            progressMap={state.progressMap}
           />
 
-          {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
-            <ConditionerList
-              conditioners={state.currentConditioners}
-              answers={state.conditionerAnswers}
-              onSaveAnswer={actions.saveConditioner}
-              onResetAnswer={actions.deleteConditioner}
-              isLoading={false}
-              dependencyNameMap={state.dependencyNameMap}
-            />
-          ) : (
-            <AxisList
-              axes={state.currentAxes}
-              answers={state.answers}
-              onSaveAnswer={actions.saveAnswer}
-              onDeleteAnswer={actions.deleteAnswer}
-              isLoading={loading.isAxesLoading}
-              isLevelLoading={false}
-              dependencyNameMap={state.dependencyNameMap}
+          {state.selectedComplexity && (
+            <ProgressCard
+              label={t('progress_label', { name: state.selectedComplexityObj?.name || '' })}
+              percentage={state.selectedProgress}
+              className="mt-6"
+              onShare={actions.share}
+              isSharing={loading.isGeneratingShare}
             />
           )}
-        </div>
-      </main>
-    </div>
+        </aside>
+
+        <main className="flex min-w-0 flex-1 flex-col gap-8">
+          <PageHeader
+            title={state.selectedComplexityObj?.name || t('header_title')}
+            description={state.selectedComplexityObj?.description || t('header_description')}
+          />
+
+          <div className="flex flex-col gap-6">
+            <SectionTabs
+              sections={state.displaySections}
+              selectedId={state.selectedSection}
+              onSelect={actions.selectSection}
+              isLoading={loading.isSectionLoading}
+            />
+
+            {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
+              <ConditionerList
+                conditioners={state.currentConditioners}
+                answers={state.conditionerAnswers}
+                onSaveAnswer={actions.saveConditioner}
+                onResetAnswer={actions.deleteConditioner}
+                isLoading={false}
+                dependencyNameMap={state.dependencyNameMap}
+              />
+            ) : (
+              <AxisList
+                axes={state.currentAxes}
+                answers={state.answers}
+                onSaveAnswer={actions.saveAnswer}
+                onDeleteAnswer={actions.deleteAnswer}
+                isLoading={loading.isAxesLoading}
+                isLevelLoading={false}
+                dependencyNameMap={state.dependencyNameMap}
+              />
+            )}
+          </div>
+        </main>
+      </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 /* tslint:disable */
 
 import type { CompletedAnswer } from '../models/CompletedAnswer';
+import type { CompletedAnswerRequest } from '../models/CompletedAnswerRequest';
 import type { ConditionerAnswerRead } from '../models/ConditionerAnswerRead';
 import type { ConditionerAnswerUpsertRequest } from '../models/ConditionerAnswerUpsertRequest';
 import type { PaginatedConditionerAnswerReadList } from '../models/PaginatedConditionerAnswerReadList';
@@ -78,15 +79,39 @@ export class AnswersService {
     });
   }
   /**
-   * Generate completed answer snapshot
-   * Triggers the calculation of the user's current results, saves it as a CompletedAnswer, and returns the structured data.
+   * Retrieve specific completed answer
+   * Returns the details of a specific completed answer by its UUID.
+   * @param uuid
    * @returns CompletedAnswer
    * @throws ApiError
    */
-  public static answersCompletedGenerateCreate(): CancelablePromise<CompletedAnswer> {
+  public static answersCompletedRetrieve(uuid: string): CancelablePromise<CompletedAnswer> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/answers/completed/{uuid}/',
+      path: {
+        uuid: uuid,
+      },
+      errors: {
+        404: `No response body`,
+      },
+    });
+  }
+  /**
+   * Generate completed answer snapshot
+   * Generates a snapshot. If logged in, calculates from DB. If anonymous, expects 'axis' and 'conditioners' lists in body.
+   * @param requestBody
+   * @returns CompletedAnswer
+   * @throws ApiError
+   */
+  public static answersCompletedGenerateCreate(
+    requestBody?: CompletedAnswerRequest,
+  ): CancelablePromise<CompletedAnswer> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/answers/completed/generate/',
+      body: requestBody,
+      mediaType: 'application/json',
     });
   }
   /**
