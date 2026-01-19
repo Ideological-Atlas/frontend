@@ -167,7 +167,7 @@ export function useAtlasController(contextSectionLabel: string) {
     const filteredSections = rawSections.filter(section => checkVisibility(section.condition_rules));
 
     const visibleConditioners = rawConditioners.filter(
-      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules),
+      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[]),
     );
 
     if (visibleConditioners.length > 0) {
@@ -270,7 +270,7 @@ export function useAtlasController(contextSectionLabel: string) {
       let answeredItems = 0;
 
       compConditioners.forEach(cond => {
-        if (cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules)) {
+        if (cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[])) {
           totalItems++;
           if (conditionerAnswers[cond.uuid]) {
             answeredItems++;
@@ -310,7 +310,9 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-    return raw.filter(cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules));
+    return raw.filter(
+      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[]),
+    );
   }, [selectedComplexity, conditioners, checkVisibility]);
 
   const currentAxes = useMemo(() => {

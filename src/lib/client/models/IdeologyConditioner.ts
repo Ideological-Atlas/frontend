@@ -28,7 +28,7 @@ export type IdeologyConditioner = {
    * List of valid options if the type is 'Categorical'. Format: ['Option A', 'Option B']. For 'Derived from Axis Range', this is auto-set to ['true', 'false'].
    */
   accepted_values?: any;
-  readonly condition_rules: string;
+  readonly condition_rules: Array<Record<string, any>>;
   readonly source_axis_uuid: string | null;
   /**
    * Condition is met if user value >= this.

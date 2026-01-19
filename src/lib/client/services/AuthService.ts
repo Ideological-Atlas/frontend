@@ -5,6 +5,9 @@
 import type { CustomTokenObtainPairRequest } from '../models/CustomTokenObtainPairRequest';
 import type { GoogleLoginRequest } from '../models/GoogleLoginRequest';
 import type { GoogleLoginResponse } from '../models/GoogleLoginResponse';
+import type { PasswordResetConfirmRequest } from '../models/PasswordResetConfirmRequest';
+import type { PasswordResetRequestRequest } from '../models/PasswordResetRequestRequest';
+import type { PasswordResetResponse } from '../models/PasswordResetResponse';
 import type { PatchedUserVerificationRequest } from '../models/PatchedUserVerificationRequest';
 import type { RegisterRequest } from '../models/RegisterRequest';
 import type { RegisterResponse } from '../models/RegisterResponse';
@@ -31,6 +34,64 @@ export class AuthService {
       url: '/api/login/google/',
       body: requestBody,
       mediaType: 'application/json',
+    });
+  }
+  /**
+   * Confirm Password Reset
+   * Resets the user's password using the token and invalidates it.
+   * @param uuid
+   * @param requestBody
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static passwordResetConfirmCreate(
+    uuid: string,
+    requestBody: PasswordResetConfirmRequest,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/password/reset/confirm/{uuid}/',
+      path: {
+        uuid: uuid,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
+   * Request Password Reset
+   * Triggers a password reset email if the email exists. Always returns 200 OK for security.
+   * @param requestBody
+   * @returns PasswordResetResponse
+   * @throws ApiError
+   */
+  public static passwordResetRequestCreate(
+    requestBody: PasswordResetRequestRequest,
+  ): CancelablePromise<PasswordResetResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/password/reset/request/',
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
+   * Check Reset Token Validity
+   * Checks if a reset password token exists and is valid.
+   * @param uuid
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static passwordResetVerifyRetrieve(uuid: string): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/password/reset/verify/{uuid}/',
+      path: {
+        uuid: uuid,
+      },
+      errors: {
+        404: `No response body`,
+      },
     });
   }
   /**
