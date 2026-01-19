@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { AppearanceEnum } from './AppearanceEnum';
 export type PatchedMeRequest = {
   /**
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
@@ -14,4 +15,6 @@ export type PatchedMeRequest = {
    * User bio
    */
   bio?: string | null;
+  appearance?: AppearanceEnum;
+  is_public?: boolean;
 };

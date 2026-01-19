@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { AppearanceEnum } from './AppearanceEnum';
 import type { AuthProviderEnum } from './AuthProviderEnum';
 export type Me = {
   readonly uuid: string;
@@ -28,4 +29,6 @@ export type Me = {
    * User bio
    */
   bio?: string | null;
+  appearance?: AppearanceEnum;
+  is_public?: boolean;
 };

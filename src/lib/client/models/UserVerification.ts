@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { AppearanceEnum } from './AppearanceEnum';
 export type UserVerification = {
   readonly uuid: string;
   /**
@@ -12,6 +13,8 @@ export type UserVerification = {
    * User bio
    */
   bio?: string | null;
+  appearance?: AppearanceEnum;
+  is_public?: boolean;
   /**
    * Field that shows if the user is verified or not.
    */
