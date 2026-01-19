@@ -96,7 +96,6 @@ export function AtlasView() {
                 onDeleteAnswer={actions.deleteAnswer}
                 isLoading={loading.isAxesLoading}
                 isLevelLoading={false}
-                dependencyNameMap={state.dependencyNameMap}
               />
             )}
           </div>

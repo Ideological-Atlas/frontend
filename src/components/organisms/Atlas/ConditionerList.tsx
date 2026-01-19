@@ -9,10 +9,12 @@ import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditione
 interface ConditionerListProps {
   conditioners: IdeologyConditioner[];
   answers: Record<string, string>;
-  onSaveAnswer: (uuid: string, value: string) => void;
-  onResetAnswer: (uuid: string) => void;
+  onSaveAnswer?: (uuid: string, value: string) => void;
+  onResetAnswer?: (uuid: string) => void;
   isLoading: boolean;
   dependencyNameMap: Record<string, string>;
+  readOnly?: boolean;
+  variant?: 'default' | 'other';
 }
 
 const itemVariants: Variants = {
@@ -36,6 +38,8 @@ export function ConditionerList({
   onResetAnswer,
   isLoading,
   dependencyNameMap,
+  readOnly = false,
+  variant = 'default',
 }: ConditionerListProps) {
   const t = useTranslations('Atlas');
 
@@ -85,6 +89,8 @@ export function ConditionerList({
                 onReset={onResetAnswer}
                 answer={answers[cond.uuid]}
                 dependencyNames={names}
+                readOnly={readOnly}
+                variant={variant}
               />
             </motion.div>
           );

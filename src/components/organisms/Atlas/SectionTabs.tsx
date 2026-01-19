@@ -10,9 +10,10 @@ interface SectionTabsProps {
   selectedId: string | null;
   onSelect: (id: string) => void;
   isLoading: boolean;
+  variant?: 'default' | 'other';
 }
 
-export function SectionTabs({ sections, selectedId, onSelect, isLoading }: SectionTabsProps) {
+export function SectionTabs({ sections, selectedId, onSelect, isLoading, variant = 'default' }: SectionTabsProps) {
   if (isLoading) {
     return (
       <div className="flex gap-4">
@@ -23,23 +24,35 @@ export function SectionTabs({ sections, selectedId, onSelect, isLoading }: Secti
     );
   }
 
+  const isOther = variant === 'other';
+
   return (
     <div className="border-border flex flex-wrap gap-2 border-b">
-      {sections.map(sec => (
-        <button
-          key={sec.uuid}
-          onClick={() => onSelect(sec.uuid)}
-          className={clsx(
-            'relative px-6 py-3 text-sm font-medium transition-colors',
-            selectedId === sec.uuid ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
-          )}
-        >
-          {sec.name}
-          {selectedId === sec.uuid && (
-            <motion.div layoutId="activeTab" className="bg-primary absolute right-0 bottom-0 left-0 h-0.5" />
-          )}
-        </button>
-      ))}
+      {sections.map(sec => {
+        const isSelected = selectedId === sec.uuid;
+        return (
+          <button
+            key={sec.uuid}
+            onClick={() => onSelect(sec.uuid)}
+            className={clsx(
+              'relative px-6 py-3 text-sm font-medium transition-colors',
+              isSelected
+                ? isOther
+                  ? 'text-other-user'
+                  : 'text-primary'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {sec.name}
+            {isSelected && (
+              <motion.div
+                layoutId="activeTab"
+                className={clsx('absolute right-0 bottom-0 left-0 h-0.5', isOther ? 'bg-other-user' : 'bg-primary')}
+              />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
