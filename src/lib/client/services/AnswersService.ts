@@ -2,13 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { AxisAnswerRead } from '../models/AxisAnswerRead';
-import type { AxisAnswerUpsertRequest } from '../models/AxisAnswerUpsertRequest';
 import type { CompletedAnswer } from '../models/CompletedAnswer';
+import type { CompletedAnswerRequest } from '../models/CompletedAnswerRequest';
 import type { ConditionerAnswerRead } from '../models/ConditionerAnswerRead';
 import type { ConditionerAnswerUpsertRequest } from '../models/ConditionerAnswerUpsertRequest';
-import type { PaginatedAxisAnswerReadList } from '../models/PaginatedAxisAnswerReadList';
 import type { PaginatedConditionerAnswerReadList } from '../models/PaginatedConditionerAnswerReadList';
+import type { PaginatedUserAxisAnswerReadList } from '../models/PaginatedUserAxisAnswerReadList';
+import type { UserAxisAnswerRead } from '../models/UserAxisAnswerRead';
+import type { UserAxisAnswerUpsertRequest } from '../models/UserAxisAnswerUpsertRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -19,14 +20,14 @@ export class AnswersService {
    * @param sectionUuid UUID of the Ideology Section
    * @param limit Number of results to return per page.
    * @param offset The initial index from which to return the results.
-   * @returns PaginatedAxisAnswerReadList
+   * @returns PaginatedUserAxisAnswerReadList
    * @throws ApiError
    */
   public static answersAxisListList(
     sectionUuid: string,
     limit?: number,
     offset?: number,
-  ): CancelablePromise<PaginatedAxisAnswerReadList> {
+  ): CancelablePromise<PaginatedUserAxisAnswerReadList> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/answers/axis/{section_uuid}/list/',
@@ -44,13 +45,13 @@ export class AnswersService {
    * Creates or updates the user's answer for a specific axis defined by UUID in URL. Allows marking answer as indifferent (null value).
    * @param uuid UUID of the Axis to answer
    * @param requestBody
-   * @returns AxisAnswerRead
+   * @returns UserAxisAnswerRead
    * @throws ApiError
    */
   public static answersAxisCreate(
     uuid: string,
-    requestBody?: AxisAnswerUpsertRequest,
-  ): CancelablePromise<AxisAnswerRead> {
+    requestBody?: UserAxisAnswerUpsertRequest,
+  ): CancelablePromise<UserAxisAnswerRead> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/answers/axis/{uuid}/',
@@ -78,15 +79,39 @@ export class AnswersService {
     });
   }
   /**
-   * Generate completed answer snapshot
-   * Triggers the calculation of the user's current results, saves it as a CompletedAnswer, and returns the structured data.
+   * Retrieve specific completed answer
+   * Returns the details of a specific completed answer by its UUID.
+   * @param uuid
    * @returns CompletedAnswer
    * @throws ApiError
    */
-  public static answersCompletedGenerateCreate(): CancelablePromise<CompletedAnswer> {
+  public static answersCompletedRetrieve(uuid: string): CancelablePromise<CompletedAnswer> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/answers/completed/{uuid}/',
+      path: {
+        uuid: uuid,
+      },
+      errors: {
+        404: `No response body`,
+      },
+    });
+  }
+  /**
+   * Generate completed answer snapshot
+   * Generates a snapshot. If logged in, calculates from DB. If anonymous, expects 'axis' and 'conditioners' lists in body.
+   * @param requestBody
+   * @returns CompletedAnswer
+   * @throws ApiError
+   */
+  public static answersCompletedGenerateCreate(
+    requestBody?: CompletedAnswerRequest,
+  ): CancelablePromise<CompletedAnswer> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/answers/completed/generate/',
+      body: requestBody,
+      mediaType: 'application/json',
     });
   }
   /**

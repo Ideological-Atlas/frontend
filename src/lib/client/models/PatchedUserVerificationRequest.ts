@@ -7,5 +7,8 @@ export type PatchedUserVerificationRequest = {
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
    */
   username?: string;
-  preferred_language?: string;
+  /**
+   * User bio
+   */
+  bio?: string | null;
 };

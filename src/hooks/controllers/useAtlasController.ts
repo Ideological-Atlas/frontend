@@ -1,15 +1,37 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
+import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySectionConditioner';
 import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
-import type { IdeologyConditionerConditioner } from '@/lib/client/models/IdeologyConditionerConditioner';
+import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
+import { TypeEnum } from '@/lib/client/models/TypeEnum';
+import { AnswersService } from '@/lib/client/services/AnswersService';
+import type { CompletedAnswerRequest } from '@/lib/client/models/CompletedAnswerRequest';
+
+interface LocalConditionerRule {
+  uuid?: string;
+  source_conditioner_uuid: string;
+  condition_values: string | number | boolean | (string | number | boolean)[];
+  conditioner?: IdeologyConditioner;
+}
 
 const CONTEXT_SECTION_UUID = 'context';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
-type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | IdeologyConditionerConditioner;
+type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | LocalConditionerRule;
+
+const parseRules = (rules: string | unknown[]): ConditionRule[] => {
+  if (Array.isArray(rules)) return rules as ConditionRule[];
+  if (typeof rules === 'string') {
+    try {
+      return JSON.parse(rules) as ConditionRule[];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
 
 export function useAtlasController(contextSectionLabel: string) {
   const { isAuthenticated } = useAuthStore();
@@ -32,6 +54,10 @@ export function useAtlasController(contextSectionLabel: string) {
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [isGeneratingShare, setIsGeneratingShare] = useState(false);
+
   useEffect(() => {
     if (!isInitialized) {
       fetchAllData(isAuthenticated);
@@ -45,26 +71,93 @@ export function useAtlasController(contextSectionLabel: string) {
     }
   }, [complexities, selectedComplexity]);
 
+  const normalizedAnswers = useMemo(() => {
+    const map: Record<string, AnswerData> = {};
+    Object.entries(answers).forEach(([key, value]) => {
+      map[normalizeUuid(key)] = value;
+    });
+    return map;
+  }, [answers]);
+
+  const normalizedConditionerAnswers = useMemo(() => {
+    const map: Record<string, string> = {};
+    Object.entries(conditionerAnswers).forEach(([key, value]) => {
+      map[normalizeUuid(key)] = value;
+    });
+    return map;
+  }, [conditionerAnswers]);
+
+  const virtualConditionerAnswers = useMemo(() => {
+    const computed: Record<string, string> = {};
+    const allConditioners = Object.values(conditioners).flat();
+
+    allConditioners.forEach(cond => {
+      if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
+        const sourceUuid = normalizeUuid(cond.source_axis_uuid);
+        const axisAnswer = normalizedAnswers[sourceUuid];
+
+        let result = 'false';
+
+        if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
+          const val = axisAnswer.value;
+          const min = cond.axis_min_value ?? -Infinity;
+          const max = cond.axis_max_value ?? Infinity;
+
+          if (val > min && val <= max) {
+            result = 'true';
+          }
+        }
+
+        computed[normalizeUuid(cond.uuid)] = result;
+      }
+    });
+
+    return computed;
+  }, [conditioners, normalizedAnswers]);
+
+  const combinedConditionerAnswers = useMemo(() => {
+    return { ...normalizedConditionerAnswers, ...virtualConditionerAnswers };
+  }, [normalizedConditionerAnswers, virtualConditionerAnswers]);
+
   const checkVisibility = useCallback(
-    (rules: ConditionRule[]) => {
+    (rulesInput: string | ConditionRule[]) => {
+      const rules = parseRules(rulesInput);
       if (!rules || rules.length === 0) return true;
 
       return rules.every(rule => {
-        // @ts-expect-error - Complex union type discrimination
-        const rawSourceUuid = rule.source_conditioner_uuid || rule.conditioner?.uuid;
+        const nestedConditioner = rule.conditioner;
+
+        let rawSourceUuid: string | undefined;
+
+        if ('source_conditioner_uuid' in rule && rule.source_conditioner_uuid) {
+          rawSourceUuid = rule.source_conditioner_uuid;
+        } else if (nestedConditioner?.uuid) {
+          rawSourceUuid = nestedConditioner.uuid;
+        }
+
+        if (!rawSourceUuid) return true;
+
         const sourceUuid = normalizeUuid(rawSourceUuid);
-        const userAnswer = conditionerAnswers[sourceUuid];
+        const userAnswer = combinedConditionerAnswers[sourceUuid];
 
         if (!userAnswer) return false;
 
-        const accepted = rule.condition_values;
+        let accepted = rule.condition_values;
+
+        const isAxisRange = nestedConditioner?.type === TypeEnum.AXIS_RANGE;
+        const hasNoValues = !accepted || (Array.isArray(accepted) && accepted.length === 0);
+
+        if (hasNoValues && isAxisRange) {
+          accepted = ['true'];
+        }
+
         if (Array.isArray(accepted)) {
           return accepted.includes(userAnswer);
         }
         return accepted === userAnswer;
       });
     },
-    [conditionerAnswers],
+    [combinedConditionerAnswers],
   );
 
   const displaySections: IdeologySection[] = useMemo(() => {
@@ -73,7 +166,11 @@ export function useAtlasController(contextSectionLabel: string) {
 
     const filteredSections = rawSections.filter(section => checkVisibility(section.condition_rules));
 
-    if (rawConditioners.length > 0) {
+    const visibleConditioners = rawConditioners.filter(
+      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules),
+    );
+
+    if (visibleConditioners.length > 0) {
       const contextSection: IdeologySection = {
         uuid: CONTEXT_SECTION_UUID,
         name: contextSectionLabel,
@@ -107,6 +204,42 @@ export function useAtlasController(contextSectionLabel: string) {
     setSelectedSection(uuid);
   };
 
+  const handleShare = async () => {
+    setIsGeneratingShare(true);
+    try {
+      let requestBody: CompletedAnswerRequest | undefined = undefined;
+
+      if (!isAuthenticated) {
+        const axisList = Object.entries(answers).map(([uuid, data]) => ({
+          uuid,
+          value: data.value,
+          margin_left: data.margin_left ?? 0,
+          margin_right: data.margin_right ?? 0,
+        }));
+
+        const conditionersList = Object.entries(conditionerAnswers).map(([uuid, value]) => ({
+          uuid,
+          value,
+        }));
+
+        requestBody = {
+          axis: axisList,
+          conditioners: conditionersList,
+        };
+      }
+
+      const response = await AnswersService.answersCompletedGenerateCreate(requestBody);
+      const origin = window.location.origin;
+      const url = `${origin}/answers/${response.uuid}`;
+      setShareUrl(url);
+      setIsShareModalOpen(true);
+    } catch (error) {
+      console.error('Error generating completed answer:', error);
+    } finally {
+      setIsGeneratingShare(false);
+    }
+  };
+
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
       saveAnswer(axisUuid, data, isAuthenticated);
@@ -122,6 +255,8 @@ export function useAtlasController(contextSectionLabel: string) {
     },
     selectComplexity: handleSelectComplexity,
     selectSection: handleSelectSection,
+    share: handleShare,
+    closeShareModal: () => setIsShareModalOpen(false),
   };
 
   const progressMap = useMemo(() => {
@@ -135,7 +270,7 @@ export function useAtlasController(contextSectionLabel: string) {
       let answeredItems = 0;
 
       compConditioners.forEach(cond => {
-        if (checkVisibility(cond.condition_rules)) {
+        if (cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules)) {
           totalItems++;
           if (conditionerAnswers[cond.uuid]) {
             answeredItems++;
@@ -168,13 +303,14 @@ export function useAtlasController(contextSectionLabel: string) {
       .flat()
       .forEach(cond => {
         map[cond.uuid] = cond.name;
+        map[normalizeUuid(cond.uuid)] = cond.name;
       });
     return map;
   }, [conditioners]);
 
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-    return raw.filter(cond => checkVisibility(cond.condition_rules));
+    return raw.filter(cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules));
   }, [selectedComplexity, conditioners, checkVisibility]);
 
   const currentAxes = useMemo(() => {
@@ -190,6 +326,7 @@ export function useAtlasController(contextSectionLabel: string) {
     isGlobalLoading: !isInitialized && complexities.length === 0,
     isSectionLoading: selectedComplexity ? !sections[selectedComplexity] : true,
     isAxesLoading: selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? !axes[selectedSection] : false,
+    isGeneratingShare,
   };
 
   return {
@@ -207,6 +344,8 @@ export function useAtlasController(contextSectionLabel: string) {
       selectedProgress,
       dependencyNameMap,
       CONTEXT_SECTION_UUID,
+      isShareModalOpen,
+      shareUrl,
     },
     loading: loadingState,
     actions: handlers,

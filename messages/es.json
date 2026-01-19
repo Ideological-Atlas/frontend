@@ -119,6 +119,13 @@
     "conditioned_label": "CONDICIONADA",
     "depends_on_label": "Depende de",
     "asymmetric_label": "ASIMÉTRICO",
-    "progress_label": "Progreso {name}"
+    "progress_label": "Progreso {name}",
+    "share_posture_title": "Compartir Postura",
+    "share_posture_description": "Comparte tu posición en el espectro ideológico mediante este enlace único. Cualquiera con el enlace podrá ver tu configuración.",
+    "direct_link_label": "ENLACE DIRECTO",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "link_copied_success": "¡Enlace copiado al portapapeles correctamente!",
+    "share_button": "Compartir"
   }
 }

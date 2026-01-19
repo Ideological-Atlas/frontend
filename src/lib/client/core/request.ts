@@ -8,6 +8,10 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
+import { refreshAuthTokenAction } from '@/actions/auth';
+import { useAuthStore } from '@/store/useAuthStore';
+
+let refreshPromise: Promise<boolean> | null = null;
 
 export const isDefined = <T>(value: T | null | undefined): value is Exclude<T, null | undefined> => {
   return value !== undefined && value !== null;
@@ -304,7 +308,32 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
       const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
-        const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+        let response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+
+        if (response.status === 401) {
+          if (!refreshPromise) {
+            refreshPromise = (async () => {
+              try {
+                const result = await refreshAuthTokenAction();
+                return result.success;
+              } catch (error) {
+                console.error('Failed to execute refresh token action', error);
+                return false;
+              } finally {
+                refreshPromise = null;
+              }
+            })();
+          }
+
+          const success = await refreshPromise;
+
+          if (success) {
+            response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+          } else {
+            useAuthStore.getState().logout();
+          }
+        }
+
         const responseBody = await getResponseBody(response);
         const responseHeader = getResponseHeader(response, options.responseHeader);
 

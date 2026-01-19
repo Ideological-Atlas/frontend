@@ -11,11 +11,12 @@ interface AxisListProps {
   axes: IdeologyAxis[];
   answers: Record<string, AnswerData>;
   sectionId?: string | null;
-  onSaveAnswer: (uuid: string, data: AnswerUpdatePayload) => void;
-  onDeleteAnswer: (uuid: string) => void;
+  onSaveAnswer?: (uuid: string, data: AnswerUpdatePayload) => void;
+  onDeleteAnswer?: (uuid: string) => void;
   isLoading: boolean;
   isLevelLoading: boolean;
-  dependencyNameMap: Record<string, string>;
+  readOnly?: boolean;
+  variant?: 'default' | 'other';
 }
 
 const itemVariants: Variants = {
@@ -32,7 +33,16 @@ const itemVariants: Variants = {
   },
 };
 
-export function AxisList({ axes, answers, onSaveAnswer, onDeleteAnswer, isLoading, isLevelLoading }: AxisListProps) {
+export function AxisList({
+  axes,
+  answers,
+  onSaveAnswer,
+  onDeleteAnswer,
+  isLoading,
+  isLevelLoading,
+  readOnly = false,
+  variant = 'default',
+}: AxisListProps) {
   const t = useTranslations('Atlas');
 
   if (isLoading) {
@@ -57,7 +67,6 @@ export function AxisList({ axes, answers, onSaveAnswer, onDeleteAnswer, isLoadin
     <motion.div layout className="flex flex-col gap-6">
       <AnimatePresence mode="popLayout" initial={false}>
         {axes.map(axis => {
-          // FIX: IdeologyAxisConditioner siempre tiene el objeto 'conditioner' completo
           const names = axis.condition_rules.map(rule => {
             return rule.conditioner?.name || 'Unknown';
           });
@@ -70,6 +79,8 @@ export function AxisList({ axes, answers, onSaveAnswer, onDeleteAnswer, isLoadin
                 onDelete={onDeleteAnswer}
                 answerData={answers[axis.uuid]}
                 dependencyNames={names}
+                readOnly={readOnly}
+                variant={variant}
               />
             </motion.div>
           );

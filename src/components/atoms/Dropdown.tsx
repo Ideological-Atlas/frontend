@@ -14,6 +14,7 @@ interface DropdownProps<T extends string | number> {
   suffix?: string;
   onOpenChange?: (isOpen: boolean) => void;
   align?: 'start' | 'end';
+  variant?: 'default' | 'other';
 }
 
 export function Dropdown<T extends string | number>({
@@ -24,10 +25,12 @@ export function Dropdown<T extends string | number>({
   suffix = '',
   onOpenChange,
   align = 'start',
+  variant = 'default',
 }: DropdownProps<T>) {
   const t = useTranslations('Common');
   const [isOpen, setIsOpen] = useState(false);
   const scope = useMenuAnimation(isOpen);
+  const isOther = variant === 'other';
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -45,6 +48,9 @@ export function Dropdown<T extends string | number>({
     }
   }, [isOpen, onOpenChange]);
 
+  const activeRing = isOther ? 'ring-other-user/20 border-other-user/50' : 'ring-primary/20 border-primary/50';
+  const selectedBg = isOther ? 'bg-other-user text-white' : 'bg-primary text-primary-foreground';
+
   return (
     <div ref={scope} className="relative inline-block w-full text-left">
       <motion.button
@@ -53,7 +59,7 @@ export function Dropdown<T extends string | number>({
         className={clsx(
           'flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-1.5 transition-colors',
           'bg-secondary/50 border-border hover:bg-secondary',
-          isOpen ? 'ring-primary/20 border-primary/50 ring-2' : '',
+          isOpen ? `${activeRing} ring-2` : '',
         )}
       >
         <div className="flex items-center gap-2">
@@ -88,9 +94,7 @@ export function Dropdown<T extends string | number>({
               key={String(option)}
               className={clsx(
                 'flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-bold transition-colors',
-                value === option
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-zinc-300 hover:bg-zinc-800 hover:text-white',
+                value === option ? selectedBg : 'text-zinc-300 hover:bg-zinc-800 hover:text-white',
               )}
               onClick={() => {
                 onChange(option);

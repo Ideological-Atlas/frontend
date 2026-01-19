@@ -35,6 +35,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  --color-other-user: var(--other-user);
+  --color-other-user-strong: var(--other-user-strong);
+  --color-other-user-strong-foreground: var(--other-user-strong-foreground);
+
   --radius: 0.5rem;
 
   --color-brand-google-blue: #4285f4;
@@ -77,6 +81,10 @@
   --strong-accent-hover: #0d34ae;
   --strong-accent-foreground: #ffffff;
 
+  --other-user: #8b5cf6;
+  --other-user-strong: #c8f65c;
+  --other-user-strong-foreground: #000000;
+
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #16a34a;
@@ -115,6 +123,10 @@
   --strong-accent: #3476d8;
   --strong-accent-hover: #0d34ae;
   --strong-accent-foreground: #ffffff;
+
+  --other-user: #8b5cf6;
+  --other-user-strong: #c8f65c;
+  --other-user-strong-foreground: #000000;
 
   --border: #1e293b;
   --input: #1e293b;

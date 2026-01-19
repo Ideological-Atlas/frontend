@@ -10,4 +10,8 @@ export type MeRequest = {
   first_name?: string;
   last_name?: string;
   preferred_language?: string;
+  /**
+   * User bio
+   */
+  bio?: string | null;
 };

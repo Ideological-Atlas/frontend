@@ -11,6 +11,7 @@ interface ComplexitySelectorProps {
   onSelect: (id: string) => void;
   isLoading: boolean;
   progressMap?: Record<string, number>;
+  variant?: 'default' | 'other';
 }
 
 export function ComplexitySelector({
@@ -19,6 +20,7 @@ export function ComplexitySelector({
   onSelect,
   isLoading,
   progressMap = {},
+  variant = 'default',
 }: ComplexitySelectorProps) {
   if (isLoading) {
     return (
@@ -29,6 +31,8 @@ export function ComplexitySelector({
       </div>
     );
   }
+
+  const isOther = variant === 'other';
 
   return (
     <div className="flex flex-col gap-2">
@@ -44,7 +48,10 @@ export function ComplexitySelector({
             className={clsx(
               'group relative flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200',
               isSelected
-                ? 'bg-primary text-primary-foreground shadow-lg shadow-blue-500/20'
+                ? clsx(
+                    'text-white shadow-lg',
+                    isOther ? 'bg-other-user shadow-other-user/20' : 'bg-primary shadow-blue-500/20',
+                  )
                 : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
             )}
           >
@@ -59,7 +66,7 @@ export function ComplexitySelector({
               <span
                 className={clsx(
                   'text-xs font-bold',
-                  isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground/60',
+                  isSelected ? 'text-white/80' : 'text-muted-foreground/60',
                   isCompleted && !isSelected && 'text-green-500',
                 )}
               >
@@ -67,11 +74,10 @@ export function ComplexitySelector({
               </span>
             </div>
 
-            {/* Background for selected state */}
             {isSelected && (
               <motion.span
                 layoutId="complexity-active"
-                className="bg-primary-foreground/20 absolute inset-0 rounded-xl"
+                className="absolute inset-0 rounded-xl bg-white/20"
                 initial={false}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
@@ -79,7 +85,10 @@ export function ComplexitySelector({
 
             {!isSelected && progress > 0 && progress < 100 && (
               <div
-                className="bg-primary/5 absolute top-0 bottom-0 left-0 rounded-xl transition-all duration-500"
+                className={clsx(
+                  'absolute top-0 bottom-0 left-0 rounded-xl transition-all duration-500',
+                  isOther ? 'bg-other-user/10' : 'bg-primary/5',
+                )}
                 style={{ width: `${progress}%` }}
               />
             )}

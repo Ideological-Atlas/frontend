@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { AxisAnswerRead } from './AxisAnswerRead';
-export type PaginatedAxisAnswerReadList = {
+import type { UserAxisAnswerRead } from './UserAxisAnswerRead';
+export type PaginatedUserAxisAnswerReadList = {
   count: number;
   next?: string | null;
   previous?: string | null;
-  results: Array<AxisAnswerRead>;
+  results: Array<UserAxisAnswerRead>;
 };

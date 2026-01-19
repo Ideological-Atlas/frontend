@@ -12,15 +12,25 @@ import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 
 interface AxisCardProps {
   axis: IdeologyAxis;
-  onSave: (uuid: string, data: AnswerUpdatePayload) => void;
-  onDelete: (uuid: string) => void;
+  onSave?: (uuid: string, data: AnswerUpdatePayload) => void;
+  onDelete?: (uuid: string) => void;
   answerData?: AnswerData;
   dependencyNames: string[];
+  readOnly?: boolean;
+  variant?: 'default' | 'other';
 }
 
 const getInitialMargin = (m?: number | null) => (m !== undefined && m !== null ? m : 10);
 
-export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }: AxisCardProps) {
+export function AxisCard({
+  axis,
+  onSave,
+  onDelete,
+  answerData,
+  dependencyNames,
+  readOnly = false,
+  variant = 'default',
+}: AxisCardProps) {
   const t = useTranslations('Atlas');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -57,16 +67,17 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   }
 
   const isAnswered = answerData !== undefined;
+  const isOther = variant === 'other';
 
   const handleSliderChange = (updates: { value?: number; marginLeft?: number; marginRight?: number }) => {
-    if (isIndifferent) return;
+    if (readOnly || isIndifferent) return;
     if (updates.value !== undefined) setValue(updates.value);
     if (updates.marginLeft !== undefined) setMarginLeft(updates.marginLeft);
     if (updates.marginRight !== undefined) setMarginRight(updates.marginRight);
   };
 
   const handleCommit = () => {
-    if (isIndifferent) return;
+    if (readOnly || isIndifferent || !onSave) return;
     onSave(axis.uuid, {
       value,
       margin_left: marginLeft,
@@ -76,6 +87,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   };
 
   const handleDropdownChange = (targetMargin: number) => {
+    if (readOnly || !onSave) return;
     const maxMarginLeft = value + 100;
     const maxMarginRight = 100 - value;
     const safeMargin = Math.min(targetMargin, maxMarginLeft, maxMarginRight);
@@ -92,7 +104,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   };
 
   const handleThumbWheel = (delta: number) => {
-    if (isIndifferent) return;
+    if (readOnly || isIndifferent || !onSave) return;
 
     let newMl = marginLeft + delta;
     let newMr = marginRight + delta;
@@ -124,6 +136,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   };
 
   const toggleIndifferent = () => {
+    if (readOnly || !onSave) return;
     const newIndifferentState = !isIndifferent;
     setIsIndifferent(newIndifferentState);
 
@@ -149,6 +162,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   };
 
   const handleReset = () => {
+    if (readOnly || !onDelete) return;
     onDelete(axis.uuid);
   };
 
@@ -156,22 +170,29 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
   const isSymmetric = marginLeft === marginRight;
   const marginDisplayValue = isSymmetric ? marginLeft : t('asymmetric_label');
 
+  const activeBorderClass = isOther ? 'border-other-user' : 'border-primary';
+  const activeBgClass = isOther ? 'bg-other-user/5' : 'bg-primary/5';
+  const activeTitleClass = isOther ? 'text-other-user' : 'text-primary';
+  const activeCheckBg = isOther ? 'bg-other-user/20' : 'bg-green-500/20';
+  const activeCheckText = isOther ? 'text-other-user' : 'text-green-600';
+
   return (
     <div
       className={clsx(
-        'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300 hover:shadow-md',
-        isAnswered && !isIndifferent ? 'border-primary bg-primary/5' : 'bg-card border-border',
+        'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
+        !readOnly && 'hover:shadow-md',
+        isAnswered && !isIndifferent ? `${activeBorderClass} ${activeBgClass}` : 'bg-card border-border',
         isIndifferent ? 'opacity-75' : '',
         isDropdownOpen ? 'z-50' : 'z-0',
       )}
     >
-      <DependencyBadge names={dependencyNames} />
+      <DependencyBadge names={dependencyNames} variant={variant} />
 
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <h4
-              className={clsx('text-lg font-bold', isAnswered && !isIndifferent ? 'text-primary' : 'text-foreground')}
+              className={clsx('text-lg font-bold', isAnswered && !isIndifferent ? activeTitleClass : 'text-foreground')}
             >
               {axis.name}
             </h4>
@@ -180,9 +201,9 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="flex items-center justify-center rounded-full bg-green-500/20 p-0.5"
+                className={clsx('flex items-center justify-center rounded-full p-0.5', activeCheckBg)}
               >
-                <span className="material-symbols-outlined text-[18px] font-bold text-green-600">check</span>
+                <span className={clsx('material-symbols-outlined text-[18px] font-bold', activeCheckText)}>check</span>
               </motion.div>
             )}
             {isIndifferent && (
@@ -199,7 +220,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
         </div>
 
         <div className="flex items-center gap-2 pr-4 md:pr-0">
-          {isAnswered && (
+          {!readOnly && isAnswered && (
             <button
               onClick={handleReset}
               title={t('reset_label')}
@@ -209,7 +230,7 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
             </button>
           )}
 
-          {!isIndifferent && (
+          {!isIndifferent && !readOnly && (
             <div className="relative z-20 min-w-[120px]">
               <Dropdown<number | string>
                 value={marginDisplayValue}
@@ -227,20 +248,32 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
       <div className="flex items-center gap-2">
         <button
           onClick={toggleIndifferent}
+          disabled={readOnly}
           className={clsx(
             'flex h-5 w-5 items-center justify-center rounded border transition-colors',
             isIndifferent
-              ? 'bg-primary border-primary'
+              ? isOther
+                ? 'bg-other-user border-other-user'
+                : 'bg-primary border-primary'
               : 'border-muted-foreground hover:border-foreground bg-transparent',
+            readOnly && 'cursor-default opacity-50',
           )}
         >
           {isIndifferent && (
-            <span className="material-symbols-outlined text-primary-foreground text-[16px] font-bold">check</span>
+            <span
+              className={clsx(
+                'material-symbols-outlined text-[16px] font-bold',
+                isOther ? 'text-white' : 'text-primary-foreground',
+              )}
+            >
+              check
+            </span>
           )}
         </button>
         <button
           onClick={toggleIndifferent}
-          className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+          disabled={readOnly}
+          className={clsx('text-muted-foreground text-sm transition-colors', !readOnly && 'hover:text-foreground')}
         >
           {t('indifferent_label')}
         </button>
@@ -261,6 +294,8 @@ export function AxisCard({ axis, onSave, onDelete, answerData, dependencyNames }
           onChange={handleSliderChange}
           onCommit={handleCommit}
           onThumbWheel={handleThumbWheel}
+          readOnly={readOnly}
+          variant={variant}
         />
       </div>
     </div>
