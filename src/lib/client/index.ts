@@ -42,6 +42,9 @@ export type { PaginatedIdeologyListList } from './models/PaginatedIdeologyListLi
 export type { PaginatedIdeologySectionList } from './models/PaginatedIdeologySectionList';
 export type { PaginatedRegionList } from './models/PaginatedRegionList';
 export type { PaginatedUserAxisAnswerReadList } from './models/PaginatedUserAxisAnswerReadList';
+export type { PasswordResetConfirmRequest } from './models/PasswordResetConfirmRequest';
+export type { PasswordResetRequestRequest } from './models/PasswordResetRequestRequest';
+export type { PasswordResetResponse } from './models/PasswordResetResponse';
 export type { PatchedMeRequest } from './models/PatchedMeRequest';
 export type { PatchedUserSetPasswordRequest } from './models/PatchedUserSetPasswordRequest';
 export type { PatchedUserVerificationRequest } from './models/PatchedUserVerificationRequest';

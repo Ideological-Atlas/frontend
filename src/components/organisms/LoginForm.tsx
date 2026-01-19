@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -16,6 +16,7 @@ import { useLogin } from '@/hooks/auth/useLogin';
 
 export function LoginForm() {
   const t = useTranslations('Auth');
+  const locale = useLocale();
   const { form, globalError, onSubmit, isLoading } = useLogin();
   const {
     register,
@@ -68,7 +69,10 @@ export function LoginForm() {
         <motion.div variants={itemVariants} className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">{t('password_label')}</Label>
-            <Link href="#" className="text-primary hover:text-primary-hover text-xs font-medium hover:underline">
+            <Link
+              href={`/${locale}/forgot-password`}
+              className="text-primary hover:text-primary-hover text-xs font-medium hover:underline"
+            >
               {t('forgot_password')}
             </Link>
           </div>

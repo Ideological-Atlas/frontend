@@ -139,7 +139,7 @@ export const calculateGlobalCleanup = (
 
     for (const cond of allConditioners) {
       if (nextCondAnswers[cond.uuid]) {
-        if (!checkVisibility(cond.condition_rules, combinedAnswers)) {
+        if (!checkVisibility(cond.condition_rules as unknown as ConditionRule[], combinedAnswers)) {
           delete nextCondAnswers[cond.uuid];
           condsToRemoveRemote.push(cond.uuid);
           changed = true;

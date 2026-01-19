@@ -7,6 +7,8 @@ export const ROLES = {
 export const ROUTES_CONFIG: Record<string, (typeof ROLES)[keyof typeof ROLES]> = {
   '/login': ROLES.GUEST,
   '/register': ROLES.GUEST,
+  '/forgot-password': ROLES.GUEST,
+  '/reset-password': ROLES.GUEST,
   '/verify': ROLES.PUBLIC,
   '/': ROLES.PUBLIC,
   '/profile': ROLES.PROTECTED,
