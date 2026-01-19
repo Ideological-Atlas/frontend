@@ -22,20 +22,20 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             transition={{
               repeat: Infinity,
               duration: 3,
-              ease: "linear",
+              ease: 'linear',
             }}
             className="absolute -inset-[3px] rounded-full"
             style={{
               background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
             }}
           />
-          
+
           <motion.div
             animate={{ rotate: 360 }}
             transition={{
               repeat: Infinity,
               duration: 3,
-              ease: "linear",
+              ease: 'linear',
             }}
             className="absolute -inset-[3px] rounded-full opacity-50 blur-sm"
             style={{
@@ -53,7 +53,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
         <div className="flex flex-col gap-1">
           <h1 className="text-foreground text-xl font-bold md:text-2xl">@{user.username}</h1>
           <div className="flex gap-2 pt-1">
-            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold uppercase tracking-wider">
+            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold tracking-wider uppercase">
               {user.bio || t('atlas_profile_label') || 'Perfil Atlas'}
             </div>
           </div>

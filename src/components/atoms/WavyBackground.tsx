@@ -9,18 +9,12 @@ export function WavyBackground({ variant = 'default' }: WavyBackgroundProps) {
 
   const color1 = isOther ? 'var(--other-user)' : 'var(--strong-accent)';
   const color2 = isOther ? 'var(--other-user-strong)' : 'var(--accent)';
-  
-  const bgGradient = isOther
-    ? 'from-other-user-strong/5 to-other-user/5' 
-    : 'from-accent-strong/5 to-accent/5';
+
+  const bgGradient = isOther ? 'from-other-user-strong/5 to-other-user/5' : 'from-accent-strong/5 to-accent/5';
 
   return (
     <div className={`absolute inset-0 z-0 overflow-hidden rounded-xl bg-gradient-to-br via-transparent ${bgGradient}`}>
-      <svg
-        className="absolute top-0 left-0 h-full w-full opacity-60"
-        preserveAspectRatio="none"
-        viewBox="0 0 1000 200"
-      >
+      <svg className="absolute top-0 left-0 h-full w-full opacity-60" preserveAspectRatio="none" viewBox="0 0 1000 200">
         <defs>
           <linearGradient
             id={`flowingGradient-${variant}`}
