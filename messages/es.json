@@ -150,7 +150,18 @@
     "copied": "Copiado",
     "copy": "Copiar",
     "link_copied_success": "¡Enlace copiado al portapapeles correctamente!",
-    "share_button": "Compartir"
+    "share_button": "Compartir",
+    "public_profile_badge": "PERFIL PÚBLICO",
+    "similarity_label": "Similitud contigo",
+    "affinity_identical": "Idéntica",
+    "affinity_very_high": "Muy Alta",
+    "affinity_high": "Alta",
+    "affinity_compatible": "Compatible",
+    "affinity_low": "Baja",
+    "affinity_very_low": "Muy Baja",
+    "affinity_opposite": "Opuesta",
+    "this_is_you_label": "Este es tu perfil",
+    "your_answers_label": "Tus Respuestas"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",

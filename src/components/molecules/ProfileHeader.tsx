@@ -1,48 +1,93 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate, type MotionValue } from 'framer-motion';
 import type { SimpleUser } from '@/lib/client/models/SimpleUser';
+import { useAuthStore } from '@/store/useAuthStore';
+import { clsx } from 'clsx';
 
 interface ProfileHeaderProps {
   user: SimpleUser;
+  affinity?: number | null;
+  isPublic?: boolean;
 }
 
-export function ProfileHeader({ user }: ProfileHeaderProps) {
-  const t = useTranslations('Atlas');
+function Counter({ value }: { value: MotionValue<number> }) {
+  const [displayValue, setDisplayValue] = useState(0);
 
+  useEffect(() => {
+    const unsubscribe = value.on('change', latest => {
+      setDisplayValue(Math.round(latest));
+    });
+    return () => unsubscribe();
+  }, [value]);
+
+  return <span className="text-xs font-bold">{displayValue}%</span>;
+}
+
+export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) {
+  const t = useTranslations('Atlas');
+  const { user: authUser } = useAuthStore();
+
+  const isOwnProfile = authUser?.uuid === user.uuid;
   const initial = user.username ? user.username.substring(0, 2).toUpperCase() : '??';
+
+  const displayBio = user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
+
+  const progress = useMotionValue(0);
+
+  const color = useTransform(progress, [0, 25, 50, 75, 100], ['#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981']);
+
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+
+  const strokeDashoffset = useTransform(progress, value => {
+    return circumference - (value / 100) * circumference;
+  });
+
+  useEffect(() => {
+    if (affinity !== undefined && affinity !== null) {
+      const controls = animate(progress, affinity, {
+        duration: 1.5,
+        ease: 'easeOut',
+      });
+      return () => controls.stop();
+    }
+  }, [affinity, progress]);
+
+  const getAffinityLabel = (val: number) => {
+    if (val === 100) return { label: t('affinity_identical'), color: 'text-emerald-500' };
+    if (val >= 80) return { label: t('affinity_very_high'), color: 'text-green-500' };
+    if (val >= 60) return { label: t('affinity_high'), color: 'text-teal-500' };
+    if (val >= 45) return { label: t('affinity_compatible'), color: 'text-blue-500' };
+    if (val >= 30) return { label: t('affinity_low'), color: 'text-orange-500' };
+    if (val >= 15) return { label: t('affinity_very_low'), color: 'text-red-400' };
+    return { label: t('affinity_opposite'), color: 'text-red-600' };
+  };
+
+  const finalAffinityInfo = affinity !== null && affinity !== undefined ? getAffinityLabel(affinity) : null;
 
   return (
     <div className="bg-card border-border mb-8 flex flex-col items-start justify-between gap-6 rounded-2xl border p-6 shadow-sm md:flex-row md:items-center">
       <div className="flex items-center gap-6">
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex shrink-0 items-center justify-center">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{
-              repeat: Infinity,
-              duration: 3,
-              ease: 'linear',
-            }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full"
             style={{
               background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
             }}
           />
-
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{
-              repeat: Infinity,
-              duration: 3,
-              ease: 'linear',
-            }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full opacity-50 blur-sm"
             style={{
               background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
             }}
           />
-
           <div className="bg-card relative z-10 flex h-[72px] w-[72px] items-center justify-center rounded-full p-[4px]">
             <div className="bg-other-user flex h-full w-full items-center justify-center rounded-full text-2xl font-black text-white shadow-inner">
               {initial}
@@ -50,18 +95,77 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <h1 className="text-foreground text-xl font-bold md:text-2xl">@{user.username}</h1>
-          <div className="flex gap-2 pt-1">
-            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold tracking-wider uppercase">
-              {user.bio || t('atlas_profile_label') || 'Perfil Atlas'}
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">@{user.username}</h1>
+
+          {isPublic && (
+            <div className="flex flex-wrap gap-2">
+              <div className="bg-primary/20 text-primary border-primary/20 flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap uppercase">
+                {t('public_profile_badge')}
+              </div>
             </div>
-          </div>
+          )}
+
+          {displayBio && (
+            <p className="text-muted-foreground max-w-[500px] text-sm leading-relaxed break-words">{displayBio}</p>
+          )}
         </div>
       </div>
 
-      <div className="hidden md:block">
-        <div className="bg-secondary/30 h-10 w-32 rounded-lg"></div>
+      <div className="hidden shrink-0 md:block">
+        {isOwnProfile ? (
+          <div className="bg-primary/10 border-primary/20 flex items-center gap-4 rounded-xl border p-3 pr-5">
+            <div className="bg-primary/20 text-primary flex h-12 w-12 items-center justify-center rounded-full">
+              <span className="material-symbols-outlined text-2xl">person</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                {t('this_is_you_label')}
+              </span>
+              <span className="text-primary text-base font-black">{t('your_answers_label')}</span>
+            </div>
+          </div>
+        ) : finalAffinityInfo && affinity !== null && affinity !== undefined ? (
+          <div className="bg-secondary/10 border-border flex items-center gap-4 rounded-xl border p-3 pr-5">
+            <div className="relative flex h-12 w-12 items-center justify-center">
+              <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 48 48">
+                <circle
+                  className="text-secondary"
+                  strokeWidth="4"
+                  stroke="currentColor"
+                  fill="transparent"
+                  r={radius}
+                  cx="24"
+                  cy="24"
+                />
+                <motion.circle
+                  style={{ stroke: color, strokeDashoffset }}
+                  strokeWidth="4"
+                  strokeDasharray={circumference}
+                  strokeLinecap="round"
+                  fill="transparent"
+                  r={radius}
+                  cx="24"
+                  cy="24"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Counter value={progress} />
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                {t('similarity_label')}
+              </span>
+              <span className={clsx('text-base font-black transition-colors duration-500', finalAffinityInfo.color)}>
+                {finalAffinityInfo.label}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-secondary/30 h-10 w-32 rounded-lg"></div>
+        )}
       </div>
     </div>
   );

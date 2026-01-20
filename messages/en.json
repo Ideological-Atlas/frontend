@@ -150,7 +150,18 @@
     "copied": "Copied",
     "copy": "Copy",
     "link_copied_success": "Link copied to clipboard successfully!",
-    "share_button": "Share"
+    "share_button": "Share",
+    "public_profile_badge": "PUBLIC PROFILE",
+    "similarity_label": "Similarity with you",
+    "affinity_identical": "Identical",
+    "affinity_very_high": "Very High",
+    "affinity_high": "High",
+    "affinity_compatible": "Compatible",
+    "affinity_low": "Low",
+    "affinity_very_low": "Very Low",
+    "affinity_opposite": "Opposite",
+    "this_is_you_label": "This is your profile",
+    "your_answers_label": "Your Answers"
   },
   "Profile": {
     "page_title": "Profile Settings",

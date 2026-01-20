@@ -68,7 +68,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">
-        {user && <ProfileHeader user={user} />}
+        {user && <ProfileHeader user={user} affinity={state.affinity} isPublic={user.is_public} />}
 
         <PageHeader
           title={state.selectedComplexityObj?.name || t('header_title')}

@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { Affinity } from '../models/Affinity';
 import type { Me } from '../models/Me';
 import type { MeRequest } from '../models/MeRequest';
 import type { PatchedMeRequest } from '../models/PatchedMeRequest';
@@ -81,6 +82,22 @@ export class UsersService {
       url: '/api/me/password/',
       body: requestBody,
       mediaType: 'application/json',
+    });
+  }
+  /**
+   * Get affinity with another user
+   * Calculates the ideological affinity (0-100%) between the current user and another user specified by UUID.
+   * @param uuid
+   * @returns Affinity
+   * @throws ApiError
+   */
+  public static usersAffinityRetrieve(uuid: string): CancelablePromise<Affinity> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/users/{uuid}/affinity/',
+      path: {
+        uuid: uuid,
+      },
     });
   }
 }

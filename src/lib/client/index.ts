@@ -7,6 +7,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { Affinity } from './models/Affinity';
 export { AppearanceEnum } from './models/AppearanceEnum';
 export { AuthProviderEnum } from './models/AuthProviderEnum';
 export type { AxisAnswerInput } from './models/AxisAnswerInput';

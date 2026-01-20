@@ -1,6 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useAtlasStore, type AnswerData } from '@/store/useAtlasStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import { AnswersService } from '@/lib/client/services/AnswersService';
+import { UsersService } from '@/lib/client/services/UsersService';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { CompletedAnswer } from '@/lib/client/models/CompletedAnswer';
@@ -11,8 +13,10 @@ const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 export function usePublicAtlasController(uuid: string, contextSectionLabel: string) {
   const { complexities, conditioners, sections, axes, isInitialized, fetchAllData } = useAtlasStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [answerData, setAnswerData] = useState<CompletedAnswer | null>(null);
+  const [affinity, setAffinity] = useState<number | null>(null);
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(true);
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -24,19 +28,28 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   }, [isInitialized, fetchAllData]);
 
   useEffect(() => {
-    const loadAnswer = async () => {
+    const loadData = async () => {
       try {
         setIsLoadingAnswer(true);
         const data = await AnswersService.answersCompletedRetrieve(uuid);
         setAnswerData(data);
+
+        if (isAuthenticated && data.completed_by?.uuid) {
+          try {
+            const affinityData = await UsersService.usersAffinityRetrieve(data.completed_by.uuid);
+            setAffinity(affinityData.affinity);
+          } catch (err) {
+            console.error('Failed to load affinity', err);
+          }
+        }
       } catch (error) {
         console.error('Failed to load answer', error);
       } finally {
         setIsLoadingAnswer(false);
       }
     };
-    if (uuid) loadAnswer();
-  }, [uuid]);
+    if (uuid) loadData();
+  }, [uuid, isAuthenticated]);
 
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
@@ -240,6 +253,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       dependencyNameMap,
       CONTEXT_SECTION_UUID,
       answerData,
+      affinity,
     },
     loading: {
       isGlobalLoading: (!isInitialized && complexities.length === 0) || isLoadingAnswer,
