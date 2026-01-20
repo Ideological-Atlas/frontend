@@ -4,6 +4,7 @@ import { ApiConfigProvider } from '@/providers/ApiConfigProvider';
 import { AppLayout } from '@/providers/AppLayout';
 import { I18nProvider } from '@/providers/I18nProvider';
 import { GoogleAuthProvider } from '@/providers/GoogleAuthProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
@@ -30,12 +31,14 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} bg-background text-foreground overflow-x-hidden font-sans`}>
         <I18nProvider locale={locale}>
           <ApiConfigProvider>
             <GoogleAuthProvider>
-              <AppLayout>{children}</AppLayout>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                <AppLayout>{children}</AppLayout>
+              </ThemeProvider>
             </GoogleAuthProvider>
           </ApiConfigProvider>
         </I18nProvider>

@@ -2,6 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
+import { ThemeSwitch } from '../atoms/ThemeSwitch';
 import Link from 'next/link';
 import Image from 'next/image';
 import { clsx } from 'clsx';
@@ -38,14 +39,21 @@ export function Header() {
 
   return (
     <header className="bg-background border-border sticky top-0 z-50 flex items-center justify-between border-b border-solid px-10 py-4 whitespace-nowrap">
-      <div className="text-foreground flex items-center gap-4">
-        <Link href={`/${locale}`} className="relative flex size-8 items-center justify-center">
-          <Image src="/logo.png" alt="Ideological Atlas Logo" width={32} height={32} className="object-contain" />
-        </Link>
-        <Link href={`/${locale}`} className="text-lg leading-tight font-bold tracking-[-0.015em]">
-          {tCommon('ideological_atlas')}
-        </Link>
+      <div className="text-foreground flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <Link href={`/${locale}`} className="relative flex size-8 items-center justify-center">
+            <Image src="/logo.png" alt="Ideological Atlas Logo" width={32} height={32} className="object-contain" />
+          </Link>
+          <Link href={`/${locale}`} className="text-lg leading-tight font-bold tracking-[-0.015em]">
+            {tCommon('ideological_atlas')}
+          </Link>
+        </div>
+
+        <div className="bg-border/50 hidden h-6 w-px md:block"></div>
+
+        <ThemeSwitch />
       </div>
+
       <div className="flex hidden flex-1 justify-end gap-8 lg:flex">
         <div className="flex items-center gap-9">
           {navKeys.map(key => {
