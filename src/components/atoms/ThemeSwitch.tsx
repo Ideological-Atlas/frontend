@@ -19,12 +19,26 @@ export function ThemeSwitch() {
 
   const isDark = theme === 'dark';
 
+  const toggleTheme = (checked: boolean) => {
+    const newTheme = checked ? 'dark' : 'light';
+
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      setTheme(newTheme);
+    });
+  };
+
   return (
     <div className="flex items-center">
       <Switch.Root
         checked={isDark}
-        onCheckedChange={checked => setTheme(checked ? 'dark' : 'light')}
+        onCheckedChange={toggleTheme}
         className={clsx(
+          'switch-track',
           'border-border focus-visible:ring-primary relative h-7 w-[52px] cursor-pointer rounded-full border shadow-inner transition-colors outline-none focus-visible:ring-2',
           'bg-secondary/50 hover:bg-secondary',
         )}
@@ -32,11 +46,12 @@ export function ThemeSwitch() {
         <motion.div
           layout
           transition={{
-            type: 'spring',
-            stiffness: 700,
-            damping: 30,
+            duration: 1.6,
+            ease: [0.25, 1, 0.5, 1],
+            type: 'tween',
           }}
           className={clsx(
+            'switch-thumb',
             'block h-5 w-5 rounded-full shadow-sm shadow-black/20',
             isDark ? 'bg-background translate-x-[26px]' : 'translate-x-[4px] bg-white',
           )}

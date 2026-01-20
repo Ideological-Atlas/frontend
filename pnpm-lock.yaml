@@ -11,7 +11,7 @@ importers:
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.71.0(react@19.2.3))
       '@radix-ui/react-switch':
-        specifier: ^1.2.6
+        specifier: 1.2.6
         version: 1.2.6(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@react-oauth/google':
         specifier: 0.13.4
@@ -38,7 +38,7 @@ importers:
         specifier: 4.7.0
         version: 4.7.0(next@16.1.1(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       next-themes:
-        specifier: ^0.4.6
+        specifier: 0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: 19.2.3
@@ -63,7 +63,7 @@ importers:
         version: 5.0.9(@types/react@19.2.7)(react@19.2.3)
     devDependencies:
       '@commitlint/cli':
-        specifier: ^20.3.1
+        specifier: 20.3.1
         version: 20.3.1(@types/node@20.19.27)(typescript@5.9.3)
       '@commitlint/config-conventional':
         specifier: 20.3.1
