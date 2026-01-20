@@ -8,12 +8,29 @@ import { AppearanceEnum } from '@/lib/client/models/AppearanceEnum';
 function ThemeSync() {
   const { user } = useAuthStore();
   const { setTheme, theme } = useTheme();
+  const mountedRef = React.useRef(false);
 
   React.useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      if (user?.appearance) {
+        const targetTheme = user.appearance === AppearanceEnum.AUTO ? 'system' : user.appearance;
+        if (theme !== targetTheme) setTheme(targetTheme);
+      }
+      return;
+    }
+
     if (user?.appearance) {
       const targetTheme = user.appearance === AppearanceEnum.AUTO ? 'system' : user.appearance;
+      
       if (theme !== targetTheme) {
-        setTheme(targetTheme);
+        if (document.startViewTransition) {
+          document.startViewTransition(() => {
+            setTheme(targetTheme);
+          });
+        } else {
+          setTheme(targetTheme);
+        }
       }
     }
   }, [user?.appearance, setTheme, theme]);
