@@ -13,7 +13,7 @@ const inputStyles = tv({
       default: { input: 'border-transparent' },
       error: {
         input:
-          'border-destructive focus-visible:ring-destructive focus-visible:border-destructive text-destructive placeholder:text-destructive/50',
+          'border-destructive bg-destructive/10 text-destructive placeholder:text-destructive/50 focus-visible:ring-destructive focus-visible:border-destructive',
         icon: 'text-destructive',
       },
     },

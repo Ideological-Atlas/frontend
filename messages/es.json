@@ -7,7 +7,10 @@
     "learn_more": "Saber más",
     "create_profile": "Crear mi perfil",
     "processing": "Procesando...",
-    "current": "Actual"
+    "current": "Actual",
+    "profile": "Perfil",
+    "logout": "Cerrar Sesión",
+    "cancel": "Cancelar"
   },
   "Navigation": {
     "home": "Inicio",
@@ -59,9 +62,9 @@
     "continue_google_loading": "Conectando...",
     "register_title": "Crear Cuenta",
     "register_subtitle": "Regístrate para establecer tu perfil ideológico y explorar el espectro.",
-    "email_label": "Correo electrónico",
+    "email_label": "Correo Electrónico",
     "email_placeholder": "correo@ejemplo.com",
-    "confirm_password_label": "Confirmar",
+    "confirm_password_label": "Confirmar contraseña",
     "register_button": "Registrarse",
     "registering": "Registrando...",
     "has_account": "¿Ya tienes cuenta?",
@@ -97,7 +100,8 @@
     "verifying_token": "Verificando enlace...",
     "invalid_token_title": "Enlace no válido",
     "invalid_token_description": "Este enlace de recuperación ha caducado o no es válido. Por favor, solicita uno nuevo.",
-    "reset_password_error": "Hubo un error al restablecer la contraseña."
+    "reset_password_error": "Hubo un error al restablecer la contraseña.",
+    "invalid_username_format": "Solo letras, números y @/./+/-/_ (sin espacios)"
   },
   "Footer": {
     "privacy": "Privacidad",
@@ -147,5 +151,40 @@
     "copy": "Copiar",
     "link_copied_success": "¡Enlace copiado al portapapeles correctamente!",
     "share_button": "Compartir"
+  },
+  "Profile": {
+    "page_title": "Configuración de Perfil",
+    "header_title": "Configuración de Perfil",
+    "header_description": "Gestiona tu identidad, preferencias y privacidad en el Atlas Ideológico.",
+    "public_profile": "Perfil Público",
+    "website_label": "Sitio Web",
+    "first_name_label": "Nombre",
+    "last_name_label": "Apellidos",
+    "bio_label": "Biografía",
+    "preferences_title": "Preferencias Generales",
+    "language_label": "Idioma",
+    "language_select": "Seleccionar idioma",
+    "appearance_label": "Apariencia",
+    "theme_select": "Seleccionar tema",
+    "security_title": "Seguridad",
+    "change_password_title": "Cambiar Contraseña",
+    "new_password_label": "Nueva contraseña",
+    "privacy_title": "Privacidad",
+    "visibility_label": "Visibilidad del Perfil",
+    "visibility_description": "Define quién puede ver tu posición en el espectro.",
+    "public": "Público",
+    "private": "Privado",
+    "save_all": "Guardar Todo",
+    "saved": "Guardado",
+    "menu_configuration": "MENÚ DE CONFIGURACIÓN",
+    "view_public_profile": "Ver Perfil Público",
+    "general_preferences": "Preferencias Generales",
+    "save_changes": "Guardar Cambios",
+    "cancel": "Cancelar",
+    "public_profile_desc": "Información visible para otros usuarios del Atlas.",
+    "bio_placeholder": "",
+    "preferences_desc": "Personaliza tu experiencia en la aplicación.",
+    "security_desc": "Protege tu cuenta y datos sensibles.",
+    "privacy_desc": "Controla quién puede ver tu actividad."
   }
 }

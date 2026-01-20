@@ -7,7 +7,10 @@
     "learn_more": "Learn More",
     "create_profile": "Create Profile",
     "processing": "Processing...",
-    "current": "Current"
+    "current": "Current",
+    "profile": "Profile",
+    "logout": "Logout",
+    "cancel": "Cancel"
   },
   "Navigation": {
     "home": "Home",
@@ -61,7 +64,7 @@
     "register_subtitle": "Register to establish your ideological profile and explore the spectrum.",
     "email_label": "Email",
     "email_placeholder": "email@example.com",
-    "confirm_password_label": "Confirm",
+    "confirm_password_label": "Confirm password",
     "register_button": "Sign Up",
     "registering": "Registering...",
     "has_account": "Already have an account?",
@@ -97,7 +100,8 @@
     "verifying_token": "Verifying link...",
     "invalid_token_title": "Invalid Link",
     "invalid_token_description": "This recovery link has expired or is invalid. Please request a new one.",
-    "reset_password_error": "There was an error resetting the password."
+    "reset_password_error": "There was an error resetting the password.",
+    "invalid_username_format": "Only letters, numbers and @/./+/-/_ (no spaces)"
   },
   "Footer": {
     "privacy": "Privacy",
@@ -147,5 +151,38 @@
     "copy": "Copy",
     "link_copied_success": "Link copied to clipboard successfully!",
     "share_button": "Share"
+  },
+  "Profile": {
+    "page_title": "Profile Settings",
+    "header_title": "Profile Settings",
+    "header_description": "Manage your identity, preferences, and privacy in the Ideological Atlas.",
+    "menu_configuration": "CONFIGURATION MENU",
+    "view_public_profile": "View Public Profile",
+    "save_changes": "Save Changes",
+    "save_all": "Save All",
+    "saved": "Saved",
+    "public_profile": "Public Profile",
+    "public_profile_desc": "Information visible to other Atlas users.",
+    "first_name_label": "First Name",
+    "last_name_label": "Last Name",
+    "bio_label": "Biography",
+    "bio_placeholder": "",
+    "website_label": "Website",
+    "preferences_title": "General Preferences",
+    "preferences_desc": "Customize your experience in the application.",
+    "language_label": "Language",
+    "language_select": "Select language",
+    "appearance_label": "Appearance",
+    "theme_select": "Select theme",
+    "security_title": "Security",
+    "security_desc": "Protect your account and sensitive data.",
+    "change_password_title": "Change Password",
+    "new_password_label": "New password",
+    "privacy_title": "Privacy",
+    "privacy_desc": "Control who can see your activity.",
+    "visibility_label": "Profile Visibility",
+    "visibility_description": "Define who can see your position on the spectrum.",
+    "public": "Public",
+    "private": "Private"
   }
 }
