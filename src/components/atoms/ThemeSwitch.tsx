@@ -28,10 +28,10 @@ export function ThemeSwitch() {
 
     if (isAuthenticated && user) {
       setUser({ ...user, appearance: newTheme as AppearanceEnum });
-      
-      UsersService.mePartialUpdate({ 
-        appearance: newTheme as AppearanceEnum 
-      }).catch((err) => {
+
+      UsersService.mePartialUpdate({
+        appearance: newTheme as AppearanceEnum,
+      }).catch(err => {
         console.error('Error syncing theme preference:', err);
       });
     } else {
@@ -53,9 +53,9 @@ export function ThemeSwitch() {
         checked={isDark}
         onCheckedChange={toggleTheme}
         className={clsx(
-          "switch-track",
-          "relative h-7 w-[52px] cursor-pointer rounded-full border border-border shadow-inner outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary",
-          "bg-secondary/50 hover:bg-secondary"
+          'switch-track',
+          'border-border focus-visible:ring-primary relative h-7 w-[52px] cursor-pointer rounded-full border shadow-inner transition-colors outline-none focus-visible:ring-2',
+          'bg-secondary/50 hover:bg-secondary',
         )}
       >
         <motion.div
@@ -63,17 +63,17 @@ export function ThemeSwitch() {
           transition={{
             duration: 1.6,
             ease: [0.25, 1, 0.5, 1],
-            type: "tween"
+            type: 'tween',
           }}
           className={clsx(
-            "switch-thumb",
-            "block h-5 w-5 rounded-full shadow-sm shadow-black/20",
-            isDark ? "bg-background translate-x-[26px]" : "bg-white translate-x-[4px]"
+            'switch-thumb',
+            'block h-5 w-5 rounded-full shadow-sm shadow-black/20',
+            isDark ? 'bg-background translate-x-[26px]' : 'translate-x-[4px] bg-white',
           )}
         >
           <div className="flex h-full w-full items-center justify-center text-[14px]">
             {isDark ? (
-              <span className="material-symbols-outlined text-[14px] text-primary">dark_mode</span>
+              <span className="material-symbols-outlined text-primary text-[14px]">dark_mode</span>
             ) : (
               <span className="material-symbols-outlined text-[14px] text-amber-500">light_mode</span>
             )}

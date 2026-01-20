@@ -22,7 +22,7 @@ function ThemeSync() {
 
     if (user?.appearance) {
       const targetTheme = user.appearance === AppearanceEnum.AUTO ? 'system' : user.appearance;
-      
+
       if (theme !== targetTheme) {
         if (document.startViewTransition) {
           document.startViewTransition(() => {
