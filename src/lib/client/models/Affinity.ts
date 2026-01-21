@@ -2,11 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { SimpleUser } from './SimpleUser';
+import type { ComplexityAffinity } from './ComplexityAffinity';
+import type { PublicUser } from './PublicUser';
 export type Affinity = {
-  readonly target_user: SimpleUser;
+  readonly target_user: PublicUser;
   /**
-   * Calculated affinity percentage (0-100).
+   * Overall affinity percentage.
    */
-  affinity: number;
+  total_affinity: number;
+  /**
+   * Affinity grouped by abstraction level.
+   */
+  complexities: Array<ComplexityAffinity>;
 };

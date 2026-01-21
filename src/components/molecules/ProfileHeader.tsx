@@ -6,6 +6,7 @@ import { motion, useMotionValue, useTransform, animate, type MotionValue } from 
 import type { SimpleUser } from '@/lib/client/models/SimpleUser';
 import { useAuthStore } from '@/store/useAuthStore';
 import { clsx } from 'clsx';
+import { getAffinityLevel } from '@/lib/affinity-utils';
 
 interface ProfileHeaderProps {
   user: SimpleUser;
@@ -15,14 +16,10 @@ interface ProfileHeaderProps {
 
 function Counter({ value }: { value: MotionValue<number> }) {
   const [displayValue, setDisplayValue] = useState(0);
-
   useEffect(() => {
-    const unsubscribe = value.on('change', latest => {
-      setDisplayValue(Math.round(latest));
-    });
+    const unsubscribe = value.on('change', latest => setDisplayValue(Math.round(latest)));
     return () => unsubscribe();
   }, [value]);
-
   return <span className="text-xs font-bold">{displayValue}%</span>;
 }
 
@@ -32,44 +29,31 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
 
   const isOwnProfile = authUser?.uuid === user.uuid;
   const initial = user.username ? user.username.substring(0, 2).toUpperCase() : '??';
-
   const displayBio = user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
 
   const progress = useMotionValue(0);
 
-  const color = useTransform(progress, [0, 25, 50, 75, 100], ['#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981']);
+  const color = useTransform(
+    progress,
+    [0, 15, 30, 45, 60, 80, 90, 100],
+    ['#dc2626', '#ef4444', '#f97316', '#3b82f6', '#14b8a6', '#22c55e', '#10b981', '#059669'],
+  );
 
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
-
-  const strokeDashoffset = useTransform(progress, value => {
-    return circumference - (value / 100) * circumference;
-  });
+  const strokeDashoffset = useTransform(progress, value => circumference - (value / 100) * circumference);
 
   useEffect(() => {
     if (affinity !== undefined && affinity !== null) {
-      const controls = animate(progress, affinity, {
-        duration: 1.5,
-        ease: 'easeOut',
-      });
+      const controls = animate(progress, affinity, { duration: 1.5, ease: 'easeOut' });
       return () => controls.stop();
     }
   }, [affinity, progress]);
 
-  const getAffinityLabel = (val: number) => {
-    if (val === 100) return { label: t('affinity_identical'), color: 'text-emerald-500' };
-    if (val >= 80) return { label: t('affinity_very_high'), color: 'text-green-500' };
-    if (val >= 60) return { label: t('affinity_high'), color: 'text-teal-500' };
-    if (val >= 45) return { label: t('affinity_compatible'), color: 'text-blue-500' };
-    if (val >= 30) return { label: t('affinity_low'), color: 'text-orange-500' };
-    if (val >= 15) return { label: t('affinity_very_low'), color: 'text-red-400' };
-    return { label: t('affinity_opposite'), color: 'text-red-600' };
-  };
-
-  const finalAffinityInfo = affinity !== null && affinity !== undefined ? getAffinityLabel(affinity) : null;
+  const affinityInfo = affinity !== null && affinity !== undefined ? getAffinityLevel(affinity) : null;
 
   return (
-    <div className="bg-card border-border mb-8 flex flex-col items-start justify-between gap-6 rounded-2xl border p-6 shadow-sm md:flex-row md:items-center">
+    <div className="bg-card border-border sticky top-20 z-30 mb-8 flex flex-col items-start justify-between gap-6 rounded-2xl border p-6 shadow-md transition-all duration-300 md:flex-row md:items-center">
       <div className="flex items-center gap-6">
         <div className="relative flex shrink-0 items-center justify-center">
           <motion.div
@@ -97,7 +81,6 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
 
         <div className="flex min-w-0 flex-col gap-1.5">
           <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">@{user.username}</h1>
-
           {isPublic && (
             <div className="flex flex-wrap gap-2">
               <div className="bg-primary/20 text-primary border-primary/20 flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap uppercase">
@@ -105,7 +88,6 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
               </div>
             </div>
           )}
-
           {displayBio && (
             <p className="text-muted-foreground max-w-[500px] text-sm leading-relaxed break-words">{displayBio}</p>
           )}
@@ -125,7 +107,7 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
               <span className="text-primary text-base font-black">{t('your_answers_label')}</span>
             </div>
           </div>
-        ) : finalAffinityInfo && affinity !== null && affinity !== undefined ? (
+        ) : affinityInfo ? (
           <div className="bg-secondary/10 border-border flex items-center gap-4 rounded-xl border p-3 pr-5">
             <div className="relative flex h-12 w-12 items-center justify-center">
               <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 48 48">
@@ -153,13 +135,12 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
                 <Counter value={progress} />
               </div>
             </div>
-
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 {t('similarity_label')}
               </span>
-              <span className={clsx('text-base font-black transition-colors duration-500', finalAffinityInfo.color)}>
-                {finalAffinityInfo.label}
+              <span className={clsx('text-base font-black transition-colors duration-500', affinityInfo.colorClass)}>
+                {t(affinityInfo.labelKey)}
               </span>
             </div>
           </div>

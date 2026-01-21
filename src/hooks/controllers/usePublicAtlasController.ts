@@ -6,6 +6,8 @@ import { UsersService } from '@/lib/client/services/UsersService';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { CompletedAnswer } from '@/lib/client/models/CompletedAnswer';
+import type { AxisBreakdown } from '@/lib/client/models/AxisBreakdown';
+import type { ComplexityAffinity } from '@/lib/client/models/ComplexityAffinity';
 import { checkVisibility } from '@/lib/domain/atlas-logic';
 
 const CONTEXT_SECTION_UUID = 'context';
@@ -17,6 +19,13 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   const [answerData, setAnswerData] = useState<CompletedAnswer | null>(null);
   const [affinity, setAffinity] = useState<number | null>(null);
+
+  const [axisAffinityMap, setAxisAffinityMap] = useState<
+    Record<string, { affinity: number; my_answer: AnswerData | null }>
+  >({});
+  const [complexityAffinityMap, setComplexityAffinityMap] = useState<Record<string, number>>({});
+  const [sectionAffinityMap, setSectionAffinityMap] = useState<Record<string, number>>({});
+
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(true);
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -37,7 +46,49 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         if (isAuthenticated && data.completed_by?.uuid) {
           try {
             const affinityData = await UsersService.usersAffinityRetrieve(data.completed_by.uuid);
-            setAffinity(affinityData.affinity);
+            setAffinity(affinityData.total_affinity);
+
+            const axMap: Record<string, { affinity: number; my_answer: AnswerData | null }> = {};
+            const compMap: Record<string, number> = {};
+            const secMap: Record<string, number> = {};
+
+            if (affinityData.complexities) {
+              affinityData.complexities.forEach((compAff: ComplexityAffinity) => {
+                if (compAff.complexity?.uuid) {
+                  compMap[compAff.complexity.uuid] = compAff.affinity;
+                }
+
+                if (compAff.sections) {
+                  compAff.sections.forEach(secAff => {
+                    if (secAff.section?.uuid) {
+                      secMap[secAff.section.uuid] = secAff.affinity;
+                    }
+
+                    if (secAff.axes) {
+                      secAff.axes.forEach((item: AxisBreakdown) => {
+                        if (item.axis?.uuid) {
+                          axMap[item.axis.uuid] = {
+                            affinity: item.affinity,
+                            my_answer: item.my_answer
+                              ? {
+                                  value: item.my_answer.value,
+                                  margin_left: item.my_answer.margin_left,
+                                  margin_right: item.my_answer.margin_right,
+                                  is_indifferent: false,
+                                }
+                              : null,
+                          };
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
+
+            setAxisAffinityMap(axMap);
+            setComplexityAffinityMap(compMap);
+            setSectionAffinityMap(secMap);
           } catch (err) {
             console.error('Failed to load affinity', err);
           }
@@ -58,7 +109,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     }
   }, [complexities, selectedComplexity]);
 
-  const { answers, conditionerAnswers } = useMemo(() => {
+  const { answers: theirAnswers, conditionerAnswers } = useMemo(() => {
     if (!answerData?.answers) return { answers: {}, conditionerAnswers: {} };
 
     const rawAxis = (answerData.answers.axis || []) as Array<{
@@ -89,11 +140,11 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   const normalizedAnswers = useMemo(() => {
     const map: Record<string, AnswerData> = {};
-    Object.entries(answers).forEach(([key, value]) => {
+    Object.entries(theirAnswers).forEach(([key, value]) => {
       map[normalizeUuid(key)] = value;
     });
     return map;
-  }, [answers]);
+  }, [theirAnswers]);
 
   const normalizedConditionerAnswers = useMemo(() => {
     const map: Record<string, string> = {};
@@ -111,14 +162,11 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
         const axisAnswer = normalizedAnswers[sourceUuid];
-
         let result = 'false';
-
         if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
           const val = axisAnswer.value;
           const min = cond.axis_min_value ?? -Infinity;
           const max = cond.axis_max_value ?? Infinity;
-
           if (val > min && val <= max) {
             result = 'true';
           }
@@ -144,7 +192,6 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
 
     const filteredSections = rawSections.filter(section => visibilityChecker(section.condition_rules));
-
     const visibleConditioners = rawConditioners.filter(
       cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules),
     );
@@ -159,7 +206,6 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       };
       return [contextSection, ...filteredSections];
     }
-
     return filteredSections;
   }, [selectedComplexity, sections, conditioners, visibilityChecker, contextSectionLabel]);
 
@@ -176,11 +222,9 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   const progressMap = useMemo(() => {
     const map: Record<string, number> = {};
-
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       const compConditioners = conditioners[c.uuid] || [];
-
       let totalItems = 0;
       let answeredItems = 0;
 
@@ -199,18 +243,45 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
           secAxes.forEach(axis => {
             if (visibilityChecker(axis.condition_rules)) {
               totalItems++;
-              if (answers[axis.uuid]) {
+              if (theirAnswers[axis.uuid]) {
                 answeredItems++;
               }
             }
           });
         }
       });
-
       map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
     return map;
-  }, [complexities, sections, axes, answers, conditioners, conditionerAnswers, visibilityChecker]);
+  }, [complexities, sections, axes, theirAnswers, conditioners, conditionerAnswers, visibilityChecker]);
+
+  const myProgressMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    if (!isAuthenticated) return map;
+
+    complexities.forEach(c => {
+      const compSections = sections[c.uuid] || [];
+
+      let totalItems = 0;
+      let answeredItems = 0;
+
+      compSections.forEach(sec => {
+        if (visibilityChecker(sec.condition_rules)) {
+          const secAxes = axes[sec.uuid] || [];
+          secAxes.forEach(axis => {
+            if (visibilityChecker(axis.condition_rules)) {
+              totalItems++;
+              if (axisAffinityMap[axis.uuid]?.my_answer) {
+                answeredItems++;
+              }
+            }
+          });
+        }
+      });
+      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+    });
+    return map;
+  }, [complexities, sections, axes, axisAffinityMap, visibilityChecker, isAuthenticated]);
 
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
@@ -246,8 +317,12 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       currentConditioners,
       currentAxes,
       conditionerAnswers,
-      answers,
+      answers: theirAnswers,
+      axisAffinityMap,
+      complexityAffinityMap,
+      sectionAffinityMap,
       progressMap,
+      myProgressMap,
       selectedComplexityObj,
       selectedProgress,
       dependencyNameMap,

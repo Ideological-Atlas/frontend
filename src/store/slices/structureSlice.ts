@@ -9,6 +9,7 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
   sections: {},
   axes: {},
   isInitialized: false,
+  isAnswersInitialized: false,
 
   resetStructure: () => {
     set({
@@ -17,32 +18,44 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
       sections: {},
       axes: {},
       isInitialized: false,
+      isAnswersInitialized: false,
     });
   },
 
   fetchAllData: async isAuthenticated => {
-    if (get().isInitialized) return;
+    const { isInitialized, isAnswersInitialized } = get();
 
+    if (isInitialized && (!isAuthenticated || isAnswersInitialized)) {
+      return;
+    }
+
+    const shouldFetchStructure = !isInitialized;
+    const shouldFetchAnswers = isAuthenticated;
     try {
-      const compsResponse = await StructureService.structureComplexitiesList(100);
-      const complexities = compsResponse.results;
+      let currentComplexities = get().complexities;
 
-      set({ complexities });
+      if (shouldFetchStructure) {
+        const compsResponse = await StructureService.structureComplexitiesList(100);
+        currentComplexities = compsResponse.results;
+        set({ complexities: currentComplexities });
+      }
 
       await Promise.all(
-        complexities.map(async comp => {
+        currentComplexities.map(async comp => {
           try {
-            const [condRes, secRes] = await Promise.all([
-              StructureService.structureConditionersAggregatedList(comp.uuid, 100),
-              StructureService.structureSectionsList(comp.uuid, 100),
-            ]);
+            if (shouldFetchStructure) {
+              const [condRes, secRes] = await Promise.all([
+                StructureService.structureConditionersAggregatedList(comp.uuid, 100),
+                StructureService.structureSectionsList(comp.uuid, 100),
+              ]);
 
-            set(state => ({
-              conditioners: { ...state.conditioners, [comp.uuid]: condRes.results },
-              sections: { ...state.sections, [comp.uuid]: secRes.results },
-            }));
+              set(state => ({
+                conditioners: { ...state.conditioners, [comp.uuid]: condRes.results },
+                sections: { ...state.sections, [comp.uuid]: secRes.results },
+              }));
+            }
 
-            if (isAuthenticated) {
+            if (shouldFetchAnswers) {
               const condAnswersRes = await AnswersService.answersConditionerListList(comp.uuid, 100);
               set(state => {
                 const newCondAnswers = { ...state.conditionerAnswers };
@@ -53,32 +66,34 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
               });
             }
 
+            const compSections = get().sections[comp.uuid] || [];
+
             await Promise.all(
-              secRes.results.map(async sec => {
-                const axesPromise = StructureService.structureSectionsAxesList(sec.uuid, 100);
-                const answersPromise = isAuthenticated
-                  ? AnswersService.answersAxisListList(sec.uuid, 100)
-                  : Promise.resolve({ results: [] });
-
-                const [axesRes, answersRes] = await Promise.all([axesPromise, answersPromise]);
-
-                set(state => {
-                  const newAnswers = { ...state.answers };
-                  if (isAuthenticated && answersRes.results) {
-                    answersRes.results.forEach(ans => {
-                      newAnswers[ans.axis_uuid] = {
-                        value: ans.value ?? null,
-                        margin_left: ans.margin_left,
-                        margin_right: ans.margin_right,
-                        is_indifferent: ans.is_indifferent,
-                      };
-                    });
-                  }
-                  return {
+              compSections.map(async sec => {
+                if (shouldFetchStructure) {
+                  const axesRes = await StructureService.structureSectionsAxesList(sec.uuid, 100);
+                  set(state => ({
                     axes: { ...state.axes, [sec.uuid]: axesRes.results },
-                    answers: newAnswers,
-                  };
-                });
+                  }));
+                }
+
+                if (shouldFetchAnswers) {
+                  const answersRes = await AnswersService.answersAxisListList(sec.uuid, 100);
+                  set(state => {
+                    const newAnswers = { ...state.answers };
+                    if (answersRes.results) {
+                      answersRes.results.forEach(ans => {
+                        newAnswers[ans.axis_uuid] = {
+                          value: ans.value ?? null,
+                          margin_left: ans.margin_left,
+                          margin_right: ans.margin_right,
+                          is_indifferent: ans.is_indifferent,
+                        };
+                      });
+                    }
+                    return { answers: newAnswers };
+                  });
+                }
               }),
             );
           } catch (err) {
@@ -87,7 +102,8 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
         }),
       );
 
-      set({ isInitialized: true });
+      if (shouldFetchStructure) set({ isInitialized: true });
+      if (shouldFetchAnswers) set({ isAnswersInitialized: true });
     } catch (error) {
       console.error('Error fetching complexities:', error);
     }
@@ -102,6 +118,7 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
       answers: { ...get().answers, ...data.answers },
       conditionerAnswers: { ...get().conditionerAnswers, ...data.conditionerAnswers },
       isInitialized: true,
+      isAnswersInitialized: true,
     });
   },
 });

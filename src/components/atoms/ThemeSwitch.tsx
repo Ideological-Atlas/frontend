@@ -26,24 +26,24 @@ export function ThemeSwitch() {
   const toggleTheme = (checked: boolean) => {
     const newTheme = checked ? 'dark' : 'light';
 
-    if (isAuthenticated && user) {
-      setUser({ ...user, appearance: newTheme as AppearanceEnum });
+    const applyChange = () => {
+      setTheme(newTheme);
 
-      UsersService.mePartialUpdate({
-        appearance: newTheme as AppearanceEnum,
-      }).catch(err => {
-        console.error('Error syncing theme preference:', err);
-      });
-    } else {
-      const updateVisuals = () => {
-        setTheme(newTheme);
-      };
+      if (isAuthenticated && user) {
+        setUser({ ...user, appearance: newTheme as AppearanceEnum });
 
-      if (!document.startViewTransition) {
-        updateVisuals();
-      } else {
-        document.startViewTransition(updateVisuals);
+        UsersService.mePartialUpdate({
+          appearance: newTheme as AppearanceEnum,
+        }).catch(err => {
+          console.error('Error syncing theme preference:', err);
+        });
       }
+    };
+
+    if (document.startViewTransition) {
+      document.startViewTransition(applyChange);
+    } else {
+      applyChange();
     }
   };
 

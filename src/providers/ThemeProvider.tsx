@@ -13,24 +13,13 @@ function ThemeSync() {
   React.useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
-      if (user?.appearance) {
-        const targetTheme = user.appearance === AppearanceEnum.AUTO ? 'system' : user.appearance;
-        if (theme !== targetTheme) setTheme(targetTheme);
-      }
-      return;
     }
 
     if (user?.appearance) {
       const targetTheme = user.appearance === AppearanceEnum.AUTO ? 'system' : user.appearance;
 
       if (theme !== targetTheme) {
-        if (document.startViewTransition) {
-          document.startViewTransition(() => {
-            setTheme(targetTheme);
-          });
-        } else {
-          setTheme(targetTheme);
-        }
+        setTheme(targetTheme);
       }
     }
   }, [user?.appearance, setTheme, theme]);

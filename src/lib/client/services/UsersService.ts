@@ -86,7 +86,7 @@ export class UsersService {
   }
   /**
    * Get affinity with another user
-   * Calculates the ideological affinity (0-100%) between the current user and another user specified by UUID.
+   * Calculates the ideological affinity (0-100%) between the current user and another user specified by UUID. Returns breakdown grouped by complexity and section.
    * @param uuid
    * @returns Affinity
    * @throws ApiError
