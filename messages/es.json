@@ -167,7 +167,9 @@
     "affinity_medium": "Similitud Media",
     "affinity_short_label": "Afinidad",
     "affinity_almost_identical": "Altamente compatible",
-    "affinity_almost_opposite": "Muy incompatible"
+    "affinity_almost_opposite": "Muy incompatible",
+    "copy_answer_tooltip": "Copiar respuesta de {username}",
+    "copy_answer_label": "Copiar"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",

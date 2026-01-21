@@ -18,7 +18,7 @@ interface PublicAtlasViewProps {
 export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const t = useTranslations('Atlas');
   const { state, loading, actions } = usePublicAtlasController(uuid, t('context_section'));
-  const { user: authUser } = useAuthStore();
+  const { isAuthenticated, user: authUser } = useAuthStore();
 
   if (loading.isGlobalLoading) {
     return (
@@ -102,9 +102,10 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
               answers={state.answers}
               axisAffinityMap={state.axisAffinityMap}
               targetUsername={targetUser?.username}
+              onSaveAnswer={actions.saveAnswer}
               isLoading={false}
               isLevelLoading={false}
-              readOnly={true}
+              readOnly={!isAuthenticated}
               variant="other"
             />
           )}

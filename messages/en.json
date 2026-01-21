@@ -167,7 +167,9 @@
     "affinity_medium": "Medium Similarity",
     "affinity_short_label": "Affinity",
     "affinity_almost_identical": "Very compatible",
-    "affinity_almost_opposite": "Not compatible"
+    "affinity_almost_opposite": "Not compatible",
+    "copy_answer_tooltip": "Copy answer from {username}",
+    "copy_answer_label": "Copy"
   },
   "Profile": {
     "page_title": "Profile Settings",

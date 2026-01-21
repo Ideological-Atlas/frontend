@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useAtlasStore, type AnswerData } from '@/store/useAtlasStore';
+import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AnswersService } from '@/lib/client/services/AnswersService';
 import { UsersService } from '@/lib/client/services/UsersService';
@@ -14,7 +14,16 @@ const CONTEXT_SECTION_UUID = 'context';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 export function usePublicAtlasController(uuid: string, contextSectionLabel: string) {
-  const { complexities, conditioners, sections, axes, isInitialized, fetchAllData } = useAtlasStore();
+  const {
+    complexities,
+    conditioners,
+    sections,
+    axes,
+    isInitialized,
+    fetchAllData,
+    saveAnswer: saveAnswerToStore,
+  } = useAtlasStore();
+
   const { isAuthenticated } = useAuthStore();
 
   const [answerData, setAnswerData] = useState<CompletedAnswer | null>(null);
@@ -32,9 +41,56 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   useEffect(() => {
     if (!isInitialized) {
-      fetchAllData(false);
+      fetchAllData(isAuthenticated);
     }
-  }, [isInitialized, fetchAllData]);
+  }, [isInitialized, fetchAllData, isAuthenticated]);
+
+  const refreshAffinity = useCallback(async () => {
+    if (!isAuthenticated || !answerData?.completed_by?.uuid) return;
+
+    try {
+      const affinityData = await UsersService.usersAffinityRetrieve(answerData.completed_by.uuid);
+      setAffinity(affinityData.total_affinity);
+
+      const axMap: Record<string, { affinity: number; my_answer: AnswerData | null }> = {};
+      const compMap: Record<string, number> = {};
+      const secMap: Record<string, number> = {};
+
+      if (affinityData.complexities) {
+        affinityData.complexities.forEach((compAff: ComplexityAffinity) => {
+          if (compAff.complexity?.uuid) compMap[compAff.complexity.uuid] = compAff.affinity;
+          if (compAff.sections) {
+            compAff.sections.forEach(secAff => {
+              if (secAff.section?.uuid) secMap[secAff.section.uuid] = secAff.affinity;
+              if (secAff.axes) {
+                secAff.axes.forEach((item: AxisBreakdown) => {
+                  if (item.axis?.uuid) {
+                    axMap[item.axis.uuid] = {
+                      affinity: item.affinity,
+                      my_answer: item.my_answer
+                        ? {
+                            value: item.my_answer.value,
+                            margin_left: item.my_answer.margin_left,
+                            margin_right: item.my_answer.margin_right,
+                            is_indifferent: false,
+                          }
+                        : null,
+                    };
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+
+      setAxisAffinityMap(axMap);
+      setComplexityAffinityMap(compMap);
+      setSectionAffinityMap(secMap);
+    } catch (err) {
+      console.error('Failed to refresh affinity', err);
+    }
+  }, [isAuthenticated, answerData]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -42,57 +98,6 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         setIsLoadingAnswer(true);
         const data = await AnswersService.answersCompletedRetrieve(uuid);
         setAnswerData(data);
-
-        if (isAuthenticated && data.completed_by?.uuid) {
-          try {
-            const affinityData = await UsersService.usersAffinityRetrieve(data.completed_by.uuid);
-            setAffinity(affinityData.total_affinity);
-
-            const axMap: Record<string, { affinity: number; my_answer: AnswerData | null }> = {};
-            const compMap: Record<string, number> = {};
-            const secMap: Record<string, number> = {};
-
-            if (affinityData.complexities) {
-              affinityData.complexities.forEach((compAff: ComplexityAffinity) => {
-                if (compAff.complexity?.uuid) {
-                  compMap[compAff.complexity.uuid] = compAff.affinity;
-                }
-
-                if (compAff.sections) {
-                  compAff.sections.forEach(secAff => {
-                    if (secAff.section?.uuid) {
-                      secMap[secAff.section.uuid] = secAff.affinity;
-                    }
-
-                    if (secAff.axes) {
-                      secAff.axes.forEach((item: AxisBreakdown) => {
-                        if (item.axis?.uuid) {
-                          axMap[item.axis.uuid] = {
-                            affinity: item.affinity,
-                            my_answer: item.my_answer
-                              ? {
-                                  value: item.my_answer.value,
-                                  margin_left: item.my_answer.margin_left,
-                                  margin_right: item.my_answer.margin_right,
-                                  is_indifferent: false,
-                                }
-                              : null,
-                          };
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-
-            setAxisAffinityMap(axMap);
-            setComplexityAffinityMap(compMap);
-            setSectionAffinityMap(secMap);
-          } catch (err) {
-            console.error('Failed to load affinity', err);
-          }
-        }
       } catch (error) {
         console.error('Failed to load answer', error);
       } finally {
@@ -100,7 +105,13 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       }
     };
     if (uuid) loadData();
-  }, [uuid, isAuthenticated]);
+  }, [uuid]);
+
+  useEffect(() => {
+    if (answerData) {
+      refreshAffinity();
+    }
+  }, [answerData, refreshAffinity]);
 
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
@@ -308,6 +319,12 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
+  const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
+    if (!isAuthenticated) return;
+    await saveAnswerToStore(axisUuid, data, true);
+    await refreshAffinity();
+  };
+
   return {
     state: {
       complexities,
@@ -337,6 +354,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     actions: {
       selectComplexity: setSelectedComplexity,
       selectSection: setSelectedSection,
+      saveAnswer: handleSaveAnswer,
     },
   };
 }

@@ -77,22 +77,27 @@ export function AxisList({
             return rule.conditioner?.name || 'Unknown';
           });
 
-          const theirAnswer = answers[axis.uuid];
-          const comparisonData = axisAffinityMap ? axisAffinityMap[axis.uuid] : undefined;
-          const myAnswerRaw = comparisonData?.my_answer;
+          const currentViewAnswers = answers[axis.uuid];
 
           let primaryAnswer: AnswerData | undefined;
           let secondaryAnswer: AnswerData | undefined;
           let effectiveVariant = variant;
           let affinityValue = undefined;
 
-          if (myAnswerRaw) {
-            primaryAnswer = myAnswerRaw;
-            secondaryAnswer = theirAnswer;
-            effectiveVariant = 'default';
+          const isComparisonMode = !!axisAffinityMap && !readOnly;
+
+          if (isComparisonMode) {
+            const comparisonData = axisAffinityMap![axis.uuid];
+
+            primaryAnswer = comparisonData?.my_answer || undefined;
+
+            secondaryAnswer = currentViewAnswers;
+
+            effectiveVariant = 'default'; // Yo soy el protagonista de la acción
             affinityValue = comparisonData?.affinity;
           } else {
-            primaryAnswer = theirAnswer;
+            primaryAnswer = currentViewAnswers;
+
             secondaryAnswer = undefined;
             effectiveVariant = variant;
             affinityValue = undefined;

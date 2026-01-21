@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import { DependencyBadge } from '@/components/atoms/DependencyBadge';
+import { Button } from '@/components/atoms/Button';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
@@ -118,14 +119,32 @@ export function AxisCard({
     }
   };
 
+  const handleCopy = () => {
+    if (!otherAnswerData || !onSave) return;
+    const newData = {
+      value: otherAnswerData.value,
+      margin_left: otherAnswerData.margin_left,
+      margin_right: otherAnswerData.margin_right,
+      is_indifferent: otherAnswerData.is_indifferent,
+    };
+    if (newData.is_indifferent) {
+      setIsIndifferent(true);
+    } else {
+      setIsIndifferent(false);
+      setValue(newData.value ?? 0);
+      setMarginLeft(newData.margin_left ?? 10);
+      setMarginRight(newData.margin_right ?? 10);
+    }
+    onSave(axis.uuid, newData);
+  };
+
   const handleReset = () => {
     if (readOnly || !onDelete) return;
     onDelete(axis.uuid);
   };
 
   const marginOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50];
-  const isSymmetric = marginLeft === marginRight;
-  const marginDisplayValue = isSymmetric ? marginLeft : t('asymmetric_label');
+  const marginDisplayValue = marginLeft === marginRight ? marginLeft : t('asymmetric_label');
 
   const activeBorderClass = isOther ? 'border-other-user' : 'border-primary';
   const activeBgClass = isOther ? 'bg-other-user/5' : 'bg-primary/5';
@@ -137,6 +156,7 @@ export function AxisCard({
       : 'bg-card border-border';
 
   const affinityStyle = affinity !== undefined ? getAffinityBadgeStyles(affinity) : null;
+  const isDifferent = affinity !== 100;
 
   return (
     <div
@@ -184,22 +204,36 @@ export function AxisCard({
               )}
             </div>
             {isComparison && affinityStyle && (
-              <div
-                className={clsx(
-                  'flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-bold tracking-wide uppercase',
-                  affinityStyle.badgeClass,
+              <div className="flex items-center gap-3">
+                {!readOnly && isDifferent && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="text-muted-foreground hover:text-primary hover:border-border hover:bg-secondary h-7 gap-1.5 border border-transparent px-2 text-xs"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                    {t('copy_answer_label') || 'Copiar'}
+                  </Button>
                 )}
-              >
-                <span className="material-symbols-outlined text-[14px]">{affinityStyle.icon}</span>
-                {t(affinityStyle.labelKey)}
+                <div
+                  className={clsx(
+                    'flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-bold tracking-wide uppercase',
+                    affinityStyle.badgeClass,
+                  )}
+                >
+                  <span className="material-symbols-outlined text-[14px]">{affinityStyle.icon}</span>
+                  {t(affinityStyle.labelKey)}
+                </div>
               </div>
             )}
           </div>
           {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
-        {!isComparison && (
+
+        {!readOnly && (
           <div className="flex shrink-0 items-center gap-2 pr-4 md:pr-0">
-            {!readOnly && isAnswered && (
+            {!isComparison && isAnswered && (
               <button
                 onClick={handleReset}
                 title={t('reset_label')}
@@ -208,7 +242,8 @@ export function AxisCard({
                 <span className="material-symbols-outlined text-[20px]">restart_alt</span>
               </button>
             )}
-            {!isIndifferent && !readOnly && (
+
+            {!isIndifferent && (
               <div className="relative z-20 min-w-[120px]">
                 <Dropdown<number | string>
                   value={marginDisplayValue}
@@ -223,7 +258,8 @@ export function AxisCard({
           </div>
         )}
       </div>
-      {!isComparison && !readOnly && (
+
+      {!readOnly && (
         <div className="flex items-center gap-2">
           <button
             onClick={toggleIndifferent}
