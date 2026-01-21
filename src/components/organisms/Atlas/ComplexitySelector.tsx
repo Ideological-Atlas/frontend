@@ -140,16 +140,19 @@ export function ComplexitySelector({
                   )}
                 </div>
               </div>
-              {affinity !== undefined && (
-                <span
-                  className={clsx(
-                    'text-xs font-black',
-                    isSelected ? 'text-white' : bothCompleted ? affinityStyle?.colorClass : 'text-muted-foreground/50',
-                  )}
-                >
-                  {bothCompleted ? `${Math.round(affinity)}%` : 'N/A'}
-                </span>
-              )}
+
+              <span
+                className={clsx(
+                  'text-xs font-black',
+                  isSelected
+                    ? 'text-white'
+                    : bothCompleted && affinity !== undefined && affinityStyle
+                      ? affinityStyle.colorClass
+                      : 'text-muted-foreground/50',
+                )}
+              >
+                {bothCompleted && affinity !== undefined ? `${Math.round(affinity)}%` : 'N/A'}
+              </span>
             </div>
             <div className="relative z-10 flex w-full flex-col gap-2">
               <div className="flex flex-col gap-1">
