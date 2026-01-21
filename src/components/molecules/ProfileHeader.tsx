@@ -32,7 +32,7 @@ const CSS_VARS = [
   '--affinity-high',
   '--affinity-very-high',
   '--affinity-almost-identical',
-  '--affinity-identical'
+  '--affinity-identical',
 ];
 
 export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) {
@@ -52,7 +52,7 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
     const updatePalette = () => {
       const style = getComputedStyle(document.documentElement);
       const newColors = CSS_VARS.map(v => style.getPropertyValue(v).trim() || '#000000');
-      
+
       setPalette(prev => {
         const hasChanged = newColors.some((c, i) => c !== prev[i]);
         return hasChanged ? newColors : prev;
@@ -63,13 +63,9 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
 
     const timeout = setTimeout(updatePalette, 50);
     return () => clearTimeout(timeout);
-  }, [resolvedTheme]); 
+  }, [resolvedTheme]);
 
-  const color = useTransform(
-    progress,
-    [0, 15, 30, 45, 60, 80, 90, 100],
-    palette
-  );
+  const color = useTransform(progress, [0, 15, 30, 45, 60, 80, 90, 100], palette);
 
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
@@ -92,13 +88,17 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full"
-            style={{ background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))` }}
+            style={{
+              background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
+            }}
           />
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full opacity-50 blur-sm"
-            style={{ background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))` }}
+            style={{
+              background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
+            }}
           />
           <div className="bg-card relative z-10 flex h-[72px] w-[72px] items-center justify-center rounded-full p-[4px]">
             <div className="bg-other-user flex h-full w-full items-center justify-center rounded-full text-2xl font-black text-white shadow-inner">
@@ -139,8 +139,25 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
           <div className="bg-secondary/10 border-border flex items-center gap-4 rounded-xl border p-3 pr-5">
             <div className="relative flex h-12 w-12 items-center justify-center">
               <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 48 48">
-                <circle className="text-secondary" strokeWidth="4" stroke="currentColor" fill="transparent" r={radius} cx="24" cy="24" />
-                <motion.circle style={{ stroke: color, strokeDashoffset }} strokeWidth="4" strokeDasharray={circumference} strokeLinecap="round" fill="transparent" r={radius} cx="24" cy="24" />
+                <circle
+                  className="text-secondary"
+                  strokeWidth="4"
+                  stroke="currentColor"
+                  fill="transparent"
+                  r={radius}
+                  cx="24"
+                  cy="24"
+                />
+                <motion.circle
+                  style={{ stroke: color, strokeDashoffset }}
+                  strokeWidth="4"
+                  strokeDasharray={circumference}
+                  strokeLinecap="round"
+                  fill="transparent"
+                  r={radius}
+                  cx="24"
+                  cy="24"
+                />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <Counter value={progress} />

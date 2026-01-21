@@ -21,7 +21,8 @@ export function getAffinityBadgeStyles(val: number): AffinityLevel {
       labelKey: 'affinity_almost_identical',
       colorClass: 'text-affinity-almost-identical',
       icon: 'hotel_class',
-      badgeClass: 'bg-affinity-almost-identical/10 border-affinity-almost-identical/20 text-affinity-almost-identical border',
+      badgeClass:
+        'bg-affinity-almost-identical/10 border-affinity-almost-identical/20 text-affinity-almost-identical border',
       solidClass: 'bg-affinity-almost-identical text-white shadow-affinity-almost-identical/20',
     };
   }
@@ -75,7 +76,8 @@ export function getAffinityBadgeStyles(val: number): AffinityLevel {
       labelKey: 'affinity_almost_opposite',
       colorClass: 'text-affinity-almost-opposite',
       icon: 'block',
-      badgeClass: 'bg-affinity-almost-opposite/10 border-affinity-almost-opposite/20 text-affinity-almost-opposite border',
+      badgeClass:
+        'bg-affinity-almost-opposite/10 border-affinity-almost-opposite/20 text-affinity-almost-opposite border',
       solidClass: 'bg-affinity-almost-opposite text-white shadow-affinity-almost-opposite/20',
     };
   }
