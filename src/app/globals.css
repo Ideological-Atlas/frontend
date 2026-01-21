@@ -41,6 +41,16 @@
   --color-other-user-strong: var(--other-user-strong);
   --color-other-user-strong-foreground: var(--other-user-strong-foreground);
 
+  --color-affinity-identical: var(--affinity-identical);
+  --color-affinity-almost-identical: var(--affinity-almost-identical);
+  --color-affinity-very-high: var(--affinity-very-high);
+  --color-affinity-high: var(--affinity-high);
+  --color-affinity-compatible: var(--affinity-compatible);
+  --color-affinity-low: var(--affinity-low);
+  --color-affinity-very-low: var(--affinity-very-low);
+  --color-affinity-almost-opposite: var(--affinity-almost-opposite);
+  --color-affinity-opposite: var(--affinity-opposite);
+
   --radius: 0.5rem;
 
   --color-brand-google-blue: #4285f4;
@@ -81,6 +91,16 @@
     --border: #e2e8f0;
     --input: #e2e8f0;
     --ring: #16a34a;
+
+    --affinity-identical: #059669;
+    --affinity-almost-identical: #10b981;
+    --affinity-very-high: #22c55e;
+    --affinity-high: #14b8a6;
+    --affinity-compatible: #3b82f6;
+    --affinity-low: #f97316;
+    --affinity-very-low: #f87171;
+    --affinity-almost-opposite: #ef4444;
+    --affinity-opposite: #dc2626;
   }
 
   .dark {
@@ -114,6 +134,16 @@
     --border: #1e293b;
     --input: #1e293b;
     --ring: #338f39;
+
+    --affinity-identical: #059669;
+    --affinity-almost-identical: #10b981;
+    --affinity-very-high: #22c55e;
+    --affinity-high: #14b8a6;
+    --affinity-compatible: #3b82f6;
+    --affinity-low: #f97316;
+    --affinity-very-low: #f87171;
+    --affinity-almost-opposite: #ef4444;
+    --affinity-opposite: #dc2626;
   }
 
   * {

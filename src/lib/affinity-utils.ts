@@ -2,94 +2,90 @@ export type AffinityLevel = {
   labelKey: string;
   colorClass: string;
   icon: string;
-  colorHex?: string; // Para gráficos SVG
+  badgeClass: string;
+  solidClass: string;
 };
 
-export function getAffinityLevel(val: number): AffinityLevel {
+export function getAffinityBadgeStyles(val: number): AffinityLevel {
   if (val === 100) {
     return {
       labelKey: 'affinity_identical',
-      colorClass: 'text-emerald-600',
-      colorHex: '#059669',
+      colorClass: 'text-affinity-identical',
       icon: 'verified',
+      badgeClass: 'bg-affinity-identical/10 border-affinity-identical/20 text-affinity-identical border',
+      solidClass: 'bg-affinity-identical text-white shadow-affinity-identical/20',
     };
   }
   if (val >= 90) {
     return {
       labelKey: 'affinity_almost_identical',
-      colorClass: 'text-emerald-500',
-      colorHex: '#10b981',
+      colorClass: 'text-affinity-almost-identical',
       icon: 'hotel_class',
+      badgeClass: 'bg-affinity-almost-identical/10 border-affinity-almost-identical/20 text-affinity-almost-identical border',
+      solidClass: 'bg-affinity-almost-identical text-white shadow-affinity-almost-identical/20',
     };
   }
   if (val >= 80) {
     return {
       labelKey: 'affinity_very_high',
-      colorClass: 'text-green-500',
-      colorHex: '#22c55e',
+      colorClass: 'text-affinity-very-high',
       icon: 'check_circle',
+      badgeClass: 'bg-affinity-very-high/10 border-affinity-very-high/20 text-affinity-very-high border',
+      solidClass: 'bg-affinity-very-high text-white shadow-affinity-very-high/20',
     };
   }
   if (val >= 60) {
     return {
       labelKey: 'affinity_high',
-      colorClass: 'text-teal-500',
-      colorHex: '#14b8a6',
+      colorClass: 'text-affinity-high',
       icon: 'check',
+      badgeClass: 'bg-affinity-high/10 border-affinity-high/20 text-affinity-high border',
+      solidClass: 'bg-affinity-high text-white shadow-affinity-high/20',
     };
   }
   if (val >= 45) {
     return {
       labelKey: 'affinity_compatible',
-      colorClass: 'text-blue-500',
-      colorHex: '#3b82f6',
+      colorClass: 'text-affinity-compatible',
       icon: 'thumb_up',
+      badgeClass: 'bg-affinity-compatible/10 border-affinity-compatible/20 text-affinity-compatible border',
+      solidClass: 'bg-affinity-compatible text-white shadow-affinity-compatible/20',
     };
   }
   if (val >= 30) {
     return {
       labelKey: 'affinity_low',
-      colorClass: 'text-orange-500',
-      colorHex: '#f97316',
+      colorClass: 'text-affinity-low',
       icon: 'warning',
+      badgeClass: 'bg-affinity-low/10 border-affinity-low/20 text-affinity-low border',
+      solidClass: 'bg-affinity-low text-white shadow-affinity-low/20',
     };
   }
   if (val >= 15) {
     return {
       labelKey: 'affinity_very_low',
-      colorClass: 'text-red-400',
-      colorHex: '#f87171',
+      colorClass: 'text-affinity-very-low',
       icon: 'error',
+      badgeClass: 'bg-affinity-very-low/10 border-affinity-very-low/20 text-affinity-very-low border',
+      solidClass: 'bg-affinity-very-low text-white shadow-affinity-very-low/20',
     };
   }
   if (val > 0) {
     return {
       labelKey: 'affinity_almost_opposite',
-      colorClass: 'text-red-500',
-      colorHex: '#ef4444',
+      colorClass: 'text-affinity-almost-opposite',
       icon: 'block',
+      badgeClass: 'bg-affinity-almost-opposite/10 border-affinity-almost-opposite/20 text-affinity-almost-opposite border',
+      solidClass: 'bg-affinity-almost-opposite text-white shadow-affinity-almost-opposite/20',
     };
   }
-  // 0%
   return {
     labelKey: 'affinity_opposite',
-    colorClass: 'text-red-600',
-    colorHex: '#dc2626',
+    colorClass: 'text-affinity-opposite',
     icon: 'cancel',
+    badgeClass: 'bg-affinity-opposite/10 border-affinity-opposite/20 text-affinity-opposite border',
+    solidClass: 'bg-affinity-opposite text-white shadow-affinity-opposite/20',
   };
 }
 
-// Helpers para clases de Tailwind compuestas (fondos, bordes)
-export function getAffinityBadgeStyles(val: number) {
-  const level = getAffinityLevel(val);
-  // Mapeamos la clase de texto base a variantes de fondo/borde
-  // Esto asume que level.colorClass es algo como "text-color-500"
-  const baseColor = level.colorClass.replace('text-', '');
-
-  return {
-    ...level,
-    badgeClass: `bg-${baseColor}/10 border-${baseColor}/20 ${level.colorClass}`,
-    bgClass: `bg-${baseColor}`,
-    solidClass: `bg-${baseColor} text-white shadow-${baseColor}/20`,
-  };
-}
+export const getAffinityLevel = getAffinityBadgeStyles;

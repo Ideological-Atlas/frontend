@@ -1,3 +1,5 @@
+'use client';
+
 import { clsx } from 'clsx';
 import { WavyBackground } from '@/components/atoms/WavyBackground';
 import { useTranslations } from 'next-intl';
@@ -19,17 +21,24 @@ export function PageHeader({ title, description, affinity, variant = 'default' }
       <WavyBackground variant={variant} />
       <div className="relative z-10 flex flex-col items-center gap-4">
         <h1 className="text-foreground text-3xl font-black tracking-tight md:text-4xl">{title}</h1>
+
         {affinityStyle && (
-          <div
-            className={clsx(
-              'flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-bold shadow-lg backdrop-blur-sm transition-transform hover:scale-105',
-              affinityStyle.solidClass,
-            )}
-          >
-            <span className="material-symbols-outlined text-[18px]">percent</span>
-            {Math.round(affinity!)}% {t('affinity_short_label') || 'Afinidad'}
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className={clsx(
+                'rounded-full px-4 py-1.5 text-sm font-bold shadow-lg backdrop-blur-sm transition-transform hover:scale-105',
+                affinityStyle.solidClass,
+              )}
+            >
+              {Math.round(affinity!)}% {t('affinity_short_label') || 'Afinidad'}
+            </div>
+
+            <span className={clsx('text-sm font-black tracking-widest uppercase', affinityStyle.colorClass)}>
+              {t(affinityStyle.labelKey)}
+            </span>
           </div>
         )}
+
         <p className="text-muted-foreground max-w-[600px] text-base leading-relaxed">{description}</p>
       </div>
     </section>
