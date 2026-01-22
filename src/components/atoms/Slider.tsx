@@ -12,12 +12,16 @@ interface SliderProps {
   marginLeft: number;
   marginRight: number;
   bottomLabel?: string;
+  isIndifferent?: boolean;
+  indifferentLabel?: string;
 
   otherValue?: number | null;
   otherMarginLeft?: number | null;
   otherMarginRight?: number | null;
   otherIsIndifferent?: boolean;
+  otherIsNotAnswered?: boolean;
   otherIndifferentLabel?: string;
+  otherNotAnsweredLabel?: string;
   topLabel?: string;
 
   onChange?: (updates: { value?: number; marginLeft?: number; marginRight?: number }) => void;
@@ -77,6 +81,8 @@ interface TrackProps {
   isInteractive?: boolean;
   isIndifferent?: boolean;
   indifferentLabel?: string;
+  isNotAnswered?: boolean;
+  notAnsweredLabel?: string;
   onPointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove?: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp?: (e: React.PointerEvent<HTMLDivElement>) => void;
@@ -93,6 +99,8 @@ const Track = ({
   isInteractive,
   isIndifferent,
   indifferentLabel,
+  isNotAnswered,
+  notAnsweredLabel,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -104,23 +112,48 @@ const Track = ({
       <div
         className={clsx(
           'absolute -top-5 left-0 text-xs font-bold tracking-wider uppercase',
-          color.includes('other') ? 'text-other-user' : 'text-primary',
+          isNotAnswered
+            ? 'text-muted-foreground opacity-50'
+            : color.includes('other')
+              ? 'text-other-user'
+              : 'text-primary',
         )}
       >
         {label}
       </div>
     )}
 
-    <div className="bg-secondary/40 pointer-events-none absolute top-1/2 right-0 left-0 h-1.5 w-full -translate-y-1/2 rounded-full" />
+    <div
+      className={clsx(
+        'pointer-events-none absolute top-1/2 right-0 left-0 h-1.5 w-full -translate-y-1/2 rounded-full',
+        isNotAnswered ? 'bg-muted border-border border border-dashed' : 'bg-secondary/40',
+      )}
+    />
 
-    {isIndifferent ? (
+    {/* ESTADO INDIFERENTE */}
+    {isIndifferent && (
       <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="border-border bg-card/80 text-muted-foreground flex items-center gap-1.5 rounded-md border px-2 py-1 backdrop-blur-sm">
-          <span className="material-symbols-outlined text-[14px]">remove</span>
-          <span className="text-[10px] font-bold tracking-wider uppercase">{indifferentLabel || 'Indifferent'}</span>
+        <div className="border-border bg-card/80 text-muted-foreground flex items-center justify-center rounded-md border px-3 py-1.5 shadow-sm backdrop-blur-sm">
+          <span className="text-[10px] leading-none font-bold tracking-widest uppercase">
+            {indifferentLabel || 'Indifferent'}
+          </span>
         </div>
       </div>
-    ) : (
+    )}
+
+    {/* ESTADO NO RESPONDIDO */}
+    {isNotAnswered && (
+      <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+        <div className="bg-card/50 text-muted-foreground flex items-center justify-center rounded-md px-3 py-1.5 backdrop-blur-sm">
+          <span className="text-[10px] leading-none font-bold tracking-widest uppercase opacity-70">
+            {notAnsweredLabel || 'Not Answered'}
+          </span>
+        </div>
+      </div>
+    )}
+
+    {/* TRACK NORMAL */}
+    {!isIndifferent && !isNotAnswered && (
       <>
         <div
           className="pointer-events-none absolute top-1/2 z-10 h-2 -translate-y-1/2 rounded-full transition-all duration-75 ease-out"
@@ -195,11 +228,15 @@ export const Slider = ({
   marginLeft,
   marginRight,
   bottomLabel,
+  isIndifferent,
+  indifferentLabel,
   otherValue,
   otherMarginLeft,
   otherMarginRight,
   otherIsIndifferent,
+  otherIsNotAnswered,
   otherIndifferentLabel,
+  otherNotAnsweredLabel,
   topLabel,
   onChange,
   onCommit,
@@ -212,31 +249,31 @@ export const Slider = ({
 
   const toPercent = (val: number) => ((val + 100) / 200) * 100;
 
-  const centerPercent = toPercent(value);
+  const centerPercent = isIndifferent ? 50 : toPercent(value);
   const leftBoundVal = Math.max(-100, value - marginLeft);
   const rightBoundVal = Math.min(100, value + marginRight);
-  const leftPercent = toPercent(leftBoundVal);
-  const rightPercent = toPercent(rightBoundVal);
+  const leftPercent = isIndifferent ? 0 : toPercent(leftBoundVal);
+  const rightPercent = isIndifferent ? 0 : toPercent(rightBoundVal);
 
   const activeColor = variant === 'other' ? 'var(--other-user)' : 'var(--primary)';
 
-  const hasOther = otherValue !== undefined && otherValue !== null;
-  const otherCenterPercent = hasOther ? toPercent(otherValue!) : 50;
+  const hasOther = otherValue !== undefined || otherIsNotAnswered;
+  const otherCenterPercent = hasOther && otherValue !== null && otherValue !== undefined ? toPercent(otherValue) : 50;
   const otherColor = 'var(--other-user-strong)';
 
   let otherLeftPercent = 0;
   let otherRightPercent = 0;
-  if (hasOther) {
+  if (hasOther && otherValue !== null && otherValue !== undefined) {
     const omL = otherMarginLeft ?? 10;
     const omR = otherMarginRight ?? 10;
-    const otherLeftVal = Math.max(-100, otherValue! - omL);
-    const otherRightVal = Math.min(100, otherValue! + omR);
+    const otherLeftVal = Math.max(-100, otherValue - omL);
+    const otherRightVal = Math.min(100, otherValue + omR);
     otherLeftPercent = toPercent(otherLeftVal);
     otherRightPercent = toPercent(otherRightVal);
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (readOnly || !onChange) return;
+    if (readOnly || !onChange || isIndifferent) return;
 
     e.preventDefault();
 
@@ -334,7 +371,8 @@ export const Slider = ({
   return (
     <div className={twMerge('flex w-full flex-col select-none', readOnly && 'opacity-90', className)}>
       <div ref={containerRef} className="relative flex flex-col pt-6 pb-2">
-        {hasOther && !otherIsIndifferent && (
+        {/* Línea de conexión si ambos tienen datos válidos */}
+        {hasOther && !otherIsIndifferent && !otherIsNotAnswered && !isIndifferent && (
           <svg className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full">
             <line
               x1={`${otherCenterPercent}%`}
@@ -352,7 +390,7 @@ export const Slider = ({
 
         <div className="flex flex-col gap-10">
           {hasOther && (
-            <div className={clsx(otherIsIndifferent && 'opacity-75')}>
+            <div className={clsx((otherIsIndifferent || otherIsNotAnswered) && 'opacity-75')}>
               <Track
                 cPercent={otherCenterPercent}
                 lPercent={otherLeftPercent}
@@ -362,6 +400,8 @@ export const Slider = ({
                 isInteractive={false}
                 isIndifferent={otherIsIndifferent}
                 indifferentLabel={otherIndifferentLabel}
+                isNotAnswered={otherIsNotAnswered}
+                notAnsweredLabel={otherNotAnsweredLabel}
               />
             </div>
           )}
@@ -372,7 +412,9 @@ export const Slider = ({
             rPercent={rightPercent}
             color={activeColor}
             label={hasOther ? bottomLabel : undefined}
-            isInteractive={!readOnly}
+            isInteractive={!readOnly && !isIndifferent}
+            isIndifferent={isIndifferent}
+            indifferentLabel={indifferentLabel}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}

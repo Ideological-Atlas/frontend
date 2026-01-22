@@ -85,8 +85,8 @@ export class UsersService {
     });
   }
   /**
-   * Get affinity with another user
-   * Calculates the ideological affinity (0-100%) between the current user and another user specified by UUID. Returns breakdown grouped by complexity and section.
+   * Get affinity with a Completed Answer
+   * Calculates the ideological affinity (0-100%) between the current user's active answers and a specific CompletedAnswer (identified by UUID). The target might be anonymous.
    * @param uuid
    * @returns Affinity
    * @throws ApiError
@@ -94,7 +94,7 @@ export class UsersService {
   public static usersAffinityRetrieve(uuid: string): CancelablePromise<Affinity> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/users/{uuid}/affinity/',
+      url: '/api/users/affinity/{uuid}/',
       path: {
         uuid: uuid,
       },

@@ -9,12 +9,14 @@ import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditione
 interface ConditionerListProps {
   conditioners: IdeologyConditioner[];
   answers: Record<string, string>;
+  otherAnswers?: Record<string, string>;
   onSaveAnswer?: (uuid: string, value: string) => void;
   onResetAnswer?: (uuid: string) => void;
   isLoading: boolean;
   dependencyNameMap: Record<string, string>;
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  targetUsername?: string;
 }
 
 const itemVariants: Variants = {
@@ -34,12 +36,14 @@ const itemVariants: Variants = {
 export function ConditionerList({
   conditioners,
   answers,
+  otherAnswers,
   onSaveAnswer,
   onResetAnswer,
   isLoading,
   dependencyNameMap,
   readOnly = false,
   variant = 'default',
+  targetUsername,
 }: ConditionerListProps) {
   const t = useTranslations('Atlas');
 
@@ -76,9 +80,19 @@ export function ConditionerList({
             console.error('Error parsing conditioner rules', e);
           }
 
-          // @ts-expect-error - Rules are typed locally inside the loop logic due to API change
+          // @ts-expect-error - Rules are typed locally inside the loop logic
           const names = rules.map(rule => {
-            return dependencyNameMap[rule.source_conditioner_uuid] || 'Unknown';
+            const targetUuid = rule.source_conditioner_uuid || rule.conditioner?.uuid;
+
+            if (targetUuid) {
+              if (dependencyNameMap[targetUuid]) return dependencyNameMap[targetUuid];
+              const normUuid = targetUuid.replace(/-/g, '');
+              if (dependencyNameMap[normUuid]) return dependencyNameMap[normUuid];
+            }
+
+            if (rule.conditioner?.name) return rule.conditioner.name;
+
+            return 'Unknown';
           });
 
           return (
@@ -88,6 +102,8 @@ export function ConditionerList({
                 onSave={onSaveAnswer}
                 onReset={onResetAnswer}
                 answer={answers[cond.uuid]}
+                otherAnswer={otherAnswers ? otherAnswers[cond.uuid] : undefined}
+                targetUsername={targetUsername}
                 dependencyNames={names}
                 readOnly={readOnly}
                 variant={variant}

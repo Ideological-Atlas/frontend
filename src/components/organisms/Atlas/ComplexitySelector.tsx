@@ -2,6 +2,7 @@
 
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Skeleton } from '@/components/atoms/Skeleton';
 import type { IdeologyAbstractionComplexity } from '@/lib/client/models/IdeologyAbstractionComplexity';
 import { getAffinityLevel } from '@/lib/affinity-utils';
@@ -31,6 +32,8 @@ export function ComplexitySelector({
   affinityMap,
   variant = 'default',
 }: ComplexitySelectorProps) {
+  const t = useTranslations('Atlas');
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-4">
@@ -42,19 +45,23 @@ export function ComplexitySelector({
   }
 
   const isComparison = variant === 'other' && Object.keys(myProgressMap).length > 0;
+  const targetLabel = targetUsername ? `@${targetUsername}` : t('anonymous_user') || 'Anónimo';
 
   return (
     <div className="flex flex-col gap-2">
       {complexities.map(c => {
         const theirProgress = progressMap[c.uuid] || 0;
         const myProgress = myProgressMap[c.uuid] || 0;
+
         const affinity = affinityMap ? affinityMap[c.uuid] : undefined;
+
         const isSelected = selectedId === c.uuid;
         const theirCompleted = theirProgress === 100;
         const myCompleted = myProgress === 100;
         const bothCompleted = theirCompleted && myCompleted;
 
-        const affinityStyle = affinity !== undefined ? getAffinityLevel(affinity) : null;
+        const hasAffinity = affinity !== undefined && affinity !== null;
+        const affinityStyle = hasAffinity ? getAffinityLevel(affinity as number) : null;
 
         if (!isComparison) {
           return (
@@ -146,18 +153,19 @@ export function ComplexitySelector({
                   'text-xs font-black',
                   isSelected
                     ? 'text-white'
-                    : bothCompleted && affinity !== undefined && affinityStyle
+                    : bothCompleted && hasAffinity && affinityStyle
                       ? affinityStyle.colorClass
                       : 'text-muted-foreground/50',
                 )}
               >
-                {bothCompleted && affinity !== undefined ? `${Math.round(affinity)}%` : 'N/A'}
+                {/* CORRECCIÓN: Mostrar N/A si hasAffinity es falso (es null o undefined) */}
+                {bothCompleted && hasAffinity ? `${Math.round(affinity as number)}%` : 'N/A'}
               </span>
             </div>
             <div className="relative z-10 flex w-full flex-col gap-2">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-[10px] font-bold tracking-wider uppercase opacity-70">
-                  <span>@{targetUsername}</span>
+                  <span>{targetLabel}</span>
                   <span>{theirProgress}%</span>
                 </div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/20">

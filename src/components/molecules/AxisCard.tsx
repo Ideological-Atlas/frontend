@@ -53,17 +53,17 @@ export function AxisCard({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue(answerData?.value ?? 0);
-
     setMarginLeft(getInitialMargin(answerData?.margin_left));
-
     setMarginRight(getInitialMargin(answerData?.margin_right));
-
     setIsIndifferent(answerData?.is_indifferent ?? false);
   }, [answerData]);
 
   const isAnswered = answerData !== undefined;
-  const isComparison = otherAnswerData !== undefined;
   const isOther = variant === 'other';
+  const isComparison = otherAnswerData !== undefined || isOther;
+
+  const otherIsNotAnswered =
+    isOther && (!otherAnswerData || (otherAnswerData.value === null && !otherAnswerData.is_indifferent));
 
   const handleSliderChange = (updates: { value?: number; marginLeft?: number; marginRight?: number }) => {
     if (readOnly || isIndifferent) return;
@@ -106,21 +106,26 @@ export function AxisCard({
   };
 
   const toggleIndifferent = () => {
-    if (readOnly || !onSave) return;
+    if (readOnly) return;
     const newIndifferentState = !isIndifferent;
     setIsIndifferent(newIndifferentState);
+
     if (newIndifferentState) {
-      setValue(0);
-      setMarginLeft(10);
-      setMarginRight(10);
-      onSave(axis.uuid, { is_indifferent: true, value: null, margin_left: null, margin_right: null });
+      if (onSave) {
+        setValue(0);
+        setMarginLeft(10);
+        setMarginRight(10);
+        onSave(axis.uuid, { is_indifferent: true, value: null, margin_left: null, margin_right: null });
+      }
     } else {
-      onSave(axis.uuid, { is_indifferent: false, value, margin_left: marginLeft, margin_right: marginRight });
+      if (onDelete) {
+        onDelete(axis.uuid);
+      }
     }
   };
 
   const handleCopy = () => {
-    if (!otherAnswerData || !onSave) return;
+    if (!otherAnswerData || !onSave || otherIsNotAnswered) return;
     const newData = {
       value: otherAnswerData.value,
       margin_left: otherAnswerData.margin_left,
@@ -144,7 +149,8 @@ export function AxisCard({
   };
 
   const marginOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50];
-  const marginDisplayValue = marginLeft === marginRight ? marginLeft : t('asymmetric_label');
+  const isSymmetric = marginLeft === marginRight;
+  const marginDisplayValue = isSymmetric ? marginLeft : t('asymmetric_label');
 
   const activeBorderClass = isOther ? 'border-other-user' : 'border-primary';
   const activeBgClass = isOther ? 'bg-other-user/5' : 'bg-primary/5';
@@ -155,8 +161,7 @@ export function AxisCard({
       ? `${activeBorderClass} ${activeBgClass}`
       : 'bg-card border-border';
 
-  const affinityStyle = affinity !== undefined ? getAffinityBadgeStyles(affinity) : null;
-  const isDifferent = affinity !== 100;
+  const affinityStyle = affinity !== undefined && !otherIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
 
   return (
     <div
@@ -181,6 +186,7 @@ export function AxisCard({
               >
                 {axis.name}
               </h4>
+
               {!isComparison && isAnswered && !isIndifferent && (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -203,9 +209,10 @@ export function AxisCard({
                 </motion.div>
               )}
             </div>
+
             {isComparison && affinityStyle && (
               <div className="flex items-center gap-3">
-                {!readOnly && isDifferent && (
+                {!readOnly && !otherIsNotAnswered && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -231,19 +238,16 @@ export function AxisCard({
           {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
 
-        {!readOnly && (
+        {!isComparison && isAnswered && (
           <div className="flex shrink-0 items-center gap-2 pr-4 md:pr-0">
-            {!isComparison && isAnswered && (
-              <button
-                onClick={handleReset}
-                title={t('reset_label')}
-                className="text-muted-foreground hover:bg-secondary hover:text-foreground flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-              >
-                <span className="material-symbols-outlined text-[20px]">restart_alt</span>
-              </button>
-            )}
-
-            {!isIndifferent && (
+            <button
+              onClick={handleReset}
+              title={t('reset_label')}
+              className="text-muted-foreground hover:bg-secondary hover:text-foreground flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">restart_alt</span>
+            </button>
+            {!isIndifferent && !readOnly && (
               <div className="relative z-20 min-w-[120px]">
                 <Dropdown<number | string>
                   value={marginDisplayValue}
@@ -252,6 +256,7 @@ export function AxisCard({
                   label={t('margin_label')}
                   align="end"
                   onOpenChange={setIsDropdownOpen}
+                  variant="default"
                 />
               </div>
             )}
@@ -267,20 +272,13 @@ export function AxisCard({
             className={clsx(
               'flex h-5 w-5 items-center justify-center rounded border transition-colors',
               isIndifferent
-                ? isOther
-                  ? 'bg-other-user border-other-user'
-                  : 'bg-primary border-primary'
+                ? 'bg-primary border-primary'
                 : 'border-muted-foreground hover:border-foreground bg-transparent',
               readOnly && 'cursor-default opacity-50',
             )}
           >
             {isIndifferent && (
-              <span
-                className={clsx(
-                  'material-symbols-outlined text-[16px] font-bold',
-                  isOther ? 'text-white' : 'text-primary-foreground',
-                )}
-              >
+              <span className={clsx('material-symbols-outlined text-primary-foreground text-[16px] font-bold')}>
                 check
               </span>
             )}
@@ -294,6 +292,7 @@ export function AxisCard({
           </button>
         </div>
       )}
+
       <div
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
@@ -307,17 +306,21 @@ export function AxisCard({
           marginLeft={marginLeft}
           marginRight={marginRight}
           bottomLabel={viewerUsername ? `@${viewerUsername}` : t('your_answer_label')}
+          isIndifferent={isIndifferent}
+          indifferentLabel={t('indifferent_status')}
           otherValue={otherAnswerData?.value ?? undefined}
           otherMarginLeft={otherAnswerData?.margin_left ?? undefined}
           otherMarginRight={otherAnswerData?.margin_right ?? undefined}
           otherIsIndifferent={otherAnswerData?.is_indifferent}
-          otherIndifferentLabel={t('indifferent_label')}
+          otherIsNotAnswered={otherIsNotAnswered}
+          otherNotAnsweredLabel={t('not_answered_status')}
+          otherIndifferentLabel={t('indifferent_status')}
           topLabel={targetUsername ? `@${targetUsername}` : t('their_answer_label')}
           onChange={handleSliderChange}
           onCommit={handleCommit}
           onThumbWheel={handleThumbWheel}
           readOnly={readOnly}
-          variant={variant}
+          variant="default"
         />
       </div>
     </div>

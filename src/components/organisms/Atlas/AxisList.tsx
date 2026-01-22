@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 interface AxisListProps {
   axes: IdeologyAxis[];
   answers: Record<string, AnswerData>;
+  myAnswers?: Record<string, AnswerData>;
   axisAffinityMap?: Record<string, { affinity: number; my_answer: AnswerData | null }>;
   targetUsername?: string;
   onSaveAnswer?: (uuid: string, data: AnswerUpdatePayload) => void;
@@ -38,6 +39,7 @@ const itemVariants: Variants = {
 export function AxisList({
   axes,
   answers,
+  myAnswers,
   axisAffinityMap,
   targetUsername,
   onSaveAnswer,
@@ -77,30 +79,25 @@ export function AxisList({
             return rule.conditioner?.name || 'Unknown';
           });
 
-          const currentViewAnswers = answers[axis.uuid];
+          const storeAnswer = answers[axis.uuid];
+          const comparisonData = axisAffinityMap ? axisAffinityMap[axis.uuid] : undefined;
 
           let primaryAnswer: AnswerData | undefined;
           let secondaryAnswer: AnswerData | undefined;
-          let effectiveVariant = variant;
           let affinityValue = undefined;
+          let effectiveVariant = variant;
 
-          const isComparisonMode = !!axisAffinityMap && !readOnly;
+          if (variant === 'other') {
+            primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined;
 
-          if (isComparisonMode) {
-            const comparisonData = axisAffinityMap![axis.uuid];
+            secondaryAnswer = storeAnswer;
 
-            primaryAnswer = comparisonData?.my_answer || undefined;
-
-            secondaryAnswer = currentViewAnswers;
-
-            effectiveVariant = 'default'; // Yo soy el protagonista de la acción
             affinityValue = comparisonData?.affinity;
+            effectiveVariant = 'default';
           } else {
-            primaryAnswer = currentViewAnswers;
-
+            primaryAnswer = storeAnswer;
             secondaryAnswer = undefined;
-            effectiveVariant = variant;
-            affinityValue = undefined;
+            effectiveVariant = 'default';
           }
 
           return (

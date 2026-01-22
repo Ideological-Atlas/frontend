@@ -20,8 +20,12 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     sections,
     axes,
     isInitialized,
+    answers: myAxisAnswers,
+    conditionerAnswers: myConditionerAnswers,
     fetchAllData,
     saveAnswer: saveAnswerToStore,
+    deleteAnswer: deleteAnswerFromStore,
+    saveConditionerAnswer: saveConditionerToStore,
   } = useAtlasStore();
 
   const { isAuthenticated } = useAuthStore();
@@ -46,10 +50,10 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   }, [isInitialized, fetchAllData, isAuthenticated]);
 
   const refreshAffinity = useCallback(async () => {
-    if (!isAuthenticated || !answerData?.completed_by?.uuid) return;
+    if (!isAuthenticated || !uuid) return;
 
     try {
-      const affinityData = await UsersService.usersAffinityRetrieve(answerData.completed_by.uuid);
+      const affinityData = await UsersService.usersAffinityRetrieve(uuid);
       setAffinity(affinityData.total_affinity);
 
       const axMap: Record<string, { affinity: number; my_answer: AnswerData | null }> = {};
@@ -72,7 +76,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
                             value: item.my_answer.value,
                             margin_left: item.my_answer.margin_left,
                             margin_right: item.my_answer.margin_right,
-                            is_indifferent: false,
+                            is_indifferent: item.my_answer.is_indifferent ?? false,
                           }
                         : null,
                     };
@@ -90,7 +94,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     } catch (err) {
       console.error('Failed to refresh affinity', err);
     }
-  }, [isAuthenticated, answerData]);
+  }, [isAuthenticated, uuid]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -104,14 +108,14 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         setIsLoadingAnswer(false);
       }
     };
-    if (uuid) loadData();
-  }, [uuid]);
 
-  useEffect(() => {
-    if (answerData) {
-      refreshAffinity();
+    if (uuid) {
+      loadData();
+      if (isAuthenticated) {
+        refreshAffinity();
+      }
     }
-  }, [answerData, refreshAffinity]);
+  }, [uuid, isAuthenticated, refreshAffinity]);
 
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
@@ -120,7 +124,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     }
   }, [complexities, selectedComplexity]);
 
-  const { answers: theirAnswers, conditionerAnswers } = useMemo(() => {
+  const { answers: theirAxisAnswers, conditionerAnswers: theirConditionerAnswers } = useMemo(() => {
     if (!answerData?.answers) return { answers: {}, conditionerAnswers: {} };
 
     const rawAxis = (answerData.answers.axis || []) as Array<{
@@ -128,6 +132,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       value: number | null;
       margin_left?: number;
       margin_right?: number;
+      is_indifferent?: boolean;
     }>;
     const rawConds = (answerData.answers.conditioners || []) as Array<{ uuid: string; value: string }>;
 
@@ -137,60 +142,62 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         value: item.value,
         margin_left: item.margin_left,
         margin_right: item.margin_right,
-        is_indifferent: item.value === null && !item.margin_left,
+        is_indifferent: item.is_indifferent ?? false,
       };
     });
-
     const condMap: Record<string, string> = {};
     rawConds.forEach(item => {
       condMap[item.uuid] = item.value;
     });
-
     return { answers: axisMap, conditionerAnswers: condMap };
   }, [answerData]);
 
-  const normalizedAnswers = useMemo(() => {
-    const map: Record<string, AnswerData> = {};
-    Object.entries(theirAnswers).forEach(([key, value]) => {
-      map[normalizeUuid(key)] = value;
-    });
-    return map;
-  }, [theirAnswers]);
-
-  const normalizedConditionerAnswers = useMemo(() => {
-    const map: Record<string, string> = {};
-    Object.entries(conditionerAnswers).forEach(([key, value]) => {
-      map[normalizeUuid(key)] = value;
-    });
-    return map;
-  }, [conditionerAnswers]);
+  const visibilitySource = useMemo(() => {
+    if (isAuthenticated) {
+      return {
+        axis: myAxisAnswers,
+        cond: myConditionerAnswers,
+      };
+    }
+    return {
+      axis: theirAxisAnswers,
+      cond: theirConditionerAnswers,
+    };
+  }, [isAuthenticated, myAxisAnswers, myConditionerAnswers, theirAxisAnswers, theirConditionerAnswers]);
 
   const virtualConditionerAnswers = useMemo(() => {
     const computed: Record<string, string> = {};
     const allConditioners = Object.values(conditioners).flat();
 
+    const normSourceAxis: Record<string, AnswerData> = {};
+    Object.entries(visibilitySource.axis).forEach(([k, v]) => {
+      normSourceAxis[normalizeUuid(k)] = v;
+    });
+
     allConditioners.forEach(cond => {
       if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
-        const axisAnswer = normalizedAnswers[sourceUuid];
+        const axisAnswer = normSourceAxis[sourceUuid];
         let result = 'false';
         if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
           const val = axisAnswer.value;
           const min = cond.axis_min_value ?? -Infinity;
           const max = cond.axis_max_value ?? Infinity;
-          if (val > min && val <= max) {
-            result = 'true';
-          }
+          if (val > min && val <= max) result = 'true';
         }
         computed[normalizeUuid(cond.uuid)] = result;
       }
     });
     return computed;
-  }, [conditioners, normalizedAnswers]);
+  }, [conditioners, visibilitySource.axis]);
 
   const combinedConditionerAnswers = useMemo(() => {
-    return { ...normalizedConditionerAnswers, ...virtualConditionerAnswers };
-  }, [normalizedConditionerAnswers, virtualConditionerAnswers]);
+    const normCond: Record<string, string> = {};
+    Object.entries(visibilitySource.cond).forEach(([k, v]) => {
+      normCond[normalizeUuid(k)] = v;
+    });
+    return { ...normCond, ...virtualConditionerAnswers };
+  }, [visibilitySource.cond, virtualConditionerAnswers]);
 
   const visibilityChecker = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -201,7 +208,6 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   const displaySections: IdeologySection[] = useMemo(() => {
     const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
     const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-
     const filteredSections = rawSections.filter(section => visibilityChecker(section.condition_rules));
     const visibleConditioners = rawConditioners.filter(
       cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules),
@@ -242,19 +248,17 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       compConditioners.forEach(cond => {
         if (cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules)) {
           totalItems++;
-          if (conditionerAnswers[cond.uuid]) {
-            answeredItems++;
-          }
+          if (theirConditionerAnswers[cond.uuid]) answeredItems++;
         }
       });
-
       compSections.forEach(sec => {
         if (visibilityChecker(sec.condition_rules)) {
           const secAxes = axes[sec.uuid] || [];
           secAxes.forEach(axis => {
             if (visibilityChecker(axis.condition_rules)) {
               totalItems++;
-              if (theirAnswers[axis.uuid]) {
+              const ans = theirAxisAnswers[axis.uuid];
+              if (ans && (ans.value !== null || ans.is_indifferent)) {
                 answeredItems++;
               }
             }
@@ -264,25 +268,23 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
     return map;
-  }, [complexities, sections, axes, theirAnswers, conditioners, conditionerAnswers, visibilityChecker]);
+  }, [complexities, sections, axes, theirAxisAnswers, conditioners, theirConditionerAnswers, visibilityChecker]);
 
   const myProgressMap = useMemo(() => {
     const map: Record<string, number> = {};
     if (!isAuthenticated) return map;
-
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
-
       let totalItems = 0;
       let answeredItems = 0;
-
       compSections.forEach(sec => {
         if (visibilityChecker(sec.condition_rules)) {
           const secAxes = axes[sec.uuid] || [];
           secAxes.forEach(axis => {
             if (visibilityChecker(axis.condition_rules)) {
               totalItems++;
-              if (axisAffinityMap[axis.uuid]?.my_answer) {
+              const ans = myAxisAnswers[axis.uuid];
+              if (ans && (ans.value !== null || ans.is_indifferent)) {
                 answeredItems++;
               }
             }
@@ -292,7 +294,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
     return map;
-  }, [complexities, sections, axes, axisAffinityMap, visibilityChecker, isAuthenticated]);
+  }, [complexities, sections, axes, myAxisAnswers, visibilityChecker, isAuthenticated]);
 
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
@@ -325,6 +327,29 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     await refreshAffinity();
   };
 
+  const handleDeleteAnswer = async (axisUuid: string) => {
+    if (!isAuthenticated) return;
+    await deleteAnswerFromStore(axisUuid, true);
+    await refreshAffinity();
+  };
+
+  const handleSaveConditioner = async (uuid: string, value: string) => {
+    if (!isAuthenticated) return;
+    await saveConditionerToStore(uuid, value, true);
+  };
+
+  const effectiveAffinity = useMemo(() => {
+    if (affinity === null || !isAuthenticated) return affinity;
+    const mutuallyCompleted = complexities
+      .filter(c => progressMap[c.uuid] === 100 && myProgressMap[c.uuid] === 100)
+      .sort((a, b) => b.complexity - a.complexity);
+    if (mutuallyCompleted.length > 0) {
+      const highest = mutuallyCompleted[0];
+      return complexityAffinityMap[highest.uuid] ?? affinity;
+    }
+    return affinity;
+  }, [affinity, isAuthenticated, complexities, progressMap, myProgressMap, complexityAffinityMap]);
+
   return {
     state: {
       complexities,
@@ -333,8 +358,11 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       displaySections,
       currentConditioners,
       currentAxes,
-      conditionerAnswers,
-      answers: theirAnswers,
+      myAxisAnswers,
+      myConditionerAnswers,
+      theirAxisAnswers,
+      theirConditionerAnswers,
+      answers: theirAxisAnswers,
       axisAffinityMap,
       complexityAffinityMap,
       sectionAffinityMap,
@@ -345,7 +373,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       dependencyNameMap,
       CONTEXT_SECTION_UUID,
       answerData,
-      affinity,
+      affinity: effectiveAffinity,
     },
     loading: {
       isGlobalLoading: (!isInitialized && complexities.length === 0) || isLoadingAnswer,
@@ -355,6 +383,8 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       selectComplexity: setSelectedComplexity,
       selectSection: setSelectedSection,
       saveAnswer: handleSaveAnswer,
+      deleteAnswer: handleDeleteAnswer,
+      saveConditioner: handleSaveConditioner,
     },
   };
 }

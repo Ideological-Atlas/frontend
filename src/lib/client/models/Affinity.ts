@@ -5,7 +5,7 @@
 import type { ComplexityAffinity } from './ComplexityAffinity';
 import type { PublicUser } from './PublicUser';
 export type Affinity = {
-  readonly target_user: PublicUser;
+  readonly target_user: PublicUser | null;
   /**
    * Overall affinity percentage.
    */

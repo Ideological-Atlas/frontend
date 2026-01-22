@@ -10,7 +10,7 @@ import { getAffinityLevel } from '@/lib/affinity-utils';
 import { useTheme } from 'next-themes';
 
 interface ProfileHeaderProps {
-  user: SimpleUser;
+  user: SimpleUser | null;
   affinity?: number | null;
   isPublic?: boolean;
 }
@@ -25,7 +25,7 @@ function Counter({ value }: { value: MotionValue<number> }) {
 }
 
 const CSS_VARS = [
-  '--affinity-opposite',
+  '--muted-foreground',
   '--affinity-very-low',
   '--affinity-low',
   '--affinity-compatible',
@@ -40,18 +40,21 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
   const { user: authUser } = useAuthStore();
   const { resolvedTheme } = useTheme();
 
-  const isOwnProfile = authUser?.uuid === user.uuid;
-  const initial = user.username ? user.username.substring(0, 2).toUpperCase() : '??';
-  const displayBio = user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
+  const isAnonymous = !user;
+  const isOwnProfile = user && authUser?.uuid === user.uuid;
+
+  const initial = isAnonymous ? '?' : user.username ? user.username.substring(0, 2).toUpperCase() : '??';
+  const displayName = isAnonymous ? t('anonymous_user') || 'Usuario Anónimo' : `@${user.username}`;
+  const displayBio =
+    !isAnonymous && user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
 
   const progress = useMotionValue(0);
-
   const [palette, setPalette] = useState<string[]>(Array(8).fill('rgba(0,0,0,0)'));
 
   useEffect(() => {
     const updatePalette = () => {
       const style = getComputedStyle(document.documentElement);
-      const newColors = CSS_VARS.map(v => style.getPropertyValue(v).trim() || '#000000');
+      const newColors = CSS_VARS.map(v => style.getPropertyValue(v).trim() || '#94a3b8');
 
       setPalette(prev => {
         const hasChanged = newColors.some((c, i) => c !== prev[i]);
@@ -60,7 +63,6 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
     };
 
     updatePalette();
-
     const timeout = setTimeout(updatePalette, 50);
     return () => clearTimeout(timeout);
   }, [resolvedTheme]);
@@ -80,36 +82,42 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
 
   const affinityInfo = affinity !== null && affinity !== undefined ? getAffinityLevel(affinity) : null;
 
+  const avatarBgClass = isAnonymous ? 'bg-slate-500' : 'bg-other-user';
+  const avatarRingGradient = isAnonymous
+    ? 'conic-gradient(from 0deg, var(--muted), var(--muted-foreground), var(--muted))'
+    : 'conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))';
+
   return (
     <div className="bg-card border-border sticky top-20 z-30 mb-8 flex flex-col items-start justify-between gap-6 rounded-2xl border p-6 shadow-md transition-all duration-300 md:flex-row md:items-center">
       <div className="flex items-center gap-6">
         <div className="relative flex shrink-0 items-center justify-center">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+            transition={{ repeat: Infinity, duration: isAnonymous ? 10 : 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full"
-            style={{
-              background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
-            }}
+            style={{ background: avatarRingGradient }}
           />
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+            transition={{ repeat: Infinity, duration: isAnonymous ? 10 : 3, ease: 'linear' }}
             className="absolute -inset-[3px] rounded-full opacity-50 blur-sm"
-            style={{
-              background: `conic-gradient(from 0deg, var(--other-user), var(--other-user-strong), var(--other-user))`,
-            }}
+            style={{ background: avatarRingGradient }}
           />
           <div className="bg-card relative z-10 flex h-[72px] w-[72px] items-center justify-center rounded-full p-[4px]">
-            <div className="bg-other-user flex h-full w-full items-center justify-center rounded-full text-2xl font-black text-white shadow-inner">
-              {initial}
+            <div
+              className={clsx(
+                'flex h-full w-full items-center justify-center rounded-full text-2xl font-black text-white shadow-inner',
+                avatarBgClass,
+              )}
+            >
+              {isAnonymous ? <span className="material-symbols-outlined text-3xl">sentiment_neutral</span> : initial}
             </div>
           </div>
         </div>
 
         <div className="flex min-w-0 flex-col gap-1.5">
-          <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">@{user.username}</h1>
-          {isPublic && (
+          <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">{displayName}</h1>
+          {!isAnonymous && isPublic && (
             <div className="flex flex-wrap gap-2">
               <div className="bg-primary/20 text-primary border-primary/20 flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap uppercase">
                 {t('public_profile_badge')}

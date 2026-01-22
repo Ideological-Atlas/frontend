@@ -169,7 +169,10 @@
     "affinity_almost_identical": "Very compatible",
     "affinity_almost_opposite": "Not compatible",
     "copy_answer_tooltip": "Copy answer from {username}",
-    "copy_answer_label": "Copy"
+    "copy_answer_label": "Copy",
+    "indifferent_status": "Indifferent",
+    "not_answered_status": "Not Answered",
+    "anonymous_user": "Anonymous User"
   },
   "Profile": {
     "page_title": "Profile Settings",

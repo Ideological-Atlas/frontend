@@ -68,7 +68,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">
-        {targetUser && <ProfileHeader user={targetUser} affinity={state.affinity} isPublic={targetUser.is_public} />}
+        <ProfileHeader user={targetUser || null} affinity={state.affinity} isPublic={targetUser?.is_public ?? false} />
 
         <PageHeader
           title={state.selectedComplexityObj?.name || t('header_title')}
@@ -90,16 +90,20 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
           {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
             <ConditionerList
               conditioners={state.currentConditioners}
-              answers={state.conditionerAnswers}
+              answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
+              otherAnswers={isAuthenticated ? state.theirConditionerAnswers : undefined}
+              targetUsername={targetUser?.username}
+              onSaveAnswer={actions.saveConditioner}
               isLoading={false}
               dependencyNameMap={state.dependencyNameMap}
-              readOnly={true}
+              readOnly={!isAuthenticated}
               variant="other"
             />
           ) : (
             <AxisList
               axes={state.currentAxes}
-              answers={state.answers}
+              answers={state.theirAxisAnswers}
+              myAnswers={state.myAxisAnswers}
               axisAffinityMap={state.axisAffinityMap}
               targetUsername={targetUser?.username}
               onSaveAnswer={actions.saveAnswer}

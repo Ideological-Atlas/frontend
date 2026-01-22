@@ -40,7 +40,7 @@ export function SectionTabs({
       {sections.map(sec => {
         const isSelected = selectedId === sec.uuid;
 
-        let affinity = undefined;
+        let affinity: number | null | undefined = undefined;
         if (affinityMap) {
           affinity = affinityMap[sec.uuid];
           if (affinity === undefined && sec.uuid) {
@@ -49,7 +49,8 @@ export function SectionTabs({
           }
         }
 
-        const affinityStyle = affinity !== undefined ? getAffinityBadgeStyles(affinity) : null;
+        const hasAffinity = affinity !== undefined && affinity !== null;
+        const affinityStyle = hasAffinity ? getAffinityBadgeStyles(affinity as number) : null;
 
         return (
           <button
@@ -65,7 +66,7 @@ export function SectionTabs({
             )}
           >
             <span>{sec.name}</span>
-            {affinityStyle && (
+            {affinityStyle && hasAffinity && (
               <span
                 className={clsx(
                   'ml-1 rounded border px-1.5 py-0.5 text-[10px] font-bold transition-all',
@@ -73,7 +74,7 @@ export function SectionTabs({
                   !isSelected && 'opacity-70 group-hover:opacity-100',
                 )}
               >
-                {Math.round(affinity!)}%
+                {Math.round(affinity as number)}%
               </span>
             )}
             {isSelected && (
