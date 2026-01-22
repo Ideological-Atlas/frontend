@@ -16,6 +16,8 @@ interface ConditionerCardProps {
   onSave?: (uuid: string, value: string) => void;
   onReset?: (uuid: string) => void;
   answer?: string;
+  otherAnswer?: string;
+  targetUsername?: string;
   dependencyNames: string[];
   readOnly?: boolean;
   variant?: 'default' | 'other';
@@ -26,6 +28,8 @@ export function ConditionerCard({
   onSave,
   onReset,
   answer,
+  otherAnswer,
+  targetUsername,
   dependencyNames,
   readOnly = false,
   variant = 'default',
@@ -63,10 +67,10 @@ export function ConditionerCard({
   const activeCheckText = isOther ? 'text-other-user' : 'text-green-600';
   const activeCheckBg = isOther ? 'bg-other-user/20' : 'bg-green-500/20';
 
+  const activeBtnVariant = !readOnly && isOther ? 'primary' : isOther ? 'other' : 'primary';
+
   const renderInput = () => {
     if (conditioner.type === TypeEnum.BOOLEAN) {
-      const activeBtnVariant = isOther ? 'other' : 'primary';
-
       return (
         <div className="flex gap-4">
           <Button
@@ -108,7 +112,7 @@ export function ConditionerCard({
             suffix=""
             onOpenChange={setIsDropdownOpen}
             align="end"
-            variant={variant}
+            variant={!readOnly && isOther ? 'default' : variant}
           />
         </div>
       );
@@ -142,6 +146,15 @@ export function ConditionerCard({
         );
     }
   };
+
+  const formatOtherAnswer = (val: string) => {
+    if (conditioner.type === TypeEnum.BOOLEAN) {
+      return val === 'true' ? t('yes') : t('no');
+    }
+    return val;
+  };
+
+  const targetLabel = targetUsername ? `@${targetUsername}` : t('anonymous_user') || 'Anónimo';
 
   return (
     <div
@@ -186,7 +199,16 @@ export function ConditionerCard({
         )}
       </div>
 
-      <div className="relative z-10">{renderInput()}</div>
+      <div className="relative z-10 flex flex-col gap-4">
+        {renderInput()}
+
+        {!readOnly && isOther && otherAnswer && (
+          <div className="bg-other-user/10 border-other-user/20 mt-2 flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+            <span className="text-other-user font-bold">{targetLabel}:</span>
+            <span className="text-foreground font-medium">{formatOtherAnswer(otherAnswer)}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

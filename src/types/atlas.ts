@@ -32,6 +32,7 @@ export interface StructureSlice {
   sections: Record<string, IdeologySection[]>;
   axes: Record<string, IdeologyAxis[]>;
   isInitialized: boolean;
+  isAnswersInitialized: boolean;
   fetchAllData: (isAuthenticated: boolean) => Promise<void>;
   initializeStructure: (data: InitialServerData) => void;
   resetStructure: () => void;

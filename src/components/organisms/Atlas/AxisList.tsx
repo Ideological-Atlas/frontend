@@ -6,11 +6,14 @@ import { Skeleton } from '@/components/atoms/Skeleton';
 import { AxisCard } from '@/components/molecules/AxisCard';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface AxisListProps {
   axes: IdeologyAxis[];
   answers: Record<string, AnswerData>;
-  sectionId?: string | null;
+  myAnswers?: Record<string, AnswerData>;
+  axisAffinityMap?: Record<string, { affinity: number; my_answer: AnswerData | null }>;
+  targetUsername?: string;
   onSaveAnswer?: (uuid: string, data: AnswerUpdatePayload) => void;
   onDeleteAnswer?: (uuid: string) => void;
   isLoading: boolean;
@@ -36,6 +39,9 @@ const itemVariants: Variants = {
 export function AxisList({
   axes,
   answers,
+  myAnswers,
+  axisAffinityMap,
+  targetUsername,
   onSaveAnswer,
   onDeleteAnswer,
   isLoading,
@@ -44,6 +50,8 @@ export function AxisList({
   variant = 'default',
 }: AxisListProps) {
   const t = useTranslations('Atlas');
+  const { user } = useAuthStore();
+  const viewerUsername = user?.username;
 
   if (isLoading) {
     return (
@@ -71,16 +79,41 @@ export function AxisList({
             return rule.conditioner?.name || 'Unknown';
           });
 
+          const storeAnswer = answers[axis.uuid];
+          const comparisonData = axisAffinityMap ? axisAffinityMap[axis.uuid] : undefined;
+
+          let primaryAnswer: AnswerData | undefined;
+          let secondaryAnswer: AnswerData | undefined;
+          let affinityValue = undefined;
+          let effectiveVariant = variant;
+
+          if (variant === 'other') {
+            primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined;
+
+            secondaryAnswer = storeAnswer;
+
+            affinityValue = comparisonData?.affinity;
+            effectiveVariant = 'default';
+          } else {
+            primaryAnswer = storeAnswer;
+            secondaryAnswer = undefined;
+            effectiveVariant = 'default';
+          }
+
           return (
             <motion.div key={axis.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
               <AxisCard
                 axis={axis}
                 onSave={onSaveAnswer}
                 onDelete={onDeleteAnswer}
-                answerData={answers[axis.uuid]}
+                answerData={primaryAnswer}
+                otherAnswerData={secondaryAnswer}
+                affinity={affinityValue}
+                viewerUsername={viewerUsername}
+                targetUsername={targetUsername}
                 dependencyNames={names}
                 readOnly={readOnly}
-                variant={variant}
+                variant={effectiveVariant}
               />
             </motion.div>
           );

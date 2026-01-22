@@ -7,9 +7,9 @@ import { SectionTabs } from './SectionTabs';
 import { AxisList } from './AxisList';
 import { ConditionerList } from './ConditionerList';
 import { PageHeader } from '@/components/molecules/PageHeader';
-import { ProgressCard } from '@/components/molecules/ProgressCard';
 import { ProfileHeader } from '@/components/molecules/ProfileHeader';
 import { usePublicAtlasController } from '@/hooks/controllers/usePublicAtlasController';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface PublicAtlasViewProps {
   uuid: string;
@@ -18,6 +18,7 @@ interface PublicAtlasViewProps {
 export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const t = useTranslations('Atlas');
   const { state, loading, actions } = usePublicAtlasController(uuid, t('context_section'));
+  const { isAuthenticated, user: authUser } = useAuthStore();
 
   if (loading.isGlobalLoading) {
     return (
@@ -38,7 +39,11 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
     );
   }
 
-  const user = state.answerData?.completed_by;
+  const targetUser = state.answerData?.completed_by;
+
+  const currentLevelAffinity = state.selectedComplexity
+    ? state.complexityAffinityMap[state.selectedComplexity]
+    : undefined;
 
   return (
     <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
@@ -54,25 +59,21 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
           onSelect={actions.selectComplexity}
           isLoading={false}
           progressMap={state.progressMap}
+          myProgressMap={state.myProgressMap}
+          targetUsername={targetUser?.username}
+          viewerUsername={authUser?.username}
+          affinityMap={state.complexityAffinityMap}
           variant="other"
         />
-
-        {state.selectedComplexity && (
-          <ProgressCard
-            label={t('progress_label', { name: state.selectedComplexityObj?.name || '' })}
-            percentage={state.selectedProgress}
-            className="mt-6"
-            variant="other"
-          />
-        )}
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">
-        {user && <ProfileHeader user={user} />}
+        <ProfileHeader user={targetUser || null} affinity={state.affinity} isPublic={targetUser?.is_public ?? false} />
 
         <PageHeader
           title={state.selectedComplexityObj?.name || t('header_title')}
           description={state.selectedComplexityObj?.description || t('header_description')}
+          affinity={currentLevelAffinity}
           variant="other"
         />
 
@@ -82,25 +83,33 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             selectedId={state.selectedSection}
             onSelect={actions.selectSection}
             isLoading={loading.isSectionLoading}
+            affinityMap={state.sectionAffinityMap}
             variant="other"
           />
 
           {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
             <ConditionerList
               conditioners={state.currentConditioners}
-              answers={state.conditionerAnswers}
+              answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
+              otherAnswers={isAuthenticated ? state.theirConditionerAnswers : undefined}
+              targetUsername={targetUser?.username}
+              onSaveAnswer={actions.saveConditioner}
               isLoading={false}
               dependencyNameMap={state.dependencyNameMap}
-              readOnly={true}
+              readOnly={!isAuthenticated}
               variant="other"
             />
           ) : (
             <AxisList
               axes={state.currentAxes}
-              answers={state.answers}
+              answers={state.theirAxisAnswers}
+              myAnswers={state.myAxisAnswers}
+              axisAffinityMap={state.axisAffinityMap}
+              targetUsername={targetUser?.username}
+              onSaveAnswer={actions.saveAnswer}
               isLoading={false}
               isLevelLoading={false}
-              readOnly={true}
+              readOnly={!isAuthenticated}
               variant="other"
             />
           )}
