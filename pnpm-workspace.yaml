@@ -7,3 +7,7 @@ ignoredBuiltDependencies:
   - '@swc/core'
   - sharp
   - unrs-resolver
+
+onlyBuiltDependencies:
+  - esbuild
+  - workerd

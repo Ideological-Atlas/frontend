@@ -1,0 +1,77 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    name: 🛡️ Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "pnpm"
+
+      - name: 🧩 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🎨 Check Formatting
+        run: pnpm exec prettier --check .
+
+      - name: 🚨 Linting
+        run: pnpm run lint
+
+      - name: 📘 Type Checking
+        run: pnpm run typecheck
+
+      - name: 🔒 Security Audit
+        run: pnpm audit --audit-level=high
+
+  deploy:
+    name: 🚀 Deploy to Cloudflare Pages
+    needs: quality
+    if: github.ref == 'refs/heads/15-feat-production-deployment'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "pnpm"
+
+      - name: 🧩 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build with OpenNext
+        run: npx opennextjs-cloudflare
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_API_VERSION: ${{ secrets.NEXT_PUBLIC_API_VERSION }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_LANG: "es"
+
+      - name: ☁️ Publish to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .open-next/assets --project-name=ideological-atlas-frontend --branch=15-feat-production-deployment
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
