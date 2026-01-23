@@ -59,16 +59,17 @@ export function ThemeSwitch() {
         )}
       >
         <motion.div
-          layout
+          initial={false}
+          animate={{ x: isDark ? 26 : 4 }}
           transition={{
-            duration: 1.6,
-            ease: [0.25, 1, 0.5, 1],
-            type: 'tween',
+            type: 'spring',
+            stiffness: 700,
+            damping: 30,
           }}
           className={clsx(
             'switch-thumb',
-            'block h-5 w-5 rounded-full shadow-sm shadow-black/20',
-            isDark ? 'bg-background translate-x-[26px]' : 'translate-x-[4px] bg-white',
+            'absolute top-1 left-0 block h-5 w-5 rounded-full shadow-sm shadow-black/20',
+            isDark ? 'bg-background' : 'bg-white',
           )}
         >
           <div className="flex h-full w-full items-center justify-center text-[14px]">

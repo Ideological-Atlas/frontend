@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
@@ -43,6 +43,7 @@ export function AxisCard({
 }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [value, setValue] = useState(answerData?.value ?? 0);
@@ -50,13 +51,14 @@ export function AxisCard({
   const [marginRight, setMarginRight] = useState(getInitialMargin(answerData?.margin_right));
   const [isIndifferent, setIsIndifferent] = useState(answerData?.is_indifferent ?? false);
 
+  // Sincronización de props con estado local (necesario para el Slider)
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue(answerData?.value ?? 0);
     setMarginLeft(getInitialMargin(answerData?.margin_left));
     setMarginRight(getInitialMargin(answerData?.margin_right));
     setIsIndifferent(answerData?.is_indifferent ?? false);
-  }, [answerData]);
+  }, [answerData?.value, answerData?.margin_left, answerData?.margin_right, answerData?.is_indifferent]);
 
   const isAnswered = answerData !== undefined;
   const isOther = variant === 'other';
@@ -170,13 +172,13 @@ export function AxisCard({
         !readOnly && 'hover:shadow-md',
         cardStyle,
         isIndifferent && !isComparison ? 'opacity-75' : '',
-        isDropdownOpen ? 'z-50' : 'z-0',
+        isDropdownOpen || showDescription ? 'z-50' : 'z-0',
       )}
     >
       <DependencyBadge names={dependencyNames} variant={variant} />
       <div className="flex items-start justify-between gap-4">
         <div className="flex w-full flex-col gap-1">
-          <div className="flex w-full items-center justify-between">
+          <div className="relative flex w-full flex-col">
             <div className="flex items-center gap-2">
               <h4
                 className={clsx(
@@ -186,6 +188,41 @@ export function AxisCard({
               >
                 {axis.name}
               </h4>
+
+              {/* Botón de Ayuda / Descripción */}
+              {axis.description && (
+                <div
+                  className="relative"
+                  onMouseEnter={() => setShowDescription(true)}
+                  onMouseLeave={() => setShowDescription(false)}
+                >
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground hover:bg-secondary flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-current text-[10px] font-bold transition-colors"
+                    onClick={() => setShowDescription(!showDescription)}
+                  >
+                    ?
+                  </button>
+
+                  {/* Panel de Descripción Desplegable */}
+                  <AnimatePresence>
+                    {showDescription && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 5, scale: 0.98 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="absolute top-full left-0 z-50 mt-3 w-[calc(100vw-64px)] max-w-[400px] md:w-[400px]"
+                      >
+                        <div className="bg-popover text-popover-foreground border-border relative rounded-xl border p-4 shadow-xl">
+                          <div className="bg-popover border-t-border border-l-border absolute -top-2 left-2 h-3 w-3 rotate-45 border-t border-l" />
+                          <p className="text-sm leading-relaxed font-normal">{axis.description}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
 
               {!isComparison && isAnswered && !isIndifferent && (
                 <motion.div
@@ -211,7 +248,7 @@ export function AxisCard({
             </div>
 
             {isComparison && affinityStyle && (
-              <div className="flex items-center gap-3">
+              <div className="mt-2 flex items-center gap-3">
                 {!readOnly && !otherIsNotAnswered && (
                   <Button
                     variant="ghost"
@@ -235,7 +272,6 @@ export function AxisCard({
               </div>
             )}
           </div>
-          {axis.description && <p className="text-muted-foreground text-sm leading-relaxed">{axis.description}</p>}
         </div>
 
         {!isComparison && isAnswered && (
