@@ -61,7 +61,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🏗️ Build with OpenNext
-        run: npx opennextjs-cloudflare
+        run: npx opennextjs-cloudflare build
         env:
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
           NEXT_PUBLIC_API_VERSION: ${{ secrets.NEXT_PUBLIC_API_VERSION }}
