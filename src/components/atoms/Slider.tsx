@@ -130,7 +130,6 @@ const Track = ({
       )}
     />
 
-    {/* ESTADO INDIFERENTE */}
     {isIndifferent && (
       <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
         <div className="border-border bg-card/80 text-muted-foreground flex items-center justify-center rounded-md border px-3 py-1.5 shadow-sm backdrop-blur-sm">
@@ -141,7 +140,6 @@ const Track = ({
       </div>
     )}
 
-    {/* ESTADO NO RESPONDIDO */}
     {isNotAnswered && (
       <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
         <div className="bg-card/50 text-muted-foreground flex items-center justify-center rounded-md px-3 py-1.5 backdrop-blur-sm">
@@ -152,7 +150,6 @@ const Track = ({
       </div>
     )}
 
-    {/* TRACK NORMAL */}
     {!isIndifferent && !isNotAnswered && (
       <>
         <div
@@ -371,7 +368,6 @@ export const Slider = ({
   return (
     <div className={twMerge('flex w-full flex-col select-none', readOnly && 'opacity-90', className)}>
       <div ref={containerRef} className="relative flex flex-col pt-6 pb-2">
-        {/* Línea de conexión si ambos tienen datos válidos */}
         {hasOther && !otherIsIndifferent && !otherIsNotAnswered && !isIndifferent && (
           <svg className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full">
             <line

@@ -23,9 +23,9 @@ export function GoogleButton() {
       try {
         const result = await googleLoginAction(tokenResponse.access_token);
 
-        if (result.success && result.user) {
+        if (result.success && result.user && result.access && result.refresh) {
           resetAtlas();
-          loginSuccess(result.user);
+          loginSuccess(result.user, result.access, result.refresh);
           router.push(`/${locale}`);
           router.refresh();
         } else {
@@ -60,7 +60,6 @@ export function GoogleButton() {
       type="button"
     >
       <div className="flex items-center justify-center gap-3">
-        {/* SVG Icon remains the same, simplified for brevity in this cat block, but effectively the same */}
         <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
           <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
             <path

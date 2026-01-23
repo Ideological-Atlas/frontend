@@ -48,7 +48,7 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant }: Sectio
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
           onClick={e => {
-            e.stopPropagation(); // Evita seleccionar la tab si solo quieres ver la info
+            e.stopPropagation();
             setShowTooltip(!showTooltip);
           }}
         >

@@ -12,7 +12,8 @@
     "logout": "Cerrar Sesión",
     "cancel": "Cancelar",
     "beta_warning": "Página en modo pruebas. Es posible que los datos se borren antes de la versión definitiva y ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
-    "home": "Inicio"
+    "home": "Inicio",
+    "theme_select": "Tema"
   },
   "Navigation": {
     "home": "Inicio",
@@ -174,7 +175,8 @@
     "copy_answer_label": "Copiar",
     "indifferent_status": "Indiferente",
     "not_answered_status": "No respondido",
-    "anonymous_user": "Usuario Anónimo"
+    "anonymous_user": "Usuario Anónimo",
+    "sign_in_to_compare": "Inicia sesión para comparar"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -216,7 +218,7 @@
     "intro_title": "Introducción",
     "collection_title": "Recopilación de Datos",
     "usage_title": "Uso de la Información",
-    "cookies_title": "Política de Cookies (Sin Rastreo)",
+    "cookies_title": "Uso de Cookies",
     "rights_title": "Derechos del Usuario",
     "contact_title": "Contacto",
     "need_help_title": "¿Necesitas ayuda extra?",
@@ -242,9 +244,9 @@
     "use_perso_desc": "Adaptamos el contenido sugerido a tus resultados.",
     "use_sec_title": "Seguridad",
     "use_sec_desc": "Protección contra abusos y notificaciones de cuenta.",
-    "cookies_desc": "En Ideological Atlas respetamos tu privacidad al máximo. No utilizamos cookies de rastreo, analíticas de terceros ni píxeles publicitarios. Solo utilizamos el almacenamiento local (LocalStorage) de tu navegador para funciones esenciales.",
-    "cookies_note_label": "Transparencia",
-    "cookies_note_text": "Solo guardamos tu token de sesión y preferencias de tema en tu dispositivo. Nada más.",
+    "cookies_desc": "Utilizamos cookies estrictamente necesarias y almacenamiento local para gestionar tu sesión y autenticación de forma segura. No utilizamos cookies de terceros para seguimiento publicitario.",
+    "cookies_note_label": "Nota Técnica",
+    "cookies_note_text": "Las cookies 'access_token' y 'refresh_token' son esenciales para mantener tu sesión iniciada al recargar la página.",
     "rights_intro": "Garantizamos los siguientes derechos sobre tus datos personales:",
     "right_access_title": "Derecho de Acceso",
     "right_access_desc": "Solicita una copia de todos los datos que tenemos sobre ti.",

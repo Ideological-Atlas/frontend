@@ -12,7 +12,8 @@
     "logout": "Logout",
     "cancel": "Cancel",
     "beta_warning": "Page in testing mode. Data may be wiped before the final release and errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
-    "home": "Home"
+    "home": "Home",
+    "theme_select": "Theme"
   },
   "Navigation": {
     "home": "Home",
@@ -174,7 +175,8 @@
     "copy_answer_label": "Copy",
     "indifferent_status": "Indifferent",
     "not_answered_status": "Not Answered",
-    "anonymous_user": "Anonymous User"
+    "anonymous_user": "Anonymous User",
+    "sign_in_to_compare": "Sign in to compare"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -214,7 +216,7 @@
     "intro_title": "Introduction",
     "collection_title": "Data Collection",
     "usage_title": "Information Usage",
-    "cookies_title": "Cookie Policy (No Tracking)",
+    "cookies_title": "Cookie Usage",
     "rights_title": "User Rights",
     "contact_title": "Contact",
     "need_help_title": "Need extra help?",
@@ -240,9 +242,9 @@
     "use_perso_desc": "We adapt suggested content to your results.",
     "use_sec_title": "Security",
     "use_sec_desc": "Protection against abuse and account notifications.",
-    "cookies_desc": "At Ideological Atlas, we respect your privacy fully. We do not use tracking cookies, third-party analytics, or ad pixels. We only use your browser's LocalStorage for essential functions.",
-    "cookies_note_label": "Transparency",
-    "cookies_note_text": "We only save your session token and theme preferences on your device. Nothing else.",
+    "cookies_desc": "We use strictly necessary cookies and local storage to manage your session and authentication securely. We do not use third-party cookies for advertising tracking.",
+    "cookies_note_label": "Technical Note",
+    "cookies_note_text": "The 'access_token' and 'refresh_token' cookies are essential to keep you logged in when you reload the page.",
     "rights_intro": "We guarantee the following rights regarding your personal data:",
     "right_access_title": "Right of Access",
     "right_access_desc": "Request a copy of all the data we hold about you.",

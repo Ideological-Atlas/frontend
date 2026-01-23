@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import { DependencyBadge } from '@/components/atoms/DependencyBadge';
@@ -51,7 +52,6 @@ export function AxisCard({
   const [marginRight, setMarginRight] = useState(getInitialMargin(answerData?.margin_right));
   const [isIndifferent, setIsIndifferent] = useState(answerData?.is_indifferent ?? false);
 
-  // Sincronización de props con estado local (necesario para el Slider)
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue(answerData?.value ?? 0);
@@ -62,7 +62,8 @@ export function AxisCard({
 
   const isAnswered = answerData !== undefined;
   const isOther = variant === 'other';
-  const isComparison = otherAnswerData !== undefined || isOther;
+
+  const isAnonymousView = (isOther || otherAnswerData !== undefined) && !viewerUsername;
 
   const otherIsNotAnswered =
     isOther && (!otherAnswerData || (otherAnswerData.value === null && !otherAnswerData.is_indifferent));
@@ -157,13 +158,36 @@ export function AxisCard({
   const activeBorderClass = isOther ? 'border-other-user' : 'border-primary';
   const activeBgClass = isOther ? 'bg-other-user/5' : 'bg-primary/5';
   const activeTitleClass = isOther ? 'text-other-user' : 'text-primary';
-  const cardStyle = isComparison
-    ? 'bg-card border-border'
-    : isAnswered && !isIndifferent
-      ? `${activeBorderClass} ${activeBgClass}`
-      : 'bg-card border-border';
+
+  const cardStyle =
+    !isAnonymousView && (otherAnswerData !== undefined || isOther)
+      ? 'bg-card border-border'
+      : isAnswered && !isIndifferent
+        ? `${activeBorderClass} ${activeBgClass}`
+        : 'bg-card border-border';
 
   const affinityStyle = affinity !== undefined && !otherIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
+
+  const sliderValue = isAnonymousView ? (otherAnswerData?.value ?? 0) : value;
+  const sliderML = isAnonymousView ? getInitialMargin(otherAnswerData?.margin_left) : marginLeft;
+  const sliderMR = isAnonymousView ? getInitialMargin(otherAnswerData?.margin_right) : marginRight;
+  const sliderIndifferent = isAnonymousView ? (otherAnswerData?.is_indifferent ?? false) : isIndifferent;
+
+  const sliderBottomLabel = isAnonymousView
+    ? targetUsername
+      ? `@${targetUsername}`
+      : t('their_answer_label')
+    : viewerUsername
+      ? `@${viewerUsername}`
+      : t('your_answer_label');
+
+  const sliderOtherValue = isAnonymousView ? undefined : (otherAnswerData?.value ?? undefined);
+  const sliderOtherML = isAnonymousView ? undefined : (otherAnswerData?.margin_left ?? undefined);
+  const sliderOtherMR = isAnonymousView ? undefined : (otherAnswerData?.margin_right ?? undefined);
+  const sliderOtherIndiff = isAnonymousView ? undefined : otherAnswerData?.is_indifferent;
+  const sliderTopLabel = isAnonymousView ? undefined : targetUsername ? `@${targetUsername}` : t('their_answer_label');
+
+  const effectiveVariant = isAnonymousView ? 'other' : variant;
 
   return (
     <div
@@ -171,7 +195,7 @@ export function AxisCard({
         'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
         !readOnly && 'hover:shadow-md',
         cardStyle,
-        isIndifferent && !isComparison ? 'opacity-75' : '',
+        sliderIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
         isDropdownOpen || showDescription ? 'z-50' : 'z-0',
       )}
     >
@@ -183,13 +207,12 @@ export function AxisCard({
               <h4
                 className={clsx(
                   'text-lg font-bold',
-                  !isComparison && isAnswered && !isIndifferent ? activeTitleClass : 'text-foreground',
+                  !otherAnswerData && isAnswered && !isIndifferent ? activeTitleClass : 'text-foreground',
                 )}
               >
                 {axis.name}
               </h4>
 
-              {/* Botón de Ayuda / Descripción */}
               {axis.description && (
                 <div
                   className="relative"
@@ -204,7 +227,6 @@ export function AxisCard({
                     ?
                   </button>
 
-                  {/* Panel de Descripción Desplegable */}
                   <AnimatePresence>
                     {showDescription && (
                       <motion.div
@@ -223,31 +245,9 @@ export function AxisCard({
                   </AnimatePresence>
                 </div>
               )}
-
-              {!isComparison && isAnswered && !isIndifferent && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className={clsx(
-                    'flex items-center justify-center rounded-full p-0.5',
-                    isOther ? 'bg-other-user/20 text-other-user' : 'bg-green-500/20 text-green-600',
-                  )}
-                >
-                  <span className="material-symbols-outlined text-[18px] font-bold">check</span>
-                </motion.div>
-              )}
-              {isIndifferent && !isComparison && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex items-center justify-center rounded-full bg-gray-500/20 p-0.5"
-                >
-                  <span className="material-symbols-outlined text-[18px] font-bold text-gray-500">remove</span>
-                </motion.div>
-              )}
             </div>
 
-            {isComparison && affinityStyle && (
+            {!isAnonymousView && otherAnswerData && affinityStyle && (
               <div className="mt-2 flex items-center gap-3">
                 {!readOnly && !otherIsNotAnswered && (
                   <Button
@@ -274,7 +274,7 @@ export function AxisCard({
           </div>
         </div>
 
-        {!isComparison && isAnswered && (
+        {!otherAnswerData && isAnswered && !isAnonymousView && (
           <div className="flex shrink-0 items-center gap-2 pr-4 md:pr-0">
             <button
               onClick={handleReset}
@@ -300,7 +300,7 @@ export function AxisCard({
         )}
       </div>
 
-      {!readOnly && (
+      {!readOnly && !isAnonymousView && (
         <div className="flex items-center gap-2">
           <button
             onClick={toggleIndifferent}
@@ -332,33 +332,44 @@ export function AxisCard({
       <div
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
-          isIndifferent && !isComparison && 'pointer-events-none opacity-20 blur-[1px]',
+          sliderIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
         )}
       >
         <Slider
           leftLabel={axis.left_label}
           rightLabel={axis.right_label}
-          value={value}
-          marginLeft={marginLeft}
-          marginRight={marginRight}
-          bottomLabel={viewerUsername ? `@${viewerUsername}` : t('your_answer_label')}
-          isIndifferent={isIndifferent}
+          value={sliderValue}
+          marginLeft={sliderML}
+          marginRight={sliderMR}
+          bottomLabel={sliderBottomLabel}
+          isIndifferent={sliderIndifferent}
           indifferentLabel={t('indifferent_status')}
-          otherValue={otherAnswerData?.value ?? undefined}
-          otherMarginLeft={otherAnswerData?.margin_left ?? undefined}
-          otherMarginRight={otherAnswerData?.margin_right ?? undefined}
-          otherIsIndifferent={otherAnswerData?.is_indifferent}
+          otherValue={sliderOtherValue}
+          otherMarginLeft={sliderOtherML}
+          otherMarginRight={sliderOtherMR}
+          otherIsIndifferent={sliderOtherIndiff}
           otherIsNotAnswered={otherIsNotAnswered}
           otherNotAnsweredLabel={t('not_answered_status')}
           otherIndifferentLabel={t('indifferent_status')}
-          topLabel={targetUsername ? `@${targetUsername}` : t('their_answer_label')}
+          topLabel={sliderTopLabel}
           onChange={handleSliderChange}
           onCommit={handleCommit}
           onThumbWheel={handleThumbWheel}
           readOnly={readOnly}
-          variant="default"
+          variant={effectiveVariant}
         />
       </div>
+
+      {isAnonymousView && (
+        <div className="mt-2 flex justify-center">
+          <Link href="/login">
+            <Button variant="ghost" size="sm" className="bg-primary/10 hover:bg-primary/20 text-primary gap-2">
+              <span className="material-symbols-outlined text-[18px]">compare_arrows</span>
+              {t('sign_in_to_compare') || 'Inicia sesión para comparar'}
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

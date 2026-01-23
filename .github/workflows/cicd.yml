@@ -37,13 +37,10 @@ jobs:
         run: pnpm audit --audit-level=high
 
   deploy:
-    name: 🚀 Deploy to Cloudflare Pages
+    name: 🚀 Deploy to Vercel
     needs: quality
-    if: github.ref == 'refs/heads/15-feat-production-deployment'
+    if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -60,18 +57,11 @@ jobs:
       - name: 🧩 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🏗️ Build with OpenNext
-        run: npx opennextjs-cloudflare build
+      - name: 🏗️ Deploy to Vercel
+        run: pnpm exec vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
           NEXT_PUBLIC_API_VERSION: ${{ secrets.NEXT_PUBLIC_API_VERSION }}
           NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
-          NEXT_PUBLIC_LANG: "es"
-
-      - name: ☁️ Publish to Cloudflare
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .open-next/assets --project-name=ideological-atlas-frontend --branch=15-feat-production-deployment
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
