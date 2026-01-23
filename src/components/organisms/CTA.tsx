@@ -1,11 +1,26 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { Button } from '../atoms/Button';
 import Link from 'next/link';
+import { Button } from '../atoms/Button';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function CTA() {
   const t = useTranslations('CTA');
   const tCommon = useTranslations('Common');
   const locale = useLocale();
+  const { isAuthenticated } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (mounted && isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">

@@ -1,40 +1,18 @@
-'use server';
-
-import { cookies } from 'next/headers';
 import { AuthService } from '@/lib/client/services/AuthService';
-import { OpenAPI } from '@/lib/client/core/OpenAPI';
 import { ApiError } from '@/lib/client/core/ApiError';
 import { env } from '@/env';
+import { useAuthStore } from '@/store/useAuthStore';
 import type { LoginSchema, RegisterSchema } from '@/lib/schemas/auth';
-
-OpenAPI.BASE = env.NEXT_PUBLIC_API_BASE_URL;
-
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
-  path: '/',
-};
-
-async function setAuthCookies(access: string, refresh: string) {
-  const cookieStore = await cookies();
-
-  cookieStore.set('access_token', access, {
-    ...COOKIE_OPTIONS,
-    maxAge: 60 * 30,
-  });
-
-  cookieStore.set('refresh_token', refresh, {
-    ...COOKIE_OPTIONS,
-    maxAge: 60 * 60 * 24 * 7,
-  });
-}
 
 export async function loginAction(data: LoginSchema) {
   try {
     const response = await AuthService.tokenLoginCreate(data);
-    await setAuthCookies(response.access, response.refresh);
-    return { success: true, user: response.user };
+    return {
+      success: true,
+      user: response.user,
+      access: response.access,
+      refresh: response.refresh,
+    };
   } catch (error: unknown) {
     let errorMessage = 'Login failed';
     if (error instanceof ApiError) {
@@ -50,8 +28,12 @@ export async function registerAction(data: RegisterSchema) {
       email: data.email,
       password: data.password,
     });
-    await setAuthCookies(response.access, response.refresh);
-    return { success: true, user: response.user };
+    return {
+      success: true,
+      user: response.user,
+      access: response.access,
+      refresh: response.refresh,
+    };
   } catch (error: unknown) {
     let errorBody: unknown = null;
     if (error instanceof ApiError) {
@@ -64,23 +46,23 @@ export async function registerAction(data: RegisterSchema) {
 export async function googleLoginAction(token: string) {
   try {
     const response = await AuthService.loginGoogleCreate({ token });
-    await setAuthCookies(response.access, response.refresh);
-    return { success: true, user: response.user };
+    return {
+      success: true,
+      user: response.user,
+      access: response.access,
+      refresh: response.refresh,
+    };
   } catch {
     return { success: false, error: 'Google login failed' };
   }
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies();
-  cookieStore.delete('access_token');
-  cookieStore.delete('refresh_token');
   return { success: true };
 }
 
 export async function refreshAuthTokenAction() {
-  const cookieStore = await cookies();
-  const refreshToken = cookieStore.get('refresh_token')?.value;
+  const { refreshToken, setTokens, logout } = useAuthStore.getState();
 
   if (!refreshToken) {
     return { success: false };
@@ -96,21 +78,20 @@ export async function refreshAuthTokenAction() {
     });
 
     if (!response.ok) {
-      await logoutAction();
+      logout();
       return { success: false };
     }
 
     const data = await response.json();
-
     const newAccess = data.access;
     const newRefresh = data.refresh || refreshToken;
 
-    await setAuthCookies(newAccess, newRefresh);
+    setTokens(newAccess, newRefresh);
 
     return { success: true };
   } catch (error) {
     console.error('Error refreshing token:', error);
-    await logoutAction();
+    logout();
     return { success: false };
   }
 }

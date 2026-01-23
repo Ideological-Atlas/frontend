@@ -8,6 +8,8 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
+export const runtime = 'edge';
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',

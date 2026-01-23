@@ -28,9 +28,9 @@ export function useLogin() {
 
     const result = await loginAction(data);
 
-    if (result.success && result.user) {
+    if (result.success && result.user && result.access && result.refresh) {
       resetAtlas();
-      loginSuccess(result.user);
+      loginSuccess(result.user, result.access, result.refresh);
       router.push(`/${locale}`);
       router.refresh();
     } else {

@@ -1,15 +1,18 @@
-import { useTranslations } from 'next-intl';
+'use client';
+
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 
 export function Footer() {
   const t = useTranslations('Footer');
   const tCommon = useTranslations('Common');
+  const locale = useLocale();
   const year = new Date().getFullYear();
 
   const links = [
-    { key: 'privacy', href: '#' },
-    { key: 'terms', href: '#' },
-    { key: 'contact', href: '#' },
+    { key: 'privacy', href: `/${locale}/legal/privacy-policy` },
+    { key: 'terms', href: `/${locale}/legal/terms-of-use` },
+    { key: 'contact', href: 'mailto:support@ideologicalatlas.com' },
   ];
 
   return (

@@ -10,7 +10,10 @@
     "current": "Current",
     "profile": "Profile",
     "logout": "Logout",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "beta_warning": "Page in testing mode. Data may be wiped before the final release and errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
+    "home": "Home",
+    "theme_select": "Theme"
   },
   "Navigation": {
     "home": "Home",
@@ -172,7 +175,8 @@
     "copy_answer_label": "Copy",
     "indifferent_status": "Indifferent",
     "not_answered_status": "Not Answered",
-    "anonymous_user": "Anonymous User"
+    "anonymous_user": "Anonymous User",
+    "sign_in_to_compare": "Sign in to compare"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -206,5 +210,185 @@
     "visibility_description": "Define who can see your position on the spectrum.",
     "public": "Public",
     "private": "Private"
+  },
+  "Legal": {
+    "table_of_contents": "Table of Contents",
+    "intro_title": "Introduction",
+    "collection_title": "Data Collection",
+    "usage_title": "Information Usage",
+    "cookies_title": "Cookie Usage",
+    "rights_title": "User Rights",
+    "contact_title": "Contact",
+    "need_help_title": "Need extra help?",
+    "need_help_desc": "Our legal team is available to answer specific questions about your data.",
+    "open_ticket": "Contact Support",
+    "privacy_policy_title": "Privacy Policy",
+    "privacy_policy_subtitle": "Your privacy is fundamental. We are committed to protecting your identity and not using invasive trackers.",
+    "last_updated": "Last updated",
+    "intro_p1": "Welcome to Ideological Atlas. This Privacy Policy describes how we handle your personal information. By accessing our services, you agree to these practices.",
+    "intro_p2": "Our mission is to map ideologies transparently. We do not trade your data nor use hidden tracking techniques.",
+    "col_account_title": "Account Information",
+    "col_account_desc": "We collect basic data such as your name, email address, and language preferences when you register to create a personalized account.",
+    "col_interaction_title": "Interaction Data",
+    "col_interaction_desc": "We record your answers to ideological questionnaires, your markers in the atlas, and the time spent exploring different information nodes.",
+    "col_tech_title": "Technical Data",
+    "col_tech_desc": "We automatically collect information about your device, IP address, browser type, and operating system to optimize the visual experience of the Atlas.",
+    "col_contrib_title": "Contributions",
+    "col_contrib_desc": "Any content you voluntarily post in community forums or comments on specific nodes will be publicly visible.",
+    "usage_intro": "We do not sell your data to third parties. We use information exclusively for:",
+    "use_algo_title": "Algorithm Improvement",
+    "use_algo_desc": "We analyze anonymous patterns to refine positioning.",
+    "use_perso_title": "Personalization",
+    "use_perso_desc": "We adapt suggested content to your results.",
+    "use_sec_title": "Security",
+    "use_sec_desc": "Protection against abuse and account notifications.",
+    "cookies_desc": "We use strictly necessary cookies and local storage to manage your session and authentication securely. We do not use third-party cookies for advertising tracking.",
+    "cookies_note_label": "Technical Note",
+    "cookies_note_text": "The 'access_token' and 'refresh_token' cookies are essential to keep you logged in when you reload the page.",
+    "rights_intro": "We guarantee the following rights regarding your personal data:",
+    "right_access_title": "Right of Access",
+    "right_access_desc": "Request a copy of all the data we hold about you.",
+    "right_rect_title": "Right to Rectification",
+    "right_rect_desc": "Correct any inaccurate or incomplete information in your profile.",
+    "right_del_title": "Right to Erasure",
+    "right_del_desc": "Request the total deletion of your account and associated data (\"Right to be forgotten\").",
+    "right_port_title": "Right to Portability",
+    "right_port_desc": "Receive your data in a structured format to transfer it to another service.",
+    "contact_desc": "If you have questions about this Policy or wish to exercise your rights, contact us. We respond within 48 hours.",
+    "contact_btn": "Send Email"
+  },
+  "Terms": {
+    "table_of_contents": "Table of Contents",
+    "title": "Terms of Use",
+    "subtitle": "Clear rules for an open-source and free knowledge platform.",
+    "last_updated": "Last updated",
+    "version": "Version 0.1",
+    "sidebar": {
+      "intro": "Introduction",
+      "acceptance": "1. Acceptance",
+      "service": "2. Service",
+      "responsible": "3. Responsible Use",
+      "accounts": "4. Accounts",
+      "modifications": "5. Modifications",
+      "liability": "6. Liability"
+    },
+    "intro": {
+      "p1": "Welcome to Ideological Atlas. This page describes the legal terms governing the use of our ideological data visualization platform.",
+      "p2": "By accessing our platform, you agree to be bound by the following terms and conditions. Please read them carefully."
+    },
+    "acceptance": {
+      "title": "Acceptance of Terms",
+      "p1": "By accessing or using the Service, you confirm that you have the legal capacity to enter into this agreement.",
+      "p2": "If you do not agree to any part of the terms, you may not access the service."
+    },
+    "service": {
+      "title": "Service Description",
+      "p1": "Ideological Atlas is a non-profit, open-source project. Tools are provided \"as is\" for educational and research purposes."
+    },
+    "responsible": {
+      "title": "Responsible Use & Licenses",
+      "desc": "How we share our work and what we expect from our users.",
+      "prohibitions_title": "Strict Prohibitions",
+      "prohibitions_desc": "It is strictly forbidden to use the platform to:",
+      "prohibitions_list": [
+        "Spread hate speech or discrimination.",
+        "Manipulate data for disinformation.",
+        "Abusive scraping affecting the server."
+      ],
+      "license_title": "Open Source & License",
+      "license_desc": "The code is Open Source (MIT). Data uses Creative Commons (CC BY-NC-SA).",
+      "license_quote": "Use, modification, and distribution for non-commercial purposes with proper attribution is permitted."
+    },
+    "accounts": {
+      "title": "Collaborator Accounts",
+      "p1": "To contribute data, you may need to register. We encourage verifiable identities to maintain quality.",
+      "p2": "You are responsible for the confidentiality of your account and all activities under it."
+    },
+    "modifications": {
+      "title": "Service Modifications",
+      "p1": "We reserve the right to modify these Terms. Substantial changes will be announced on GitHub/Discord 30 days in advance."
+    },
+    "liability": {
+      "title": "Limitation of Liability",
+      "p1": "Ideological Atlas shall not be liable for damages arising from the use of the service. The platform is an experimental educational tool."
+    },
+    "contact_community": {
+      "title": "Questions about the license?",
+      "desc": "Our community can help you understand how to use the data.",
+      "btn": "Contact Community"
+    }
+  },
+  "FeaturesPage": {
+    "hero_title": "More than just a political test",
+    "hero_subtitle": "Ideological Atlas combines advanced psychometrics, data analysis, and an immersive interface to offer the most accurate ideological map.",
+    "current_title": "Available Now",
+    "roadmap_title": "Roadmap & Future",
+    "roadmap_subtitle": "We are building the ultimate political analysis ecosystem. Here is what's coming.",
+    "cards": {
+      "multidimensional": {
+        "title": "Multidimensional Spectrum",
+        "desc": "Forget the simple left-right line. We analyze multiple axes (economic, social, civil) for surgical precision."
+      },
+      "contextual": {
+        "title": "Contextual Intelligence",
+        "desc": "Questions adapt dynamically. We won't ask about Asian regional politics if your context is Europe, unless you want us to."
+      },
+      "privacy": {
+        "title": "Privacy First",
+        "desc": "Your data is yours. We do not use invasive trackers and offer full anonymity options."
+      }
+    },
+    "upcoming": {
+      "explorer": {
+        "title": "Ideology Explorer",
+        "desc": "An interactive visual library where you can navigate the history, theory, and key figures of each ideology."
+      },
+      "comparator": {
+        "title": "Comparison Engine",
+        "desc": "Compare your profile with historical figures, current politicians, or your own friends using graph overlays."
+      },
+      "dashboard": {
+        "title": "Analytics Dashboard",
+        "desc": "Deep statistics on the evolution of your thought and how you stand relative to the global average."
+      }
+    },
+    "coming_soon": "Coming Soon"
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Beyond Left and Right",
+      "subtitle": "An open-source initiative to dismantle biased diagrams and build a transparent, rigorous standard for political measurement.",
+      "mission_btn": "Our Mission",
+      "github_btn": "View Code"
+    },
+    "story": {
+      "title": "Our Story",
+      "content_p1": "Ideological Atlas was born in late 2025 out of frustration with circular political discussions. We realized complex thinkers were forced into simplistic labels because obsolete tools like the Nolan Chart couldn't represent them.",
+      "content_p2": "We are a small team operating from Spain using VPS hosted in Germany, non-profit, with a clear goal: to prove that human ideology has more dimensions than a simple Cartesian plane.",
+      "quote": "Political reality is too complex to fit into two axes."
+    },
+    "algorithm": {
+      "title": "The Affinity Engine",
+      "subtitle": "Forget simple averages. We use a Quadratic Decay model to calculate real compatibility.",
+      "indifference_title": "Indifference Logic",
+      "indifference_desc": "The system respects apathy. If both users are indifferent, affinity is total (100%). If only one is, we penalize slightly (75%) for the lack of connection.",
+      "quadratic_title": "Quadratic Decay",
+      "quadratic_desc": "Affinity does not drop linearly. We gently penalize small deviations (nuance) but severely punish large differences (conflict).",
+      "phases_title": "Two Calculation Phases",
+      "phases_overlap": "Contact Phase (50-100%): When tolerance ranges touch.",
+      "phases_gap": "Gap Phase (0-50%): When positions are irreconcilable.",
+      "aggregation_title": "Hierarchical Aggregation",
+      "aggregation_desc": "Axis → Section → Complexity. Affinity is built layer by layer."
+    },
+    "contribute": {
+      "title": "Join the Resistance",
+      "subtitle": "This project is Open Source and community-maintained. We need your brain.",
+      "role_dev": "Developers",
+      "role_dev_desc": "Help with React, Python (Django) code, and data visualization.",
+      "role_research": "Researchers",
+      "role_research_desc": "Help define new axes, review bibliography, and neutralize bias.",
+      "role_translate": "Translators",
+      "role_translate_desc": "Currently in ES/EN. Help us reach more cultures."
+    }
   }
 }

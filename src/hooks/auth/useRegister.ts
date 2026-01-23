@@ -29,9 +29,9 @@ export function useRegister() {
 
     const result = await registerAction(data);
 
-    if (result.success && result.user) {
+    if (result.success && result.user && result.access && result.refresh) {
       resetAtlas();
-      loginSuccess(result.user);
+      loginSuccess(result.user, result.access, result.refresh);
       router.push(`/${locale}/welcome`);
     } else {
       const errorBody = result.errorBody as Record<string, string[]>;
