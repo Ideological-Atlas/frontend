@@ -320,40 +320,55 @@
     }
   },
   "FeaturesPage": {
-    "hero_title": "More than just a political test",
-    "hero_subtitle": "Ideological Atlas combines advanced psychometrics, data analysis, and an immersive interface to offer the most accurate ideological map.",
-    "current_title": "Available Now",
-    "roadmap_title": "Roadmap & Future",
-    "roadmap_subtitle": "We are building the ultimate political analysis ecosystem. Here is what's coming.",
+    "hero_title": "The Ideological Operating System",
+    "hero_subtitle": "Map, visualize, and understand your political position with unprecedented precision.",
+    "current_title": "Current Features",
+    "roadmap_title": "Product Roadmap",
+    "roadmap_subtitle": "Our vision for the future of ideological analysis.",
     "cards": {
       "multidimensional": {
-        "title": "Multidimensional Spectrum",
-        "desc": "Forget the simple left-right line. We analyze multiple axes (economic, social, civil) for surgical precision."
+        "title": "Multidimensional",
+        "desc": "Beyond left and right. A complete multi-axis analysis."
       },
       "contextual": {
-        "title": "Contextual Intelligence",
-        "desc": "Questions adapt dynamically. We won't ask about Asian regional politics if your context is Europe, unless you want us to."
+        "title": "Contextual",
+        "desc": "Questions adapt dynamically based on your previous answers."
       },
       "privacy": {
-        "title": "Privacy First",
-        "desc": "Your data is yours. We do not use invasive trackers and offer full anonymity options."
+        "title": "Total Privacy",
+        "desc": "Your data is yours. Open source and no hidden trackers."
       }
     },
     "upcoming": {
       "explorer": {
         "title": "Ideology Explorer",
-        "desc": "An interactive visual library where you can navigate the history, theory, and key figures of each ideology."
-      },
-      "comparator": {
-        "title": "Comparison Engine",
-        "desc": "Compare your profile with historical figures, current politicians, or your own friends using graph overlays."
+        "desc": "Browse a comprehensive library of human ideologies and definitions."
       },
       "dashboard": {
         "title": "Analytics Dashboard",
-        "desc": "Deep statistics on the evolution of your thought and how you stand relative to the global average."
+        "desc": "Visualize your statistics, evolution over time, and deep metrics."
+      },
+      "countries": {
+        "title": "Atlas by Country",
+        "desc": "Compare ideological trends globally, regionally, and nationally."
+      },
+      "community": {
+        "title": "Community & Groups",
+        "desc": "Connect with like-minded people, form groups, and debate in moderated spaces."
+      },
+      "ai": {
+        "title": "Ideology AI",
+        "desc": "Analyze texts, news, and speeches to identify biases automatically."
+      },
+      "mobile": {
+        "title": "Mobile Versions",
+        "desc": "Take your ideological profile with you. Native apps for iOS and Android."
       }
     },
-    "coming_soon": "Coming Soon"
+    "coming_soon": "Coming Soon",
+    "help_wanted_title": "We need your help",
+    "help_wanted_desc": "This is an ambitious open-source project. If you are a developer, designer, or researcher, your help is welcome.",
+    "contact_us": "Contact us"
   },
   "AboutPage": {
     "hero": {
@@ -389,7 +404,13 @@
       "role_research": "Researchers",
       "role_research_desc": "Help define new axes, review bibliography, and neutralize bias.",
       "role_translate": "Translators",
-      "role_translate_desc": "Currently in ES/EN. Help us reach more cultures."
+      "role_translate_desc": "Currently in ES/EN. Help us reach more cultures.",
+      "role_design": "Design & UX",
+      "role_design_desc": "Design intuitive interfaces and improve user experience.",
+      "role_product": "Product",
+      "role_product_desc": "Help define features and project direction.",
+      "role_data": "Data & Analytics",
+      "role_data_desc": "Extract value from data to empower user analysis."
     }
   }
 }

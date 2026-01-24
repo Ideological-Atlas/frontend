@@ -122,25 +122,77 @@ export function FeaturesView() {
             <div className="bg-border/50 absolute top-4 bottom-10 left-[19px] w-0.5" />
 
             <div className="flex flex-col gap-2">
+              {/* 1. Explorador de ideologías */}
               <RoadmapCard
                 title={t('upcoming.explorer.title')}
                 description={t('upcoming.explorer.desc')}
                 icon="library_books"
                 delay={0.2}
               />
-              <RoadmapCard
-                title={t('upcoming.comparator.title')}
-                description={t('upcoming.comparator.desc')}
-                icon="compare_arrows"
-                delay={0.4}
-              />
+
+              {/* 2. Dashboard Analítico */}
               <RoadmapCard
                 title={t('upcoming.dashboard.title')}
                 description={t('upcoming.dashboard.desc')}
                 icon="query_stats"
+                delay={0.3}
+              />
+
+              {/* 3. Atlas por Países */}
+              <RoadmapCard
+                title={t('upcoming.countries.title')}
+                description={t('upcoming.countries.desc')}
+                icon="public"
+                delay={0.4}
+              />
+
+              {/* 4. Comunidad y Grupos */}
+              <RoadmapCard
+                title={t('upcoming.community.title')}
+                description={t('upcoming.community.desc')}
+                icon="groups"
+                delay={0.5}
+              />
+
+              {/* 5. IA de Ideologías */}
+              <RoadmapCard
+                title={t('upcoming.ai.title')}
+                description={t('upcoming.ai.desc')}
+                icon="psychology"
                 delay={0.6}
               />
+
+              {/* 6. Versiones Móviles */}
+              <RoadmapCard
+                title={t('upcoming.mobile.title')}
+                description={t('upcoming.mobile.desc')}
+                icon="smartphone"
+                delay={0.7}
+              />
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="border-primary/50 bg-secondary/30 mt-8 ml-12 rounded-r-xl border-l-4 p-4"
+            >
+              <h4 className="text-foreground mb-1 flex items-center gap-2 text-sm font-bold">
+                <span className="material-symbols-outlined text-primary">volunteer_activism</span>
+                {t('help_wanted_title') || 'Necesitamos tu ayuda'}
+              </h4>
+              <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
+                {t('help_wanted_desc') ||
+                  'Este es un proyecto open-source ambicioso. Si eres desarrollador, diseñador o investigador, tu ayuda es bienvenida.'}
+              </p>
+              <a
+                href="mailto:support@ideologicalatlas.com"
+                className="text-primary flex items-center gap-1 text-xs font-bold hover:underline"
+              >
+                {t('contact_us') || 'Contáctanos'}
+                <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
+            </motion.div>
           </div>
         </div>
       </div>

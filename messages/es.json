@@ -322,40 +322,55 @@
     }
   },
   "FeaturesPage": {
-    "hero_title": "Más que un simple test político",
-    "hero_subtitle": "Ideological Atlas combina psicometría avanzada, análisis de datos y una interfaz inmersiva para ofrecerte el mapa ideológico más preciso.",
-    "current_title": "Disponible Ahora",
-    "roadmap_title": "Hoja de Ruta & Futuro",
-    "roadmap_subtitle": "Estamos construyendo el ecosistema definitivo de análisis político. Esto es lo que viene.",
+    "hero_title": "El Sistema Operativo Ideológico",
+    "hero_subtitle": "Mapea, visualiza y comprende tu posición política con una precisión sin precedentes.",
+    "current_title": "Características Actuales",
+    "roadmap_title": "Hoja de Ruta",
+    "roadmap_subtitle": "Nuestra visión para el futuro del análisis ideológico.",
     "cards": {
       "multidimensional": {
-        "title": "Espectro Multidimensional",
-        "desc": "Olvídate de la simple línea izquierda-derecha. Analizamos múltiples ejes (económico, social, civil) para una precisión quirúrgica."
+        "title": "Multidimensional",
+        "desc": "Más allá de la izquierda y la derecha. Un análisis completo de múltiples ejes."
       },
       "contextual": {
-        "title": "Inteligencia Contextual",
-        "desc": "Las preguntas se adaptan dinámicamente. No te preguntaremos sobre política regional de Asia si tu contexto es Europa, a menos que tú quieras."
+        "title": "Contextual",
+        "desc": "Las preguntas se adaptan dinámicamente según tus respuestas previas."
       },
       "privacy": {
-        "title": "Privacidad Primero",
-        "desc": "Tus datos son tuyos. No utilizamos trackers invasivos y ofrecemos opciones de anonimato total."
+        "title": "Privacidad Total",
+        "desc": "Tus datos son tuyos. Código abierto y sin rastreadores ocultos."
       }
     },
     "upcoming": {
       "explorer": {
         "title": "Explorador de Ideologías",
-        "desc": "Una biblioteca visual interactiva donde podrás navegar por la historia, teoría y figuras clave de cada ideología."
-      },
-      "comparator": {
-        "title": "Motor de Comparación",
-        "desc": "Compara tu perfil con figuras históricas, políticos actuales o tus propios amigos mediante superposición de gráficos."
+        "desc": "Navega por una biblioteca completa de ideologías humanas y sus definiciones."
       },
       "dashboard": {
         "title": "Dashboard Analítico",
-        "desc": "Estadísticas profundas sobre la evolución de tu pensamiento y cómo te sitúas respecto a la media global."
+        "desc": "Visualiza tus estadísticas, cambios en el tiempo y métricas profundas."
+      },
+      "countries": {
+        "title": "Atlas por Países",
+        "desc": "Compara tendencias ideológicas a nivel global, regional y nacional."
+      },
+      "community": {
+        "title": "Comunidad y Grupos",
+        "desc": "Conecta con personas afines, forma grupos y debate en espacios moderados."
+      },
+      "ai": {
+        "title": "IA de Ideologías",
+        "desc": "Analiza textos, noticias y discursos para identificar sesgos automáticamente."
+      },
+      "mobile": {
+        "title": "Versiones Móviles",
+        "desc": "Lleva tu perfil ideológico contigo. Apps nativas para iOS y Android."
       }
     },
-    "coming_soon": "Próximamente"
+    "coming_soon": "Próximamente",
+    "help_wanted_title": "Necesitamos tu ayuda",
+    "help_wanted_desc": "Este es un proyecto open-source ambicioso. Si eres desarrollador, diseñador o investigador, tu ayuda es bienvenida.",
+    "contact_us": "Contáctanos"
   },
   "AboutPage": {
     "hero": {
@@ -391,7 +406,13 @@
       "role_research": "Investigadores",
       "role_research_desc": "Ayuda a definir nuevos ejes, revisar bibliografía y neutralizar sesgos.",
       "role_translate": "Traductores",
-      "role_translate_desc": "Actualmente estamos en ES/EN. Ayúdanos a llegar a más culturas."
+      "role_translate_desc": "Actualmente estamos en ES/EN. Ayúdanos a llegar a más culturas.",
+      "role_design": "Diseño & UX",
+      "role_design_desc": "Diseña interfaces intuitivas y mejora la experiencia de usuario.",
+      "role_product": "Producto",
+      "role_product_desc": "Ayuda a definir funcionalidades y la dirección del proyecto.",
+      "role_data": "Datos & Analytics",
+      "role_data_desc": "Extrae valor de los datos para potenciar el análisis de los usuarios."
     }
   }
 }
