@@ -54,7 +54,7 @@ const Thumb = ({
     return (
       <div
         className={clsx(
-          'pointer-events-none absolute top-1/2 z-30 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[2px] border-white shadow-md transition-transform',
+          'atlas-slider-thumb-center pointer-events-none absolute top-1/2 z-30 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[2px] border-white shadow-md transition-transform',
           active ? 'scale-110' : '',
           isDragging && !active && 'opacity-50',
         )}

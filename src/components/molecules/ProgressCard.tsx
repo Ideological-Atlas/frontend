@@ -45,15 +45,17 @@ export function ProgressCard({
       </div>
 
       {onShare && (
-        <Button
-          variant="outline"
-          className="border-border hover:bg-secondary w-full"
-          onClick={onShare}
-          isLoading={isSharing}
-        >
-          <span className="material-symbols-outlined mr-2 text-[18px]">share</span>
-          {t('share_button') || 'Compartir'}
-        </Button>
+        <div id="atlas-share-btn">
+          <Button
+            variant="outline"
+            className="border-border hover:bg-secondary w-full"
+            onClick={onShare}
+            isLoading={isSharing}
+          >
+            <span className="material-symbols-outlined mr-2 text-[18px]">share</span>
+            {t('share_button') || 'Compartir'}
+          </Button>
+        </div>
       )}
     </div>
   );

@@ -412,5 +412,85 @@
       "role_data": "Data & Analytics",
       "role_data_desc": "Extract value from data to empower user analysis."
     }
+  },
+  "Onboarding": {
+    "guest_prompt": {
+      "title": "First time here?",
+      "subtitle": "Let us show you how the Atlas works.",
+      "yes": "Start Tutorial",
+      "no": "No"
+    },
+    "buttons": {
+      "next": "Next",
+      "prev": "Previous",
+      "done": "Finish"
+    },
+    "restart_tutorial": "View Tutorial",
+    "tour": {
+      "welcome": {
+        "title": "Welcome to the Idea Explorer",
+        "desc": "This is the atlas of your ideology where you can define in detail your political and social thinking."
+      },
+      "levels": {
+        "title": "Abstraction Levels",
+        "desc": "These are the different abstraction levels configured for the atlas. As you progress to less abstract levels, the defined ideologies will become more complex and closer to reality."
+      },
+      "progress": {
+        "title": "Your Progress",
+        "desc": "As you advance in defining your ideology, this percentage will increase, indicating how much you have completed."
+      },
+      "header": {
+        "title": "Level Information",
+        "desc": "Here you will find detailed information about the abstraction level you are currently in."
+      },
+      "sections": {
+        "title": "Sections",
+        "desc": "In this first level there is only one section, but other levels may have multiple thematic sections."
+      },
+      "section_help": {
+        "title": "Section Help",
+        "desc": "If you need more information about what a specific section covers, you can find it by clicking here."
+      },
+      "axis": {
+        "title": "Ideological Axis",
+        "desc": "This is an ideological axis. It marks a range of possible values within which you can define yourself."
+      },
+      "axis_title": {
+        "title": "Axis Name",
+        "desc": "This is the name of the axis opposing two ideological positions."
+      },
+      "axis_help": {
+        "title": "Axis Help",
+        "desc": "If you need help with concepts or explanations of the two terms, here is where you find the context."
+      },
+      "axis_indifferent": {
+        "title": "Indifference",
+        "desc": "If an axis is indifferent to you and any value works, you can check this box."
+      },
+      "slider_value": {
+        "title": "Set Values",
+        "desc": "You can move the values by dragging the central ball to one side or the other to indicate your ideal position."
+      },
+      "slider_margin": {
+        "title": "Tolerance Margins",
+        "desc": "Each margin is independent. The wider the margin, the more willing you are to accept other positions even if they are not your ideal."
+      },
+      "conditioners": {
+        "title": "Conditioning Questions",
+        "desc": "These questions will activate or deactivate certain axes or entire sections. They apply mostly in lower abstraction levels."
+      },
+      "complete_level": {
+        "title": "Complete Level",
+        "desc": "Once you have completed a level, you will see the progress at 100% and the bar full."
+      },
+      "share": {
+        "title": "Share",
+        "desc": "With this button, you can share your ideological stance with another person so they can explore it."
+      },
+      "finish": {
+        "title": "We hope you enjoy it!",
+        "desc": "You are ready to start defining your atlas."
+      }
+    }
   }
 }

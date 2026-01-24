@@ -6,6 +6,6 @@ import type { SectionAffinity } from './SectionAffinity';
 import type { SimpleComplexity } from './SimpleComplexity';
 export type ComplexityAffinity = {
   complexity: SimpleComplexity | null;
-  affinity: number;
+  affinity: number | null;
   sections: Array<SectionAffinity>;
 };

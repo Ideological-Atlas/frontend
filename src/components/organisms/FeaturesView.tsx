@@ -122,7 +122,6 @@ export function FeaturesView() {
             <div className="bg-border/50 absolute top-4 bottom-10 left-[19px] w-0.5" />
 
             <div className="flex flex-col gap-2">
-              {/* 1. Explorador de ideologías */}
               <RoadmapCard
                 title={t('upcoming.explorer.title')}
                 description={t('upcoming.explorer.desc')}
@@ -130,7 +129,6 @@ export function FeaturesView() {
                 delay={0.2}
               />
 
-              {/* 2. Dashboard Analítico */}
               <RoadmapCard
                 title={t('upcoming.dashboard.title')}
                 description={t('upcoming.dashboard.desc')}
@@ -138,7 +136,6 @@ export function FeaturesView() {
                 delay={0.3}
               />
 
-              {/* 3. Atlas por Países */}
               <RoadmapCard
                 title={t('upcoming.countries.title')}
                 description={t('upcoming.countries.desc')}
@@ -146,7 +143,6 @@ export function FeaturesView() {
                 delay={0.4}
               />
 
-              {/* 4. Comunidad y Grupos */}
               <RoadmapCard
                 title={t('upcoming.community.title')}
                 description={t('upcoming.community.desc')}
@@ -154,7 +150,6 @@ export function FeaturesView() {
                 delay={0.5}
               />
 
-              {/* 5. IA de Ideologías */}
               <RoadmapCard
                 title={t('upcoming.ai.title')}
                 description={t('upcoming.ai.desc')}
@@ -162,7 +157,6 @@ export function FeaturesView() {
                 delay={0.6}
               />
 
-              {/* 6. Versiones Móviles */}
               <RoadmapCard
                 title={t('upcoming.mobile.title')}
                 description={t('upcoming.mobile.desc')}

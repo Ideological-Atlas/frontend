@@ -414,5 +414,85 @@
       "role_data": "Datos & Analytics",
       "role_data_desc": "Extrae valor de los datos para potenciar el análisis de los usuarios."
     }
+  },
+  "Onboarding": {
+    "guest_prompt": {
+      "title": "¿Primera vez aquí?",
+      "subtitle": "Te enseñamos cómo funciona el Atlas.",
+      "yes": "Ver Tutorial",
+      "no": "No"
+    },
+    "buttons": {
+      "next": "Siguiente",
+      "prev": "Anterior",
+      "done": "Finalizar"
+    },
+    "restart_tutorial": "Ver Tutorial",
+    "tour": {
+      "welcome": {
+        "title": "Bienvenido al explorador de ideas",
+        "desc": "Este es el atlas de tu ideología donde podrás definir en detalle cómo es tu pensamiento político y social."
+      },
+      "levels": {
+        "title": "Niveles de abstracción",
+        "desc": "Estos son los diferentes niveles de abstracción configurados para el atlas. Según vas progresando a niveles menos abstractos, más complejas serán las ideologías definidas y más cercanas a la realidad."
+      },
+      "progress": {
+        "title": "Tu Progreso",
+        "desc": "Según vas avanzando en la definición de tu ideología este porcentaje aumentará, indicando cuánto has completado."
+      },
+      "header": {
+        "title": "Información del nivel",
+        "desc": "Aquí tendrás información detallada sobre el nivel de abstracción en el que te encuentras actualmente."
+      },
+      "sections": {
+        "title": "Secciones",
+        "desc": "En este primer nivel solo hay una sección, pero otros niveles pueden tener múltiples secciones temáticas."
+      },
+      "section_help": {
+        "title": "Ayuda de Sección",
+        "desc": "Si necesitas más información sobre qué trata una sección específica, puedes encontrarla pulsando aquí."
+      },
+      "axis": {
+        "title": "Eje Ideológico",
+        "desc": "Esto es un eje ideológico. Marca un rango de posibles valores entre los que te puedes definir."
+      },
+      "axis_title": {
+        "title": "Nombre del Eje",
+        "desc": "Se trata del nombre del eje que contrapone dos posiciones ideológicas."
+      },
+      "axis_help": {
+        "title": "Ayuda del Eje",
+        "desc": "Si necesitas ayuda con los conceptos o explicación de los dos términos, aquí es donde tienes el contexto."
+      },
+      "axis_indifferent": {
+        "title": "Indiferencia",
+        "desc": "Si un eje te resulta indiferente y te vale cualquier valor, puedes marcar esta caja."
+      },
+      "slider_value": {
+        "title": "Marcar valores",
+        "desc": "Puedes mover los valores arrastrando la pelota central hacia un lado o hacia otro para indicar tu posición ideal."
+      },
+      "slider_margin": {
+        "title": "Márgenes de tolerancia",
+        "desc": "Cada margen es independiente. Cuanto más amplio sea el margen, implica que estás más dispuesto a aceptar otras posiciones aunque no sean tu ideal."
+      },
+      "conditioners": {
+        "title": "Preguntas condicionantes",
+        "desc": "Estas preguntas activarán o desactivarán ciertos ejes o secciones enteras. Aplican sobre todo en niveles de baja abstracción."
+      },
+      "complete_level": {
+        "title": "Completar nivel",
+        "desc": "Una vez hayas completado un nivel verás el progreso al 100% y la barra completa."
+      },
+      "share": {
+        "title": "Compartir",
+        "desc": "Con este botón podrás compartir tu postura ideológica con otra persona para que pueda explorarla."
+      },
+      "finish": {
+        "title": "¡Esperemos que disfrutes!",
+        "desc": "Estás listo para empezar a definir tu atlas."
+      }
+    }
   }
 }

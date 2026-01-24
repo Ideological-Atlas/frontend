@@ -31,4 +31,8 @@ export type Me = {
   bio?: string | null;
   appearance?: AppearanceEnum;
   is_public?: boolean;
+  /**
+   * Field showing whether or not the user has completed the atlas onboarding.
+   */
+  atlas_onboarding_completed?: boolean;
 };
