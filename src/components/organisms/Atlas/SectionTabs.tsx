@@ -13,7 +13,7 @@ interface SectionTabsProps {
   selectedId: string | null;
   onSelect: (id: string) => void;
   isLoading: boolean;
-  affinityMap?: Record<string, number>;
+  affinityMap?: Record<string, number | null>;
   variant?: 'default' | 'other';
 }
 
@@ -23,18 +23,21 @@ interface SectionTabProps {
   onSelect: () => void;
   affinity?: number | null;
   variant: 'default' | 'other';
+  index: number;
 }
 
-function SectionTab({ section, isSelected, onSelect, affinity, variant }: SectionTabProps) {
+function SectionTab({ section, isSelected, onSelect, affinity, variant, index }: SectionTabProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const tCommon = useTranslations('Common');
   const isOther = variant === 'other';
 
   const hasAffinity = affinity !== undefined && affinity !== null;
   const affinityStyle = hasAffinity ? getAffinityBadgeStyles(affinity as number) : null;
+  const isContext = section.uuid === 'context';
 
   return (
     <div
+      id={isContext ? 'atlas-section-tab-context' : `atlas-section-tab-${index}`}
       className={clsx(
         'group relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
         isSelected ? (isOther ? 'text-other-user' : 'text-primary') : 'text-muted-foreground hover:text-foreground',
@@ -46,6 +49,7 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant }: Sectio
 
       {section.description && (
         <div
+          id={`atlas-section-help-${index}`}
           className="relative z-20 flex items-center"
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
@@ -161,7 +165,7 @@ export function SectionTabs({
 
   return (
     <div className="border-border flex flex-wrap gap-2 border-b">
-      {sections.map(sec => {
+      {sections.map((sec, index) => {
         let affinity: number | null | undefined = undefined;
         if (affinityMap) {
           affinity = affinityMap[sec.uuid];
@@ -179,6 +183,7 @@ export function SectionTabs({
             onSelect={() => onSelect(sec.uuid)}
             affinity={affinity}
             variant={variant}
+            index={index}
           />
         );
       })}

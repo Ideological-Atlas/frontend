@@ -6,6 +6,6 @@ import type { AxisBreakdown } from './AxisBreakdown';
 import type { SimpleSection } from './SimpleSection';
 export type SectionAffinity = {
   section: SimpleSection | null;
-  affinity: number;
+  affinity: number | null;
   axes: Array<AxisBreakdown>;
 };

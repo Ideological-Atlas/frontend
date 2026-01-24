@@ -16,7 +16,7 @@ interface ComplexitySelectorProps {
   myProgressMap?: Record<string, number>;
   targetUsername?: string;
   viewerUsername?: string;
-  affinityMap?: Record<string, number>;
+  affinityMap?: Record<string, number | null>;
   variant?: 'default' | 'other';
 }
 
@@ -67,6 +67,7 @@ export function ComplexitySelector({
           return (
             <button
               key={c.uuid}
+              id={`complexity-item-${c.uuid}`}
               onClick={() => onSelect(c.uuid)}
               className={clsx(
                 'group relative flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200',
@@ -113,6 +114,7 @@ export function ComplexitySelector({
         return (
           <button
             key={c.uuid}
+            id={`complexity-item-${c.uuid}`}
             onClick={() => onSelect(c.uuid)}
             className={clsx(
               'group relative flex w-full flex-col gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200',
@@ -158,7 +160,6 @@ export function ComplexitySelector({
                       : 'text-muted-foreground/50',
                 )}
               >
-                {/* CORRECCIÓN: Mostrar N/A si hasAffinity es falso (es null o undefined) */}
                 {bothCompleted && hasAffinity ? `${Math.round(affinity as number)}%` : 'N/A'}
               </span>
             </div>

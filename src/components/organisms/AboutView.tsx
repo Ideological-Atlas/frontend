@@ -124,7 +124,6 @@ export function AboutView() {
             <p className="mb-10 text-xl opacity-90">{t('contribute.subtitle')}</p>
 
             <div className="mb-10 grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
-              {/* Developers */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">code</span>
@@ -133,7 +132,6 @@ export function AboutView() {
                 <p className="text-xs opacity-80">{t('contribute.role_dev_desc')}</p>
               </div>
 
-              {/* Research */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">school</span>
@@ -142,7 +140,6 @@ export function AboutView() {
                 <p className="text-xs opacity-80">{t('contribute.role_research_desc')}</p>
               </div>
 
-              {/* Design */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">palette</span>
@@ -151,7 +148,6 @@ export function AboutView() {
                 <p className="text-xs opacity-80">{t('contribute.role_design_desc')}</p>
               </div>
 
-              {/* Product */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">lightbulb</span>
@@ -160,7 +156,6 @@ export function AboutView() {
                 <p className="text-xs opacity-80">{t('contribute.role_product_desc')}</p>
               </div>
 
-              {/* Data - NUEVO */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">bar_chart</span>
@@ -169,7 +164,6 @@ export function AboutView() {
                 <p className="text-xs opacity-80">{t('contribute.role_data_desc')}</p>
               </div>
 
-              {/* Translate */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">translate</span>

@@ -68,7 +68,7 @@ export function ConditionerList({
   return (
     <motion.div layout className="grid gap-6 md:grid-cols-2">
       <AnimatePresence mode="popLayout" initial={false}>
-        {conditioners.map(cond => {
+        {conditioners.map((cond, index) => {
           let rules = [];
           try {
             if (typeof cond.condition_rules === 'string') {
@@ -96,7 +96,15 @@ export function ConditionerList({
           });
 
           return (
-            <motion.div key={cond.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
+            <motion.div
+              key={cond.uuid}
+              id={index === 0 ? 'atlas-first-conditioner' : undefined}
+              layout
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
               <ConditionerCard
                 conditioner={cond}
                 onSave={onSaveAnswer}

@@ -34,10 +34,10 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   const [affinity, setAffinity] = useState<number | null>(null);
 
   const [axisAffinityMap, setAxisAffinityMap] = useState<
-    Record<string, { affinity: number; my_answer: AnswerData | null }>
+    Record<string, { affinity: number | null; my_answer: AnswerData | null }>
   >({});
-  const [complexityAffinityMap, setComplexityAffinityMap] = useState<Record<string, number>>({});
-  const [sectionAffinityMap, setSectionAffinityMap] = useState<Record<string, number>>({});
+  const [complexityAffinityMap, setComplexityAffinityMap] = useState<Record<string, number | null>>({});
+  const [sectionAffinityMap, setSectionAffinityMap] = useState<Record<string, number | null>>({});
 
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(true);
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
@@ -56,9 +56,9 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       const affinityData = await UsersService.usersAffinityRetrieve(uuid);
       setAffinity(affinityData.total_affinity);
 
-      const axMap: Record<string, { affinity: number; my_answer: AnswerData | null }> = {};
-      const compMap: Record<string, number> = {};
-      const secMap: Record<string, number> = {};
+      const axMap: Record<string, { affinity: number | null; my_answer: AnswerData | null }> = {};
+      const compMap: Record<string, number | null> = {};
+      const secMap: Record<string, number | null> = {};
 
       if (affinityData.complexities) {
         affinityData.complexities.forEach((compAff: ComplexityAffinity) => {

@@ -8,5 +8,5 @@ export type AxisBreakdown = {
   axis: SimpleAxis | null;
   my_answer: AnswerDetail | null;
   their_answer: AnswerDetail | null;
-  affinity: number;
+  affinity: number | null;
 };

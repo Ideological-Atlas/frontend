@@ -7,9 +7,9 @@ import type { PublicUser } from './PublicUser';
 export type Affinity = {
   readonly target_user: PublicUser | null;
   /**
-   * Overall affinity percentage.
+   * Overall affinity percentage. Null if no common axes.
    */
-  total_affinity: number;
+  total_affinity: number | null;
   /**
    * Affinity grouped by abstraction level.
    */
