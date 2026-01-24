@@ -12,7 +12,7 @@ interface AxisListProps {
   axes: IdeologyAxis[];
   answers: Record<string, AnswerData>;
   myAnswers?: Record<string, AnswerData>;
-  axisAffinityMap?: Record<string, { affinity: number; my_answer: AnswerData | null }>;
+  axisAffinityMap?: Record<string, { affinity: number | null; my_answer: AnswerData | null }>;
   targetUsername?: string;
   onSaveAnswer?: (uuid: string, data: AnswerUpdatePayload) => void;
   onDeleteAnswer?: (uuid: string) => void;
@@ -76,7 +76,7 @@ export function AxisList({
   return (
     <motion.div layout className="flex flex-col gap-6">
       <AnimatePresence mode="popLayout" initial={false}>
-        {axes.map(axis => {
+        {axes.map((axis, index) => {
           const names = axis.condition_rules.map(rule => {
             return rule.conditioner?.name || 'Unknown';
           });
@@ -86,7 +86,7 @@ export function AxisList({
 
           let primaryAnswer: AnswerData | undefined;
           let secondaryAnswer: AnswerData | undefined;
-          let affinityValue = undefined;
+          let affinityValue: number | null | undefined = undefined;
           let effectiveVariant = variant;
 
           if (variant === 'other') {
@@ -104,12 +104,13 @@ export function AxisList({
           return (
             <motion.div key={axis.uuid} layout variants={itemVariants} initial="hidden" animate="visible" exit="exit">
               <AxisCard
+                id={index === 0 ? 'atlas-first-axis' : undefined}
                 axis={axis}
                 onSave={onSaveAnswer}
                 onDelete={onDeleteAnswer}
                 answerData={primaryAnswer}
                 otherAnswerData={secondaryAnswer}
-                affinity={affinityValue}
+                affinity={affinityValue ?? undefined}
                 viewerUsername={viewerUsername}
                 targetUsername={targetUsername}
                 hasTargetUser={hasTargetUser}

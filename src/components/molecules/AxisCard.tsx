@@ -14,6 +14,7 @@ import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
 
 interface AxisCardProps {
+  id?: string;
   axis: IdeologyAxis;
   onSave?: (uuid: string, data: AnswerUpdatePayload) => void;
   onDelete?: (uuid: string) => void;
@@ -34,6 +35,7 @@ const getInitialMargin = (m: number | null | undefined, isMobile: boolean) => {
 };
 
 export function AxisCard({
+  id,
   axis,
   onSave,
   onDelete,
@@ -61,11 +63,20 @@ export function AxisCard({
   useEffect(() => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+    const nextValue = answerData?.value ?? 0;
+    const nextML = getInitialMargin(answerData?.margin_left, isMobile);
+    const nextMR = getInitialMargin(answerData?.margin_right, isMobile);
+    const nextIndifferent = answerData?.is_indifferent ?? false;
+
+    // Sincronización segura: solo actualiza si cambia.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setValue(answerData?.value ?? 0);
-    setMarginLeft(getInitialMargin(answerData?.margin_left, isMobile));
-    setMarginRight(getInitialMargin(answerData?.margin_right, isMobile));
-    setIsIndifferent(answerData?.is_indifferent ?? false);
+    setValue(prev => (prev !== nextValue ? nextValue : prev));
+
+    setMarginLeft(prev => (prev !== nextML ? nextML : prev));
+
+    setMarginRight(prev => (prev !== nextMR ? nextMR : prev));
+
+    setIsIndifferent(prev => (prev !== nextIndifferent ? nextIndifferent : prev));
   }, [answerData?.value, answerData?.margin_left, answerData?.margin_right, answerData?.is_indifferent]);
 
   const isOther = variant === 'other';
@@ -195,8 +206,11 @@ export function AxisCard({
 
   const sliderTopLabel = targetUsername ? `@${targetUsername}` : t('their_answer_label');
 
+  const isTarget = id === 'atlas-first-axis';
+
   return (
     <div
+      id={id}
       className={clsx(
         'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
         !readOnly && 'hover:shadow-md',
@@ -212,6 +226,7 @@ export function AxisCard({
           <div className="relative flex w-full flex-col">
             <div className="flex items-center gap-2">
               <h4
+                id={isTarget ? 'atlas-axis-title' : undefined}
                 className={clsx(
                   'text-lg font-bold',
                   !otherAnswerData && meHasAnswer && !isIndifferent ? activeTitleClass : 'text-foreground',
@@ -222,6 +237,7 @@ export function AxisCard({
 
               {axis.description && (
                 <div
+                  id={isTarget ? 'atlas-axis-help' : undefined}
                   className="relative z-20"
                   onMouseEnter={() => setShowDescription(true)}
                   onMouseLeave={() => setShowDescription(false)}
@@ -343,7 +359,7 @@ export function AxisCard({
       </div>
 
       {!readOnly && !isAnonymousView && (
-        <div className="flex items-center gap-2">
+        <div id={isTarget ? 'atlas-axis-indifferent' : undefined} className="flex items-center gap-2">
           <button
             onClick={toggleIndifferent}
             disabled={readOnly}
@@ -372,6 +388,7 @@ export function AxisCard({
       )}
 
       <div
+        id={isTarget ? 'atlas-axis-slider' : undefined}
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
           isIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
