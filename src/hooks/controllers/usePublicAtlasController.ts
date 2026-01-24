@@ -92,7 +92,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       setComplexityAffinityMap(compMap);
       setSectionAffinityMap(secMap);
     } catch (err) {
-      console.error('Failed to refresh affinity', err);
+      console.error(err);
     }
   }, [isAuthenticated, uuid]);
 
@@ -103,7 +103,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         const data = await AnswersService.answersCompletedRetrieve(uuid);
         setAnswerData(data);
       } catch (error) {
-        console.error('Failed to load answer', error);
+        console.error(error);
       } finally {
         setIsLoadingAnswer(false);
       }
@@ -340,13 +340,18 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   const effectiveAffinity = useMemo(() => {
     if (affinity === null || !isAuthenticated) return affinity;
-    const mutuallyCompleted = complexities
-      .filter(c => progressMap[c.uuid] === 100 && myProgressMap[c.uuid] === 100)
-      .sort((a, b) => b.complexity - a.complexity);
-    if (mutuallyCompleted.length > 0) {
-      const highest = mutuallyCompleted[0];
-      return complexityAffinityMap[highest.uuid] ?? affinity;
+
+    const sortedComplexities = [...complexities].sort((a, b) => b.complexity - a.complexity);
+
+    for (const c of sortedComplexities) {
+      const theirProg = progressMap[c.uuid] || 0;
+      const myProg = myProgressMap[c.uuid] || 0;
+
+      if (theirProg === 100 && myProg === 100) {
+        return complexityAffinityMap[c.uuid] ?? affinity;
+      }
     }
+
     return affinity;
   }, [affinity, isAuthenticated, complexities, progressMap, myProgressMap, complexityAffinityMap]);
 

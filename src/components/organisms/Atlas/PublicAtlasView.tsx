@@ -41,9 +41,19 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
 
   const targetUser = state.answerData?.completed_by;
 
-  const currentLevelAffinity = state.selectedComplexity
-    ? state.complexityAffinityMap[state.selectedComplexity]
-    : undefined;
+  const isSelfView =
+    isAuthenticated &&
+    ((authUser?.uuid && targetUser?.uuid && authUser.uuid === targetUser.uuid) ||
+      (authUser?.username && targetUser?.username && authUser.username === targetUser.username));
+
+  const effectiveVariant = isSelfView ? 'default' : 'other';
+
+  const currentLevelAffinity =
+    !isSelfView && state.selectedComplexity ? state.complexityAffinityMap[state.selectedComplexity] : undefined;
+
+  const effectiveAffinity = isSelfView ? null : state.affinity;
+  const effectiveSectionAffinity = isSelfView ? undefined : state.sectionAffinityMap;
+  const effectiveAxisAffinity = isSelfView ? undefined : state.axisAffinityMap;
 
   return (
     <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
@@ -59,22 +69,26 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
           onSelect={actions.selectComplexity}
           isLoading={false}
           progressMap={state.progressMap}
-          myProgressMap={state.myProgressMap}
+          myProgressMap={isSelfView ? undefined : state.myProgressMap}
           targetUsername={targetUser?.username}
           viewerUsername={authUser?.username}
-          affinityMap={state.complexityAffinityMap}
-          variant="other"
+          affinityMap={isSelfView ? undefined : state.complexityAffinityMap}
+          variant={effectiveVariant}
         />
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-8">
-        <ProfileHeader user={targetUser || null} affinity={state.affinity} isPublic={targetUser?.is_public ?? false} />
+        <ProfileHeader
+          user={targetUser || null}
+          affinity={effectiveAffinity}
+          isPublic={targetUser?.is_public ?? false}
+        />
 
         <PageHeader
           title={state.selectedComplexityObj?.name || t('header_title')}
           description={state.selectedComplexityObj?.description || t('header_description')}
           affinity={currentLevelAffinity}
-          variant="other"
+          variant={effectiveVariant}
         />
 
         <div className="flex flex-col gap-6">
@@ -83,34 +97,34 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             selectedId={state.selectedSection}
             onSelect={actions.selectSection}
             isLoading={loading.isSectionLoading}
-            affinityMap={state.sectionAffinityMap}
-            variant="other"
+            affinityMap={effectiveSectionAffinity}
+            variant={effectiveVariant}
           />
 
           {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
             <ConditionerList
               conditioners={state.currentConditioners}
               answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
-              otherAnswers={isAuthenticated ? state.theirConditionerAnswers : undefined}
+              otherAnswers={isAuthenticated && !isSelfView ? state.theirConditionerAnswers : undefined}
               targetUsername={targetUser?.username}
               onSaveAnswer={actions.saveConditioner}
               isLoading={false}
               dependencyNameMap={state.dependencyNameMap}
               readOnly={!isAuthenticated}
-              variant="other"
+              variant={effectiveVariant}
             />
           ) : (
             <AxisList
               axes={state.currentAxes}
               answers={state.theirAxisAnswers}
-              myAnswers={state.myAxisAnswers}
-              axisAffinityMap={state.axisAffinityMap}
+              myAnswers={!isSelfView ? state.myAxisAnswers : undefined}
+              axisAffinityMap={effectiveAxisAffinity}
               targetUsername={targetUser?.username}
               onSaveAnswer={actions.saveAnswer}
               isLoading={false}
               isLevelLoading={false}
               readOnly={!isAuthenticated}
-              variant="other"
+              variant={effectiveVariant}
             />
           )}
         </div>

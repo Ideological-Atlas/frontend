@@ -71,6 +71,8 @@ export function AxisList({
     );
   }
 
+  const hasTargetUser = variant === 'other';
+
   return (
     <motion.div layout className="flex flex-col gap-6">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -89,10 +91,9 @@ export function AxisList({
 
           if (variant === 'other') {
             primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined;
-
             secondaryAnswer = storeAnswer;
-
             affinityValue = comparisonData?.affinity;
+
             effectiveVariant = 'default';
           } else {
             primaryAnswer = storeAnswer;
@@ -111,6 +112,7 @@ export function AxisList({
                 affinity={affinityValue}
                 viewerUsername={viewerUsername}
                 targetUsername={targetUsername}
+                hasTargetUser={hasTargetUser}
                 dependencyNames={names}
                 readOnly={readOnly}
                 variant={effectiveVariant}

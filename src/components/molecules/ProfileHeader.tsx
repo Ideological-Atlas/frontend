@@ -130,7 +130,7 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
         </div>
       </div>
 
-      <div className="hidden shrink-0 md:block">
+      <div className="w-full shrink-0 md:block md:w-auto">
         {isOwnProfile ? (
           <div className="bg-primary/10 border-primary/20 flex items-center gap-4 rounded-xl border p-3 pr-5">
             <div className="bg-primary/20 text-primary flex h-12 w-12 items-center justify-center rounded-full">
