@@ -67,11 +67,15 @@
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3",
     "typescript-eslint": "8.52.0",
+    "vercel": "50.5.0",
     "wrangler": "4.60.0"
   },
   "pnpm": {
     "overrides": {
-      "@smithy/config-resolver": "4.4.6"
+      "@smithy/config-resolver": "4.4.6",
+      "path-to-regexp": ">=6.3.0",
+      "tar": ">=7.5.4",
+      "undici": ">=6.23.0"
     }
   }
 }
