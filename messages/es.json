@@ -13,7 +13,8 @@
     "cancel": "Cancelar",
     "beta_warning": "Página en modo pruebas. Es posible que los datos se borren antes de la versión definitiva y ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
     "home": "Inicio",
-    "theme_select": "Tema"
+    "theme_select": "Tema",
+    "info": "Información"
   },
   "Navigation": {
     "home": "Inicio",

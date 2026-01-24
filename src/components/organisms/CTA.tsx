@@ -26,8 +26,8 @@ export function CTA() {
     <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">
       <div className="layout-content-container flex max-w-[960px] flex-1 flex-col">
         <div className="@container">
-          <div className="border-border to-primary/5 mt-10 flex flex-col items-center justify-center gap-8 rounded-3xl border bg-gradient-to-b from-transparent px-4 py-20">
-            <div className="flex flex-col gap-4 text-center">
+          <div className="border-border to-primary/5 mt-10 flex flex-col items-center justify-center gap-8 rounded-3xl border bg-gradient-to-b from-transparent px-4 py-20 text-center">
+            <div className="flex flex-col gap-4">
               <h1 className="text-foreground max-w-[720px] text-3xl leading-tight font-black tracking-tight md:text-5xl">
                 {t('title')}
               </h1>
@@ -35,9 +35,12 @@ export function CTA() {
                 {t('text')}
               </p>
             </div>
-            <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-              <Link href={`/${locale}/register`}>
-                <Button variant="primary" className="h-12 min-w-[200px] px-6 text-base shadow-lg shadow-blue-500/20">
+            <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
+              <Link href={`/${locale}/register`} className="w-full sm:w-auto">
+                <Button
+                  variant="primary"
+                  className="h-12 w-full min-w-[200px] px-6 text-base shadow-lg shadow-blue-500/20 sm:w-auto"
+                >
                   {tCommon('create_profile')}
                 </Button>
               </Link>

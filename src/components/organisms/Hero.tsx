@@ -13,17 +13,19 @@ export function Hero() {
 
   return (
     <div className="relative flex flex-1 justify-center overflow-hidden px-5 py-5 md:px-20 xl:px-40">
-      <MagneticBackground />
+      <div className="hidden md:block">
+        <MagneticBackground />
+      </div>
 
       <div className="layout-content-container relative z-10 flex max-w-[1200px] flex-1 flex-col">
         <div className="@container">
-          <div className="flex flex-col items-center gap-10 px-4 py-10 lg:flex-row lg:gap-16">
-            <div className="flex flex-col justify-center gap-6 lg:w-1/2">
+          <div className="flex flex-col items-center gap-10 px-4 py-10 text-center lg:flex-row lg:gap-16 lg:text-left">
+            <div className="flex flex-col items-center justify-center gap-6 lg:w-1/2 lg:items-start">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex flex-col gap-4 text-left"
+                className="flex flex-col gap-4"
               >
                 <h1 className="text-foreground text-4xl leading-tight font-black tracking-[-0.033em] md:text-5xl lg:text-6xl">
                   {t('title')}
@@ -34,7 +36,7 @@ export function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex flex-wrap gap-3"
+                className="flex flex-wrap justify-center gap-3 lg:justify-start"
               >
                 <Link href={`/${locale}/atlas`}>
                   <Button variant="primary" className="shadow-primary/20 h-12 px-6 text-base shadow-lg">
@@ -53,7 +55,7 @@ export function Hero() {
                 type: 'spring',
                 bounce: 0.4,
               }}
-              className="bg-card group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:w-1/2"
+              className="bg-card group relative hidden aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:block lg:w-1/2"
             >
               <div className="from-primary/20 to-accent/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr mix-blend-overlay"></div>
               <motion.div

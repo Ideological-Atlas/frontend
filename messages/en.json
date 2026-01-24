@@ -13,7 +13,8 @@
     "cancel": "Cancel",
     "beta_warning": "Page in testing mode. Data may be wiped before the final release and errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
     "home": "Home",
-    "theme_select": "Theme"
+    "theme_select": "Theme",
+    "info": "Info"
   },
   "Navigation": {
     "home": "Home",

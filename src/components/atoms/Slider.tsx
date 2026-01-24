@@ -15,6 +15,9 @@ interface SliderProps {
   isIndifferent?: boolean;
   indifferentLabel?: string;
 
+  isNotAnswered?: boolean;
+  notAnsweredLabel?: string;
+
   otherValue?: number | null;
   otherMarginLeft?: number | null;
   otherMarginRight?: number | null;
@@ -30,7 +33,8 @@ interface SliderProps {
   className?: string;
   readOnly?: boolean;
   variant?: 'default' | 'other';
-  showLabels?: boolean;
+
+  primaryOverlay?: React.ReactNode;
 }
 
 const Thumb = ({
@@ -113,7 +117,7 @@ const Track = ({
         className={clsx(
           'absolute -top-5 left-0 text-xs font-bold tracking-wider uppercase',
           isNotAnswered
-            ? 'text-muted-foreground opacity-50'
+            ? 'text-muted-foreground opacity-70'
             : color.includes('other')
               ? 'text-other-user'
               : 'text-primary',
@@ -130,21 +134,18 @@ const Track = ({
       )}
     />
 
-    {isIndifferent && (
+    {(isIndifferent || isNotAnswered) && (
       <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="border-border bg-card/80 text-muted-foreground flex items-center justify-center rounded-md border px-3 py-1.5 shadow-sm backdrop-blur-sm">
+        <div
+          className={clsx(
+            'flex items-center justify-center rounded-md px-3 py-1.5 shadow-sm backdrop-blur-sm',
+            isNotAnswered
+              ? 'bg-card/50 text-muted-foreground'
+              : 'bg-card/80 border-border text-muted-foreground border',
+          )}
+        >
           <span className="text-[10px] leading-none font-bold tracking-widest uppercase">
-            {indifferentLabel || 'Indifferent'}
-          </span>
-        </div>
-      </div>
-    )}
-
-    {isNotAnswered && (
-      <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="bg-card/50 text-muted-foreground flex items-center justify-center rounded-md px-3 py-1.5 backdrop-blur-sm">
-          <span className="text-[10px] leading-none font-bold tracking-widest uppercase opacity-70">
-            {notAnsweredLabel || 'Not Answered'}
+            {isNotAnswered ? notAnsweredLabel || 'Not Answered' : indifferentLabel || 'Indifferent'}
           </span>
         </div>
       </div>
@@ -227,6 +228,8 @@ export const Slider = ({
   bottomLabel,
   isIndifferent,
   indifferentLabel,
+  isNotAnswered,
+  notAnsweredLabel,
   otherValue,
   otherMarginLeft,
   otherMarginRight,
@@ -240,6 +243,7 @@ export const Slider = ({
   onThumbWheel,
   readOnly = false,
   variant = 'default',
+  primaryOverlay,
 }: SliderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState<null | 'center' | 'left' | 'right'>(null);
@@ -254,15 +258,15 @@ export const Slider = ({
 
   const activeColor = variant === 'other' ? 'var(--other-user)' : 'var(--primary)';
 
-  const hasOther = otherValue !== undefined || otherIsNotAnswered;
+  const hasOther = otherValue !== undefined || otherIsNotAnswered || otherIsIndifferent;
   const otherCenterPercent = hasOther && otherValue !== null && otherValue !== undefined ? toPercent(otherValue) : 50;
   const otherColor = 'var(--other-user-strong)';
 
   let otherLeftPercent = 0;
   let otherRightPercent = 0;
   if (hasOther && otherValue !== null && otherValue !== undefined) {
-    const omL = otherMarginLeft ?? 10;
-    const omR = otherMarginRight ?? 10;
+    const omL = otherMarginLeft ?? 25;
+    const omR = otherMarginRight ?? 25;
     const otherLeftVal = Math.max(-100, otherValue - omL);
     const otherRightVal = Math.min(100, otherValue + omR);
     otherLeftPercent = toPercent(otherLeftVal);
@@ -270,7 +274,7 @@ export const Slider = ({
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (readOnly || !onChange || isIndifferent) return;
+    if (readOnly || !onChange || isIndifferent || isNotAnswered || primaryOverlay) return;
 
     e.preventDefault();
 
@@ -368,21 +372,26 @@ export const Slider = ({
   return (
     <div className={twMerge('flex w-full flex-col select-none', readOnly && 'opacity-90', className)}>
       <div ref={containerRef} className="relative flex flex-col pt-6 pb-2">
-        {hasOther && !otherIsIndifferent && !otherIsNotAnswered && !isIndifferent && (
-          <svg className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full">
-            <line
-              x1={`${otherCenterPercent}%`}
-              y1="42px"
-              x2={`${centerPercent}%`}
-              y2="114px"
-              stroke="currentColor"
-              strokeOpacity="0.15"
-              strokeWidth="2"
-              strokeDasharray="6 4"
-              className="text-foreground"
-            />
-          </svg>
-        )}
+        {hasOther &&
+          !otherIsIndifferent &&
+          !otherIsNotAnswered &&
+          !isIndifferent &&
+          !isNotAnswered &&
+          !primaryOverlay && (
+            <svg className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full">
+              <line
+                x1={`${otherCenterPercent}%`}
+                y1="42px"
+                x2={`${centerPercent}%`}
+                y2="114px"
+                stroke="currentColor"
+                strokeOpacity="0.15"
+                strokeWidth="2"
+                strokeDasharray="6 4"
+                className="text-foreground"
+              />
+            </svg>
+          )}
 
         <div className="flex flex-col gap-10">
           {hasOther && (
@@ -402,21 +411,31 @@ export const Slider = ({
             </div>
           )}
 
-          <Track
-            cPercent={centerPercent}
-            lPercent={leftPercent}
-            rPercent={rightPercent}
-            color={activeColor}
-            label={hasOther ? bottomLabel : undefined}
-            isInteractive={!readOnly && !isIndifferent}
-            isIndifferent={isIndifferent}
-            indifferentLabel={indifferentLabel}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerLeave}
-            isDragging={isDragging ? isDragging : undefined}
-          />
+          <div className="relative">
+            <Track
+              cPercent={centerPercent}
+              lPercent={leftPercent}
+              rPercent={rightPercent}
+              color={activeColor}
+              label={hasOther ? bottomLabel : undefined}
+              isInteractive={!readOnly && !isIndifferent && !isNotAnswered && !primaryOverlay}
+              isIndifferent={isIndifferent}
+              indifferentLabel={indifferentLabel}
+              isNotAnswered={isNotAnswered}
+              notAnsweredLabel={notAnsweredLabel}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerLeave}
+              isDragging={isDragging ? isDragging : undefined}
+            />
+
+            {primaryOverlay && (
+              <div className="bg-background/20 absolute inset-0 z-50 flex items-center justify-center rounded-lg backdrop-blur-[1px]">
+                {primaryOverlay}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

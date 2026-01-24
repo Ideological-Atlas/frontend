@@ -192,44 +192,46 @@ export function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: '100vh' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="bg-background fixed inset-0 top-[73px] z-40 flex flex-col overflow-y-auto px-6 pb-20 lg:hidden"
+            className="bg-background fixed inset-x-0 top-[73px] z-40 flex h-[calc(100dvh-73px)] flex-col lg:hidden"
           >
-            <nav className="flex flex-col gap-6 py-8">
-              {navLinks.map(({ key, href }, i) => {
-                const isActive =
-                  href !== '#' && (href === `/${locale}` ? pathname === href : pathname.startsWith(href));
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <Link
-                      href={href}
-                      className={clsx(
-                        'block text-2xl font-bold transition-colors',
-                        isActive ? 'text-primary' : 'text-foreground',
-                      )}
+            <nav className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="flex flex-col gap-6">
+                {navLinks.map(({ key, href }, i) => {
+                  const isActive =
+                    href !== '#' && (href === `/${locale}` ? pathname === href : pathname.startsWith(href));
+                  return (
+                    <motion.div
+                      key={key}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
                     >
-                      {t(key)}
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                      <Link
+                        href={href}
+                        className={clsx(
+                          'block text-2xl font-bold transition-colors',
+                          isActive ? 'text-primary' : 'text-foreground',
+                        )}
+                      >
+                        {t(key)}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </nav>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="border-border mt-auto flex flex-col gap-6 border-t pt-8"
+              className="border-border bg-background shrink-0 border-t p-6"
             >
-              <div className="mb-2 flex items-center justify-between py-2 pr-2">
+              <div className="mb-4 flex items-center justify-between">
                 <span className="text-muted-foreground font-medium">{tCommon('theme_select') || 'Tema'}</span>
                 <ThemeSwitch />
               </div>
