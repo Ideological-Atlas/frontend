@@ -119,11 +119,12 @@ export function AboutView() {
 
         <section className="bg-primary text-primary-foreground relative overflow-hidden rounded-3xl px-6 py-16 text-center shadow-2xl">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-soft-light" />
-          <div className="relative z-10 mx-auto max-w-3xl">
+          <div className="relative z-10 mx-auto max-w-4xl">
             <h2 className="mb-6 text-3xl font-black">{t('contribute.title')}</h2>
             <p className="mb-10 text-xl opacity-90">{t('contribute.subtitle')}</p>
 
-            <div className="mb-10 grid gap-4 text-left sm:grid-cols-3">
+            <div className="mb-10 grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
+              {/* Developers */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">code</span>
@@ -131,6 +132,8 @@ export function AboutView() {
                 </div>
                 <p className="text-xs opacity-80">{t('contribute.role_dev_desc')}</p>
               </div>
+
+              {/* Research */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">school</span>
@@ -138,6 +141,35 @@ export function AboutView() {
                 </div>
                 <p className="text-xs opacity-80">{t('contribute.role_research_desc')}</p>
               </div>
+
+              {/* Design */}
+              <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+                <div className="mb-1 flex items-center gap-2 font-bold">
+                  <span className="material-symbols-outlined text-[18px]">palette</span>
+                  {t('contribute.role_design')}
+                </div>
+                <p className="text-xs opacity-80">{t('contribute.role_design_desc')}</p>
+              </div>
+
+              {/* Product */}
+              <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+                <div className="mb-1 flex items-center gap-2 font-bold">
+                  <span className="material-symbols-outlined text-[18px]">lightbulb</span>
+                  {t('contribute.role_product')}
+                </div>
+                <p className="text-xs opacity-80">{t('contribute.role_product_desc')}</p>
+              </div>
+
+              {/* Data - NUEVO */}
+              <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+                <div className="mb-1 flex items-center gap-2 font-bold">
+                  <span className="material-symbols-outlined text-[18px]">bar_chart</span>
+                  {t('contribute.role_data')}
+                </div>
+                <p className="text-xs opacity-80">{t('contribute.role_data_desc')}</p>
+              </div>
+
+              {/* Translate */}
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                 <div className="mb-1 flex items-center gap-2 font-bold">
                   <span className="material-symbols-outlined text-[18px]">translate</span>
