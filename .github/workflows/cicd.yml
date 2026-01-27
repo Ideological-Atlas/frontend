@@ -51,7 +51,7 @@ jobs:
           key: ${{ secrets.PROD_SSH_KEY }}
           port: 22
           script: |
-            cd /home/ideologicalatlas/notifications
+            cd /home/ideologicalatlas/frontend
             git fetch --all
             git reset --hard origin/production
             printf "%s" "${{ secrets.ENV_FILE }}" > .env
