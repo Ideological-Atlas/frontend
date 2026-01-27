@@ -55,5 +55,6 @@ jobs:
             git fetch --all
             git reset --hard origin/production
             printf "%s" "${{ secrets.ENV_FILE }}" > .env
+            cp .env .env.local
             docker compose up -d --build --remove-orphans
             docker image prune -f
