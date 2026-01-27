@@ -1,0 +1,31 @@
+services:
+  frontend:
+    container_name: ${PROJECT_NAME}_frontend
+    hostname: frontend
+    image: ${PROJECT_NAME}_frontend_image
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_API_VERSION: ${NEXT_PUBLIC_API_VERSION}
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+        NODE_ENV: ${NODE_ENV}
+    env_file: .env.local
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    networks:
+      - global_net
+    ports:
+      - "3000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+networks:
+  global_net:
+    name: ideological_global_network
+    external: true
