@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { logoutAction } from '@/actions/auth';
+import { logoutAction } from '@/lib/client/auth/clean-actions'; // IMPORTACIÓN CORREGIDA
 import type { Me } from '@/lib/client/models/Me';
 import Cookies from 'js-cookie';
 

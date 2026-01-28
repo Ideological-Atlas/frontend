@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { ThemeSwitch } from '../atoms/ThemeSwitch';
 import { BetaBanner } from '../molecules/BetaBanner';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 import Image from 'next/image';
 import { clsx } from 'clsx';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -27,13 +27,13 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsMobileMenuOpen(false);
+    const timer = setTimeout(() => setIsMobileMenuOpen(false), 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   useEffect(() => {
@@ -66,15 +66,13 @@ export function Header() {
         <div className="text-foreground flex items-center gap-4 md:gap-6">
           <div className="flex items-center gap-3 md:gap-4">
             <Link href={`/${locale}`} className="relative flex size-8 items-center justify-center">
-              <Image src="/logo.png" alt="Ideological Atlas Logo" width={32} height={32} className="object-contain" />
+              <Image src="/logo.png" alt="Logo" width={32} height={32} className="object-contain" />
             </Link>
             <Link href={`/${locale}`} className="text-base leading-tight font-bold tracking-[-0.015em] md:text-lg">
               {tCommon('ideological_atlas')}
             </Link>
           </div>
-
           <div className="bg-border/50 hidden h-6 w-px md:block"></div>
-
           <div className="hidden md:block">
             <ThemeSwitch />
           </div>
@@ -84,15 +82,14 @@ export function Header() {
           <div className="flex items-center gap-9">
             {navLinks.map(({ key, href }) => {
               const isActive = href !== '#' && (href === `/${locale}` ? pathname === href : pathname.startsWith(href));
-
               return (
                 <Link
                   key={key}
+                  href={href}
                   className={clsx(
                     'relative text-sm leading-normal transition-colors',
                     isActive ? 'text-primary font-bold' : 'hover:text-primary text-muted-foreground font-medium',
                   )}
-                  href={href}
                 >
                   {t(key)}
                   {isActive && (
@@ -119,24 +116,8 @@ export function Header() {
                     <div className="relative flex h-10 w-10 items-center justify-center">
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 3,
-                          ease: 'linear',
-                        }}
+                        transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
                         className="absolute -inset-[2px] rounded-full"
-                        style={{
-                          background: `conic-gradient(from 0deg, var(--primary), var(--strong-accent), var(--primary))`,
-                        }}
-                      />
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 3,
-                          ease: 'linear',
-                        }}
-                        className="absolute -inset-[2px] rounded-full opacity-50 blur-[1px]"
                         style={{
                           background: `conic-gradient(from 0deg, var(--primary), var(--strong-accent), var(--primary))`,
                         }}
@@ -148,7 +129,6 @@ export function Header() {
                       </div>
                     </div>
                   </button>
-
                   <div className="border-border bg-card invisible absolute top-full right-0 mt-4 w-48 translate-y-2 rounded-xl border p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                     <div className="flex flex-col gap-1">
                       <Link href={`/${locale}/profile`}>
@@ -211,6 +191,7 @@ export function Header() {
                     >
                       <Link
                         href={href}
+                        onClick={() => setIsMobileMenuOpen(false)}
                         className={clsx(
                           'block text-2xl font-bold transition-colors',
                           isActive ? 'text-primary' : 'text-foreground',
@@ -223,7 +204,6 @@ export function Header() {
                 })}
               </div>
             </nav>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -234,18 +214,8 @@ export function Header() {
                 <span className="text-muted-foreground font-medium">{tCommon('theme_select') || 'Tema'}</span>
                 <ThemeSwitch />
               </div>
-
               {mounted && isAuthenticated ? (
                 <div className="flex flex-col gap-4">
-                  <div className="bg-secondary/20 flex items-center gap-4 rounded-xl p-4">
-                    <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold">
-                      {user?.username ? user.username.slice(0, 2).toUpperCase() : '??'}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-foreground font-bold">{user?.username}</span>
-                      <span className="text-muted-foreground text-xs">{user?.email}</span>
-                    </div>
-                  </div>
                   <Link href={`/${locale}/profile`}>
                     <Button variant="secondary" className="w-full justify-start gap-2">
                       <span className="material-symbols-outlined">person</span>
@@ -275,7 +245,6 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <BetaBanner />
     </div>
   );

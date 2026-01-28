@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 import { motion } from 'framer-motion';
 
 import { Input } from '@/components/atoms/Input';
@@ -28,15 +28,12 @@ export function RegisterForm() {
         <h1 className="text-foreground text-3xl font-black tracking-tight">{t('register_title')}</h1>
         <p className="text-muted-foreground mt-2 text-base leading-relaxed font-normal">{t('register_subtitle')}</p>
       </motion.div>
-
       <motion.div variants={itemVariants}>
         <GoogleButton />
       </motion.div>
-
       <motion.div variants={itemVariants}>
         <Divider />
       </motion.div>
-
       {globalError && (
         <motion.div
           variants={itemVariants}
@@ -45,7 +42,6 @@ export function RegisterForm() {
           {t(globalError)}
         </motion.div>
       )}
-
       <form onSubmit={onSubmit} className="space-y-5">
         <motion.div variants={itemVariants} className="space-y-2">
           <Label htmlFor="email">{t('email_label')}</Label>
@@ -60,7 +56,6 @@ export function RegisterForm() {
           />
           {errors.email?.message && <p className="text-destructive text-xs">{t(errors.email.message)}</p>}
         </motion.div>
-
         <motion.div variants={itemVariants} className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="password">{t('password_label')}</Label>
@@ -103,19 +98,16 @@ export function RegisterForm() {
             )}
           </div>
         </motion.div>
-
         <motion.div variants={itemVariants} className="flex gap-3 rounded-lg bg-blue-500/10 p-3 text-blue-400">
           <span className="material-symbols-outlined shrink-0 text-[20px]">info</span>
           <p className="text-xs leading-relaxed">{t('password_requirements')}</p>
         </motion.div>
-
         <motion.div variants={itemVariants}>
           <Button type="submit" className="w-full" size="lg" isLoading={isLoading} loadingText={t('registering')}>
             {t('register_button')}
           </Button>
         </motion.div>
       </form>
-
       <motion.div variants={itemVariants} className="text-muted-foreground mt-8 text-center text-sm">
         {t('has_account')}{' '}
         <Link href="/login" className="text-primary hover:text-primary-hover font-semibold hover:underline">

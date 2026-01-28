@@ -4,12 +4,15 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { motion } from 'framer-motion';
 import { MagneticBackground } from '../molecules/MagneticBackground';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
+import { useSmartRouter } from '@/hooks/useSmartRouter';
+import { env } from '@/env';
 
 export function Hero() {
   const t = useTranslations('Hero');
   const tCommon = useTranslations('Common');
   const locale = useLocale();
+  const router = useSmartRouter();
 
   return (
     <div className="relative flex flex-1 justify-center overflow-hidden px-5 py-5 md:px-20 xl:px-40">
@@ -43,35 +46,36 @@ export function Hero() {
                     {tCommon('start_now')}
                   </Button>
                 </Link>
-                <Link href={`/${locale}/about`}>
-                  <Button variant="outline" className="h-12 px-6 text-base">
-                    {tCommon('learn_more')}
-                  </Button>
-                </Link>
+                <Button
+                  variant="outline"
+                  className="h-12 px-6 text-base"
+                  onClick={() => router.push(`/${locale}/about`)}
+                >
+                  {tCommon('learn_more')}
+                </Button>
               </motion.div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{
-                duration: 0.8,
-                type: 'spring',
-                bounce: 0.4,
-              }}
-              className="bg-card group relative hidden aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:block lg:w-1/2"
+            <Link
+              href={`/${locale}/about`}
+              className="group relative hidden aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl lg:block lg:w-1/2"
             >
-              <div className="from-primary/20 to-accent/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr mix-blend-overlay"></div>
               <motion.div
-                whileHover={{ scale: 1.1 }}
+                initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.6, type: 'spring', bounce: 0.3 }}
                 className="h-full w-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgW3xqONpPVk-2qt7_VhjJGmhhMlqhzUq2XJW6GrjMaTJmb6NTWB5FvUAOURaixKtIyhK8-euTfDOPDR9fFCIK0NEwpw7uEhlqKZeCUB70ppRUsJFSSKqL_yDRjYkJyg-RD1DYNIVwQMZLMS9pHH-JIlSzeBoFZcrMsyYhGNTPsfnNuwJDj_St5Ly04TOoqQYV8qV0K_JnaCuEIR0lpCrqM8P9pY2hjuHlQIh7AcID-iLsJlfagvBU6jBV1t_jJDB0Fp9sERk7Jcw")',
-                }}
-              />
-            </motion.div>
+              >
+                <div className="from-primary/20 to-accent/20 pointer-events-none absolute inset-0 z-10 bg-gradient-to-tr mix-blend-overlay"></div>
+                <div
+                  className="hero-image-transition h-full w-full bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url("${env.NEXT_PUBLIC_HERO_IMAGE_URL}")`,
+                  }}
+                />
+              </motion.div>
+            </Link>
           </div>
         </div>
       </div>

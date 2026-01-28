@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 
 export function Footer() {
   const t = useTranslations('Footer');
@@ -12,7 +12,6 @@ export function Footer() {
   const links = [
     { key: 'privacy', href: `/${locale}/legal/privacy-policy` },
     { key: 'terms', href: `/${locale}/legal/terms-of-use` },
-    { key: 'contact', href: 'mailto:support@ideologicalatlas.com' },
   ];
 
   return (
@@ -28,6 +27,12 @@ export function Footer() {
               {t(link.key)}
             </Link>
           ))}
+          <a
+            className="hover:text-primary text-muted-foreground min-w-[100px] text-sm leading-normal font-normal transition-colors"
+            href="mailto:support@ideologicalatlas.com"
+          >
+            {t('contact')}
+          </a>
         </div>
         <p className="text-muted-foreground text-sm leading-normal font-normal">
           © {year} {tCommon('ideological_atlas')}. {t('copyright')}

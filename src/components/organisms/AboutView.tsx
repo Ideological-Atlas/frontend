@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/atoms/Button';
 import { MagneticBackground } from '@/components/molecules/MagneticBackground';
 import { AlgorithmCard } from '@/components/molecules/about/AlgorithmCard';
+import { env } from '@/env';
 
 export function AboutView() {
   const t = useTranslations('AboutPage');
@@ -38,14 +39,15 @@ export function AboutView() {
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="border-border relative overflow-hidden rounded-2xl border shadow-2xl"
+            className="border-border hero-image-transition relative overflow-hidden rounded-2xl border shadow-2xl"
           >
             <div className="relative aspect-video w-full">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl8rwoOPJmg5qcAJKw4Vc6naau5P9eLyJ11DFXm2z8frKF2DuZpaVtUU0tL_UAYE1-Gg3dtYJgWrWlU_8kCc87rTxzi3e-c6ywBJA1hpaaPmgc3hKuIOpw3Qfv3euB3XL9at_gn3qn5xy3pyMMkJDpTLV2gMQc4T4FV5HMpZdZWzkQW17SYW4cfF3k9iyZ3LbX4Tdlh4RTI92ZQxhbAMjigy44BQhG-ULKSVmLIkOkxN7NYTEX_vir3J4LmvlsDq5UrY5E_VTLT60"
+                src={env.NEXT_PUBLIC_HERO_IMAGE_URL}
                 alt="Ideological Atlas Viz"
                 fill
                 className="object-cover"
+                priority
               />
               <div className="from-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
             </div>
