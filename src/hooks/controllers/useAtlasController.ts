@@ -16,7 +16,6 @@ interface LocalConditionerRule {
   conditioner?: IdeologyConditioner;
 }
 
-const CONTEXT_SECTION_UUID = 'context';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | LocalConditionerRule;
@@ -172,7 +171,7 @@ export function useAtlasController(contextSectionLabel: string) {
 
     if (visibleConditioners.length > 0) {
       const contextSection: IdeologySection = {
-        uuid: CONTEXT_SECTION_UUID,
+        uuid: `context_${selectedComplexity}`,
         name: contextSectionLabel,
         description: null,
         icon: 'info',
@@ -259,8 +258,9 @@ export function useAtlasController(contextSectionLabel: string) {
     closeShareModal: () => setIsShareModalOpen(false),
   };
 
-  const progressMap = useMemo(() => {
-    const map: Record<string, number> = {};
+  const { progressMap, sectionProgressMap } = useMemo(() => {
+    const cMap: Record<string, number> = {};
+    const sMap: Record<string, number> = {};
 
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
@@ -269,32 +269,48 @@ export function useAtlasController(contextSectionLabel: string) {
       let totalItems = 0;
       let answeredItems = 0;
 
+      let contextTotal = 0;
+      let contextAnswered = 0;
+
       compConditioners.forEach(cond => {
         if (cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[])) {
           totalItems++;
+          contextTotal++;
           if (conditionerAnswers[cond.uuid]) {
             answeredItems++;
+            contextAnswered++;
           }
         }
       });
 
+      if (contextTotal > 0) {
+        sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
+      }
+
       compSections.forEach(sec => {
+        let secTotal = 0;
+        let secAnswered = 0;
+
         if (checkVisibility(sec.condition_rules)) {
           const secAxes = axes[sec.uuid] || [];
           secAxes.forEach(axis => {
             if (checkVisibility(axis.condition_rules)) {
+              secTotal++;
               totalItems++;
               if (answers[axis.uuid]) {
+                secAnswered++;
                 answeredItems++;
               }
             }
           });
         }
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
       });
 
-      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
-    return map;
+
+    return { progressMap: cMap, sectionProgressMap: sMap };
   }, [complexities, sections, axes, answers, conditioners, conditionerAnswers, checkVisibility]);
 
   const dependencyNameMap = useMemo(() => {
@@ -315,11 +331,13 @@ export function useAtlasController(contextSectionLabel: string) {
     );
   }, [selectedComplexity, conditioners, checkVisibility]);
 
+  const isContextSelected = !!selectedSection && selectedSection.startsWith('context_');
+
   const currentAxes = useMemo(() => {
-    if (!selectedSection || selectedSection === CONTEXT_SECTION_UUID) return [];
+    if (!selectedSection || isContextSelected) return [];
     const rawAxes = axes[selectedSection] || [];
     return rawAxes.filter(axis => checkVisibility(axis.condition_rules));
-  }, [selectedSection, axes, checkVisibility]);
+  }, [selectedSection, axes, checkVisibility, isContextSelected]);
 
   const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
@@ -327,7 +345,7 @@ export function useAtlasController(contextSectionLabel: string) {
   const loadingState = {
     isGlobalLoading: !isInitialized && complexities.length === 0,
     isSectionLoading: selectedComplexity ? !sections[selectedComplexity] : true,
-    isAxesLoading: selectedSection && selectedSection !== CONTEXT_SECTION_UUID ? !axes[selectedSection] : false,
+    isAxesLoading: selectedSection && !isContextSelected ? !axes[selectedSection] : false,
     isGeneratingShare,
   };
 
@@ -342,10 +360,11 @@ export function useAtlasController(contextSectionLabel: string) {
       conditionerAnswers,
       answers,
       progressMap,
+      sectionProgressMap,
       selectedComplexityObj,
       selectedProgress,
       dependencyNameMap,
-      CONTEXT_SECTION_UUID,
+      isContextSelected,
       isShareModalOpen,
       shareUrl,
     },

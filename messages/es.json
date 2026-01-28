@@ -177,7 +177,13 @@
     "indifferent_status": "Indiferente",
     "not_answered_status": "No respondido",
     "anonymous_user": "Usuario Anónimo",
-    "sign_in_to_compare": "Inicia sesión para comparar"
+    "sign_in_to_compare": "Inicia sesión para comparar",
+    "guest_warning": {
+      "title": "Aviso de Persistencia",
+      "description": "Estás explorando como invitado. Puedes completar todo el atlas, pero tus respuestas NO se guardarán si actualizas la página o cierras el navegador. Para guardar tu progreso y compararte con otros, debes iniciar sesión.",
+      "continue_guest": "Entendido, continuar como invitado",
+      "login": "Iniciar sesión para guardar"
+    }
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -439,11 +445,11 @@
       },
       "progress": {
         "title": "Tu Progreso",
-        "desc": "Según vas avanzando en la definición de tu ideología este porcentaje aumentará, indicando cuánto has completado."
+        "desc": "Según vas avanzando en la definición de tu ideología este porcentaje aumentará. Ten en cuenta que es independiente por nivel e indica cuánto del *nivel actual* has completado."
       },
       "header": {
         "title": "Información del nivel",
-        "desc": "Aquí tendrás información detallada sobre el nivel de abstracción en el que te encuentras actualmente."
+        "desc": "Aquí tendrás información detallada sobre el nivel de abstracción en el que te encuentras actualmente. Es una descripción orientativa. <br/><span style='color: #f59e0b; font-weight: bold;'>De momento las descripciones han sido generadas con IA y se aceptan sugerencias.</span>"
       },
       "sections": {
         "title": "Secciones",
@@ -455,7 +461,7 @@
       },
       "axis": {
         "title": "Eje Ideológico",
-        "desc": "Esto es un eje ideológico. Marca un rango de posibles valores entre los que te puedes definir."
+        "desc": "Esto es un eje ideológico. Marca un rango de valores entre los que te puedes percibir en este momento a ti mismo. La pelota central es tu valor deseado y las otras pelotas la posición máxima que estarías dispuest@ a aceptar a cada lado."
       },
       "axis_title": {
         "title": "Nombre del Eje",
@@ -492,6 +498,10 @@
       "finish": {
         "title": "¡Esperemos que disfrutes!",
         "desc": "Estás listo para empezar a definir tu atlas."
+      },
+      "header_toggle": {
+        "title": "Colapsar Descripción",
+        "desc": "Si la descripción del nivel ocupa mucho espacio, puedes colapsarla o expandirla usando este botón para centrarte en los ejes."
       }
     }
   }

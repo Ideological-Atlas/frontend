@@ -43,7 +43,11 @@ export function Hero() {
                     {tCommon('start_now')}
                   </Button>
                 </Link>
-                <Button variant="outline">{tCommon('learn_more')}</Button>
+                <Link href={`/${locale}/about`}>
+                  <Button variant="outline" className="h-12 px-6 text-base">
+                    {tCommon('learn_more')}
+                  </Button>
+                </Link>
               </motion.div>
             </div>
 

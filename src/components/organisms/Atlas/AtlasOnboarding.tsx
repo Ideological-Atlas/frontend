@@ -61,17 +61,43 @@ export function AtlasOnboarding() {
     if (axisUuid) {
       const { saveAnswer } = useAtlasStore.getState();
       const isAuth = useAuthStore.getState().isAuthenticated;
+      saveAnswer(axisUuid, { value: 85, margin_left: 50, margin_right: 10, is_indifferent: false }, isAuth);
+    }
+  }, [getFirstAxisUuid]);
 
-      saveAnswer(
-        axisUuid,
-        {
-          value: -60,
-          margin_left: 20,
-          margin_right: 20,
-          is_indifferent: false,
-        },
-        isAuth,
-      );
+  const simulateMarginMove = useCallback(() => {
+    const axisUuid = getFirstAxisUuid();
+    if (axisUuid) {
+      const { saveAnswer } = useAtlasStore.getState();
+      const isAuth = useAuthStore.getState().isAuthenticated;
+      saveAnswer(axisUuid, { value: -60, margin_left: 20, margin_right: 20, is_indifferent: false }, isAuth);
+    }
+  }, [getFirstAxisUuid]);
+
+  const toggleHeaderDescription = useCallback((action: 'expand' | 'collapse') => {
+    const btn = document.getElementById('atlas-header-toggle');
+    if (btn) {
+      const currentLabel = btn.getAttribute('aria-label');
+      const isExpanded = currentLabel === 'Collapse description';
+
+      if ((action === 'expand' && !isExpanded) || (action === 'collapse' && isExpanded)) {
+        btn.click();
+
+        setTimeout(() => {
+          if (driverObj.current) {
+            driverObj.current.refresh();
+          }
+        }, 400);
+      }
+    }
+  }, []);
+
+  const resetSimulation = useCallback(() => {
+    const axisUuid = getFirstAxisUuid();
+    if (axisUuid) {
+      const { deleteAnswer } = useAtlasStore.getState();
+      const isAuth = useAuthStore.getState().isAuthenticated;
+      deleteAnswer(axisUuid, isAuth);
     }
   }, [getFirstAxisUuid]);
 
@@ -80,12 +106,9 @@ export function AtlasOnboarding() {
 
     const steps: DriveStep[] = [
       {
-        element: '#atlas-view-container',
         popover: {
           title: t('tour.welcome.title'),
           description: t('tour.welcome.desc'),
-          side: 'bottom',
-          align: 'center',
         },
       },
       {
@@ -113,6 +136,21 @@ export function AtlasOnboarding() {
           description: t('tour.header.desc'),
           side: 'bottom',
           align: 'center',
+        },
+        onHighlightStarted: () => {
+          toggleHeaderDescription('expand');
+        },
+      },
+      {
+        element: '#atlas-header-toggle',
+        popover: {
+          title: t('tour.header_toggle.title'),
+          description: t('tour.header_toggle.desc'),
+          side: 'bottom',
+          align: 'center',
+        },
+        onHighlightStarted: () => {
+          toggleHeaderDescription('collapse');
         },
       },
       {
@@ -178,9 +216,7 @@ export function AtlasOnboarding() {
           align: 'center',
         },
         onHighlightStarted: () => {
-          setTimeout(() => {
-            simulateAxisMove();
-          }, 500);
+          setTimeout(() => simulateAxisMove(), 500);
         },
       },
       {
@@ -190,6 +226,9 @@ export function AtlasOnboarding() {
           description: t('tour.slider_margin.desc'),
           side: 'bottom',
           align: 'center',
+        },
+        onHighlightStarted: () => {
+          setTimeout(() => simulateMarginMove(), 500);
         },
       },
       {
@@ -225,37 +264,43 @@ export function AtlasOnboarding() {
       showProgress: true,
       animate: true,
       allowClose: true,
+      popoverClass: 'driverjs-theme',
       doneBtnText: t('buttons.done'),
       nextBtnText: t('buttons.next'),
       prevBtnText: t('buttons.prev'),
       progressText: '{{current}} / {{total}}',
       steps: steps,
       onDestroyStarted: () => {
+        resetSimulation();
         handleComplete();
         driverObj.current?.destroy();
       },
     });
 
     driverObj.current.drive();
-  }, [t, handleComplete, simulateAxisMove]);
+  }, [t, handleComplete, simulateAxisMove, simulateMarginMove, toggleHeaderDescription, resetSimulation]);
 
   useEffect(() => {
     const handleStartTour = () => startTour();
     window.addEventListener('start-atlas-tour', handleStartTour);
 
+    const handleGuestWarningDismissed = () => {
+      const hasSeenGuestPrompt = localStorage.getItem('atlas_guest_prompt_seen');
+      if (!hasSeenGuestPrompt) {
+        setTimeout(() => setShowGuestPrompt(true), 500);
+      }
+    };
+    window.addEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
+
     if (isAuthenticated && user) {
       if (user.atlas_onboarding_completed === false) {
         startTour();
-      }
-    } else if (!isAuthenticated) {
-      const hasSeenGuestPrompt = localStorage.getItem('atlas_guest_prompt_seen');
-      if (!hasSeenGuestPrompt) {
-        setTimeout(() => setShowGuestPrompt(true), 0);
       }
     }
 
     return () => {
       window.removeEventListener('start-atlas-tour', handleStartTour);
+      window.removeEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
       if (driverObj.current) {
         driverObj.current.destroy();
       }
@@ -264,80 +309,6 @@ export function AtlasOnboarding() {
 
   return (
     <>
-      {/* eslint-disable-next-line react/no-unknown-property */}
-      <style jsx global>{`
-        .driver-popover.driverjs-theme {
-          background-color: var(--card) !important;
-          color: var(--card-foreground) !important;
-          border: 1px solid var(--border);
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow:
-            0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          max-width: 350px;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-title {
-          font-family: var(--font-inter), sans-serif;
-          font-weight: 800;
-          font-size: 18px;
-          margin-bottom: 8px;
-          color: var(--foreground) !important;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-description {
-          font-family: var(--font-inter), sans-serif;
-          font-size: 14px;
-          line-height: 1.6;
-          color: var(--muted-foreground) !important;
-          margin-bottom: 20px;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-footer button {
-          background-color: var(--secondary) !important;
-          color: var(--secondary-foreground) !important;
-          border: 1px solid var(--border) !important;
-          text-shadow: none;
-          border-radius: 8px;
-          padding: 8px 16px;
-          font-size: 12px;
-          font-weight: 600;
-          transition: all 0.2s;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-footer button:hover {
-          background-color: var(--primary) !important;
-          color: var(--primary-foreground) !important;
-          border-color: var(--primary) !important;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-close-btn {
-          color: var(--muted-foreground) !important;
-          top: 16px;
-          right: 16px;
-          font-size: 24px;
-          font-weight: 300;
-          transition: color 0.2s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          background: transparent !important;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-close-btn:hover {
-          color: var(--destructive) !important;
-        }
-
-        .driver-popover.driverjs-theme .driver-popover-progress-text {
-          color: var(--muted-foreground) !important;
-          font-size: 12px;
-          font-weight: 500;
-        }
-      `}</style>
-
       <AnimatePresence>
         {showGuestPrompt && !isAuthenticated && (
           <motion.div
