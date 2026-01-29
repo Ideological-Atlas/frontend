@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/atoms/Button';
@@ -20,16 +20,13 @@ export function PostRegisterStatus() {
         >
           <span className="material-symbols-outlined text-primary text-[40px]">mark_email_read</span>
         </motion.div>
-
         <motion.h1 variants={itemVariants} className="text-foreground text-3xl font-black tracking-tight">
           {t('post_register_title')}
         </motion.h1>
-
         <motion.p variants={itemVariants} className="text-muted-foreground mt-4 text-base leading-relaxed font-normal">
           {t('post_register_subtitle')}
         </motion.p>
       </div>
-
       <motion.div
         variants={itemVariants}
         className="bg-secondary/50 border-border mb-8 flex items-center gap-4 rounded-xl border p-4"
@@ -42,7 +39,6 @@ export function PostRegisterStatus() {
           <span className="text-muted-foreground text-xs">{t('status_pending')}</span>
         </div>
       </motion.div>
-
       <motion.div variants={itemVariants} className="flex flex-col gap-3">
         <Link href={`/${locale}`} className="w-full">
           <Button variant="primary" className="h-12 w-full text-base">

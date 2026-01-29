@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProgressCard } from '@/components/molecules/ProgressCard';
 import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
+import { GuestWarningModal } from './GuestWarningModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
 
 export function AtlasView() {
@@ -44,6 +45,7 @@ export function AtlasView() {
 
   return (
     <>
+      <GuestWarningModal />
       <AtlasOnboarding />
       <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
 
@@ -107,10 +109,11 @@ export function AtlasView() {
                 selectedId={state.selectedSection}
                 onSelect={actions.selectSection}
                 isLoading={loading.isSectionLoading}
+                sectionProgressMap={state.sectionProgressMap}
               />
             </div>
 
-            {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
+            {state.isContextSelected ? (
               <div id="atlas-conditioners">
                 <ConditionerList
                   conditioners={state.currentConditioners}

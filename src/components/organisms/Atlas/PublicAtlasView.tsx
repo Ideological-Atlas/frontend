@@ -99,9 +99,10 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             isLoading={loading.isSectionLoading}
             affinityMap={effectiveSectionAffinity}
             variant={effectiveVariant}
+            sectionProgressMap={state.sectionProgressMap}
           />
 
-          {state.selectedSection === state.CONTEXT_SECTION_UUID ? (
+          {state.isContextSelected ? (
             <ConditionerList
               conditioners={state.currentConditioners}
               answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
