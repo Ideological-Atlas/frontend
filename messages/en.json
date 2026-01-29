@@ -224,7 +224,8 @@
     "visibility_label": "Profile Visibility",
     "visibility_description": "Define who can see your position on the spectrum.",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "email_not_verified_warning": "User not verified, please check your email."
   },
   "Legal": {
     "table_of_contents": "Table of Contents",

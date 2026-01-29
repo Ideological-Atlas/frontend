@@ -226,7 +226,8 @@
     "bio_placeholder": "",
     "preferences_desc": "Personaliza tu experiencia en la aplicación.",
     "security_desc": "Protege tu cuenta y datos sensibles.",
-    "privacy_desc": "Controla quién puede ver tu actividad."
+    "privacy_desc": "Controla quién puede ver tu actividad.",
+    "email_not_verified_warning": "Usuario no verificado, por favor revisa tu correo."
   },
   "Legal": {
     "table_of_contents": "Tabla de Contenidos",
