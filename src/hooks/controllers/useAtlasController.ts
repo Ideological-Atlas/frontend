@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { useAtlasVisibility } from '@/hooks/features/atlas/useAtlasVisibility';
@@ -63,6 +63,61 @@ export function useAtlasController(contextSectionLabel: string) {
   const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
+  // Navigation Logic
+  const sortedComplexities = useMemo(() => {
+    return [...complexities].sort((a, b) => a.complexity - b.complexity);
+  }, [complexities]);
+
+  const navigationState = useMemo(() => {
+    const currentSectionIndex = displaySections.findIndex(s => s.uuid === selectedSection);
+    const currentCompIndex = sortedComplexities.findIndex(c => c.uuid === selectedComplexity);
+
+    const hasNextSection = currentSectionIndex < displaySections.length - 1;
+    const hasNextLevel = !hasNextSection && currentCompIndex < sortedComplexities.length - 1;
+    const hasPrevSection = currentSectionIndex > 0;
+    const hasPrevLevel = !hasPrevSection && currentCompIndex > 0;
+
+    return {
+      hasNextSection,
+      hasNextLevel,
+      hasPrevSection,
+      hasPrevLevel,
+      currentSectionIndex: currentSectionIndex !== -1 ? currentSectionIndex : 0,
+      totalSections: displaySections.length,
+      currentCompIndex,
+    };
+  }, [displaySections, selectedSection, sortedComplexities, selectedComplexity]);
+
+  const handleNext = useCallback(() => {
+    if (navigationState.hasNextSection) {
+      setSelectedSection(displaySections[navigationState.currentSectionIndex + 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (navigationState.hasNextLevel) {
+      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex + 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
+
+  const handlePrevious = useCallback(() => {
+    if (navigationState.hasPrevSection) {
+      setSelectedSection(displaySections[navigationState.currentSectionIndex - 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (navigationState.hasPrevLevel) {
+      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex - 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
+
+  const handleJumpToSection = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < displaySections.length) {
+        setSelectedSection(displaySections[index].uuid);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    [displaySections, setSelectedSection],
+  );
+
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
       saveAnswer(axisUuid, data, isAuthenticated);
@@ -80,6 +135,9 @@ export function useAtlasController(contextSectionLabel: string) {
     selectSection: setSelectedSection,
     share: handleShare,
     closeShareModal,
+    next: handleNext,
+    previous: handlePrevious,
+    jumpToSection: handleJumpToSection,
   };
 
   const loadingState = {
@@ -107,6 +165,13 @@ export function useAtlasController(contextSectionLabel: string) {
       isContextSelected,
       isShareModalOpen,
       shareUrl,
+      navigation: {
+        showNext: navigationState.hasNextSection || navigationState.hasNextLevel,
+        showPrevious: navigationState.hasPrevSection || navigationState.hasPrevLevel,
+        isNextLevel: navigationState.hasNextLevel,
+        currentIndex: navigationState.currentSectionIndex,
+        totalSteps: navigationState.totalSections,
+      },
     },
     loading: loadingState,
     actions: handlers,

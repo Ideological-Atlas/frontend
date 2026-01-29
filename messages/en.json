@@ -183,7 +183,10 @@
       "description": "You are currently exploring as a guest. You can complete the full atlas, but your answers will NOT be saved if you refresh the page or close the browser. To save your progress and compare with others, you must log in.",
       "continue_guest": "I understand, continue as guest",
       "login": "Log In to Save"
-    }
+    },
+    "previous_label": "Previous",
+    "next_section_label": "Next Section",
+    "next_level_label": "Next Level"
   },
   "Profile": {
     "page_title": "Profile Settings",

@@ -13,6 +13,7 @@ import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
 import { GuestWarningModal } from './GuestWarningModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
+import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
@@ -42,6 +43,9 @@ export function AtlasView() {
   const handleRestartTutorial = () => {
     window.dispatchEvent(new Event('start-atlas-tour'));
   };
+
+  // Calcular array de booleanos para los pasos completados
+  const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
 
   return (
     <>
@@ -136,6 +140,18 @@ export function AtlasView() {
                 />
               </div>
             )}
+
+            <SectionNavigation
+              onNext={actions.next}
+              onPrevious={actions.previous}
+              onStepClick={actions.jumpToSection}
+              showNext={state.navigation.showNext}
+              showPrevious={state.navigation.showPrevious}
+              isNextLevel={state.navigation.isNextLevel}
+              currentIndex={state.navigation.currentIndex}
+              totalSteps={state.navigation.totalSteps}
+              completedSteps={completedSteps}
+            />
           </div>
         </main>
       </div>
