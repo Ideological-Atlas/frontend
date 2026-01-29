@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { logoutAction } from '@/lib/client/auth/clean-actions'; // IMPORTACIÓN CORREGIDA
+import { logoutAction } from '@/lib/client/auth/clean-actions';
 import type { Me } from '@/lib/client/models/Me';
-import Cookies from 'js-cookie';
 
 interface AuthState {
   user: Me | null;
@@ -30,16 +29,10 @@ export const useAuthStore = create<AuthState>()(
       setUser: user => set({ user, isAuthenticated: true }),
 
       setTokens: (access, refresh) => {
-        Cookies.set('access_token', access, { expires: 1, sameSite: 'Strict' });
-        Cookies.set('refresh_token', refresh, { expires: 7, sameSite: 'Strict' });
-
         set({ accessToken: access, refreshToken: refresh });
       },
 
       loginSuccess: (user, access, refresh) => {
-        Cookies.set('access_token', access, { expires: 1, sameSite: 'Strict' });
-        Cookies.set('refresh_token', refresh, { expires: 7, sameSite: 'Strict' });
-
         set({
           isAuthenticated: true,
           user: user,
@@ -48,11 +41,8 @@ export const useAuthStore = create<AuthState>()(
         });
       },
 
-      logout: () => {
-        logoutAction();
-        Cookies.remove('access_token');
-        Cookies.remove('refresh_token');
-
+      logout: async () => {
+        await logoutAction();
         set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
       },
     }),

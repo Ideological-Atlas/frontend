@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import { DependencyBadge } from '@/components/atoms/DependencyBadge';
@@ -12,6 +12,7 @@ import { Button } from '@/components/atoms/Button';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AnswerData, AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
+import { useAxisInteraction } from '@/hooks/features/atlas/useAxisInteraction';
 
 interface AxisCardProps {
   id?: string;
@@ -28,11 +29,6 @@ interface AxisCardProps {
   readOnly?: boolean;
   variant?: 'default' | 'other';
 }
-
-const getInitialMargin = (m: number | null | undefined, isMobile: boolean) => {
-  if (m !== undefined && m !== null) return m;
-  return isMobile ? 35 : 25;
-};
 
 export function AxisCard({
   id,
@@ -51,135 +47,29 @@ export function AxisCard({
 }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const tCommon = useTranslations('Common');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [value, setValue] = useState(answerData?.value ?? 0);
-  const [marginLeft, setMarginLeft] = useState(answerData?.margin_left ?? 10);
-  const [marginRight, setMarginRight] = useState(answerData?.margin_right ?? 10);
-  const [isIndifferent, setIsIndifferent] = useState(answerData?.is_indifferent ?? false);
+  const { state, actions } = useAxisInteraction({
+    axisUuid: axis.uuid,
+    answerData,
+    onSave,
+    onDelete,
+    readOnly,
+  });
 
-  useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-    const nextValue = answerData?.value ?? 0;
-    const nextML = getInitialMargin(answerData?.margin_left, isMobile);
-    const nextMR = getInitialMargin(answerData?.margin_right, isMobile);
-    const nextIndifferent = answerData?.is_indifferent ?? false;
-
-    // Sincronización segura: solo actualiza si cambia.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setValue(prev => (prev !== nextValue ? nextValue : prev));
-
-    setMarginLeft(prev => (prev !== nextML ? nextML : prev));
-
-    setMarginRight(prev => (prev !== nextMR ? nextMR : prev));
-
-    setIsIndifferent(prev => (prev !== nextIndifferent ? nextIndifferent : prev));
-  }, [answerData?.value, answerData?.margin_left, answerData?.margin_right, answerData?.is_indifferent]);
+  const { value, marginLeft, marginRight, isIndifferent, isDropdownOpen } = state;
 
   const isOther = variant === 'other';
-
   const effectiveHasTarget = hasTargetUser || !!targetUsername;
-
   const isAnonymousView = effectiveHasTarget && !viewerUsername;
   const isComparisonView = effectiveHasTarget && !!viewerUsername;
 
   const meHasAnswer = answerData && (answerData.value !== null || answerData.is_indifferent);
-
   const themHasAnswer = otherAnswerData && (otherAnswerData.value !== null || otherAnswerData.is_indifferent);
   const themIsIndifferent = otherAnswerData?.is_indifferent ?? false;
   const themIsNotAnswered = !themHasAnswer;
-
   const showThemAsNotAnswered = (isComparisonView || isAnonymousView) && themIsNotAnswered;
-
   const canCopy = meHasAnswer && (themHasAnswer || themIsIndifferent);
-
-  const handleSliderChange = (updates: { value?: number; marginLeft?: number; marginRight?: number }) => {
-    if (readOnly || isIndifferent) return;
-    if (updates.value !== undefined) setValue(updates.value);
-    if (updates.marginLeft !== undefined) setMarginLeft(updates.marginLeft);
-    if (updates.marginRight !== undefined) setMarginRight(updates.marginRight);
-  };
-
-  const handleCommit = () => {
-    if (readOnly || isIndifferent || !onSave) return;
-    onSave(axis.uuid, { value, margin_left: marginLeft, margin_right: marginRight, is_indifferent: false });
-  };
-
-  const handleDropdownChange = (targetMargin: number) => {
-    if (readOnly || !onSave) return;
-    const maxMarginLeft = value + 100;
-    const maxMarginRight = 100 - value;
-    const safeMargin = Math.min(targetMargin, maxMarginLeft, maxMarginRight);
-    setMarginLeft(safeMargin);
-    setMarginRight(safeMargin);
-    onSave(axis.uuid, { value, margin_left: safeMargin, margin_right: safeMargin, is_indifferent: false });
-  };
-
-  const handleThumbWheel = (delta: number) => {
-    if (readOnly || isIndifferent || !onSave) return;
-    let newMl = marginLeft + delta;
-    let newMr = marginRight + delta;
-    if (newMl < 0) newMl = 0;
-    if (newMr < 0) newMr = 0;
-    const maxMl = value + 100;
-    const maxMr = 100 - value;
-    if (newMl > maxMl) newMl = maxMl;
-    if (newMr > maxMr) newMr = maxMr;
-    setMarginLeft(newMl);
-    setMarginRight(newMr);
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(() => {
-      onSave(axis.uuid, { value, margin_left: newMl, margin_right: newMr, is_indifferent: false });
-    }, 500);
-  };
-
-  const toggleIndifferent = () => {
-    if (readOnly) return;
-    const newIndifferentState = !isIndifferent;
-    setIsIndifferent(newIndifferentState);
-
-    if (newIndifferentState) {
-      if (onSave) {
-        setValue(0);
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        const defaultM = isMobile ? 35 : 25;
-        setMarginLeft(defaultM);
-        setMarginRight(defaultM);
-        onSave(axis.uuid, { is_indifferent: true, value: null, margin_left: null, margin_right: null });
-      }
-    } else {
-      if (onDelete) {
-        onDelete(axis.uuid);
-      }
-    }
-  };
-
-  const handleCopy = () => {
-    if (!otherAnswerData || !onSave || themIsNotAnswered) return;
-    const newData = {
-      value: otherAnswerData.value,
-      margin_left: otherAnswerData.margin_left,
-      margin_right: otherAnswerData.margin_right,
-      is_indifferent: otherAnswerData.is_indifferent,
-    };
-    if (newData.is_indifferent) {
-      setIsIndifferent(true);
-    } else {
-      setIsIndifferent(false);
-      setValue(newData.value ?? 0);
-      setMarginLeft(newData.margin_left ?? 10);
-      setMarginRight(newData.margin_right ?? 10);
-    }
-    onSave(axis.uuid, newData);
-  };
-
-  const handleReset = () => {
-    if (readOnly || !onDelete) return;
-    onDelete(axis.uuid);
-  };
 
   const marginOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50];
   const isSymmetric = marginLeft === marginRight;
@@ -205,7 +95,6 @@ export function AxisCard({
       : t('your_answer_label');
 
   const sliderTopLabel = targetUsername ? `@${targetUsername}` : t('their_answer_label');
-
   const isTarget = id === 'atlas-first-axis';
 
   return (
@@ -307,11 +196,11 @@ export function AxisCard({
 
             {!isAnonymousView && isComparisonView && affinityStyle && (
               <div className="mt-2 flex items-center gap-3">
-                {!readOnly && canCopy && (
+                {!readOnly && canCopy && otherAnswerData && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={handleCopy}
+                    onClick={() => actions.handleCopyFromOther(otherAnswerData)}
                     className="text-muted-foreground hover:text-primary hover:border-border hover:bg-secondary h-7 gap-1.5 border border-transparent px-2 text-xs"
                   >
                     <span className="material-symbols-outlined text-[16px]">content_copy</span>
@@ -335,7 +224,7 @@ export function AxisCard({
         {!otherAnswerData && meHasAnswer && !isAnonymousView && (
           <div className="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start">
             <button
-              onClick={handleReset}
+              onClick={actions.handleReset}
               title={t('reset_label')}
               className="text-muted-foreground hover:bg-secondary hover:text-foreground flex h-8 w-8 items-center justify-center rounded-full transition-colors"
             >
@@ -346,10 +235,10 @@ export function AxisCard({
                 <Dropdown<number | string>
                   value={marginDisplayValue}
                   options={marginOptions}
-                  onChange={val => handleDropdownChange(val as number)}
+                  onChange={val => actions.handleDropdownChange(val as number)}
                   label={t('margin_label')}
                   align="end"
-                  onOpenChange={setIsDropdownOpen}
+                  onOpenChange={actions.setIsDropdownOpen}
                   variant="default"
                 />
               </div>
@@ -361,7 +250,7 @@ export function AxisCard({
       {!readOnly && !isAnonymousView && (
         <div id={isTarget ? 'atlas-axis-indifferent' : undefined} className="flex items-center gap-2">
           <button
-            onClick={toggleIndifferent}
+            onClick={actions.toggleIndifferent}
             disabled={readOnly}
             className={clsx(
               'flex h-5 w-5 items-center justify-center rounded border transition-colors',
@@ -378,7 +267,7 @@ export function AxisCard({
             )}
           </button>
           <button
-            onClick={toggleIndifferent}
+            onClick={actions.toggleIndifferent}
             disabled={readOnly}
             className={clsx('text-muted-foreground text-sm transition-colors', !readOnly && 'hover:text-foreground')}
           >
@@ -413,20 +302,20 @@ export function AxisCard({
           otherNotAnsweredLabel={t('not_answered_status')}
           otherIndifferentLabel={t('indifferent_status')}
           topLabel={sliderTopLabel}
-          onChange={handleSliderChange}
-          onCommit={handleCommit}
-          onThumbWheel={handleThumbWheel}
+          onChange={actions.handleSliderChange}
+          onCommit={actions.handleCommit}
+          onThumbWheel={actions.handleThumbWheel}
           readOnly={readOnly}
           variant={isAnonymousView ? 'other' : variant}
           primaryOverlay={
             isAnonymousView ? (
               <Link href="/login" className="z-50">
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="bg-primary/10 hover:bg-primary/20 text-primary gap-2 shadow-sm backdrop-blur-md"
+                  variant="primary"
+                  size="default"
+                  className="shadow-primary/20 gap-2 px-6 text-sm font-bold shadow-lg"
                 >
-                  <span className="material-symbols-outlined text-[18px]">compare_arrows</span>
+                  <span className="material-symbols-outlined text-[18px]">login</span>
                   {t('sign_in_to_compare')}
                 </Button>
               </Link>
