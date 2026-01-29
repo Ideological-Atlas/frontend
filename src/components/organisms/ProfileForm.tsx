@@ -228,7 +228,7 @@ export function ProfileForm() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email">{tAuth('email_label')}</Label>
-                  
+
                   {!user.is_verified && (
                     <div className="mb-2 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs font-medium text-amber-600 dark:text-amber-500">
                       <span className="material-symbols-outlined text-[18px]">mark_email_unread</span>
