@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { useAtlasVisibility } from '@/hooks/features/atlas/useAtlasVisibility';
 import { useAtlasNavigation } from '@/hooks/features/atlas/useAtlasNavigation';
 import { useAtlasProgress } from '@/hooks/features/atlas/useAtlasProgress';
 import { useAtlasSharing } from '@/hooks/features/atlas/useAtlasSharing';
+import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
@@ -42,6 +43,10 @@ export function useAtlasController(contextSectionLabel: string) {
   const { progressMap, sectionProgressMap } = useAtlasProgress({ checkVisibility });
 
   const { isShareModalOpen, shareUrl, isGeneratingShare, handleShare, closeShareModal } = useAtlasSharing();
+
+  // Modal State
+  const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
+  const [incompleteSections, setIncompleteSections] = useState<IdeologySection[]>([]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -88,15 +93,31 @@ export function useAtlasController(contextSectionLabel: string) {
     };
   }, [displaySections, selectedSection, sortedComplexities, selectedComplexity]);
 
+  const forceNextLevel = useCallback(() => {
+    setIsIncompleteModalOpen(false);
+    setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex + 1].uuid);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [navigationState, sortedComplexities, setSelectedComplexity]);
+
   const handleNext = useCallback(() => {
     if (navigationState.hasNextSection) {
       setSelectedSection(displaySections[navigationState.currentSectionIndex + 1].uuid);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (navigationState.hasNextLevel) {
-      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex + 1].uuid);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Check for incomplete sections
+      const incomplete = displaySections.filter(sec => {
+        const progress = sectionProgressMap[sec.uuid] || 0;
+        return progress < 100;
+      });
+
+      if (incomplete.length > 0) {
+        setIncompleteSections(incomplete);
+        setIsIncompleteModalOpen(true);
+      } else {
+        forceNextLevel();
+      }
     }
-  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
+  }, [navigationState, displaySections, sectionProgressMap, forceNextLevel, setSelectedSection]);
 
   const handlePrevious = useCallback(() => {
     if (navigationState.hasPrevSection) {
@@ -109,9 +130,20 @@ export function useAtlasController(contextSectionLabel: string) {
   }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
 
   const handleJumpToSection = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < displaySections.length) {
-        setSelectedSection(displaySections[index].uuid);
+    (indexOrUuid: number | string) => {
+      let targetUuid: string | null = null;
+
+      if (typeof indexOrUuid === 'number') {
+        if (indexOrUuid >= 0 && indexOrUuid < displaySections.length) {
+          targetUuid = displaySections[indexOrUuid].uuid;
+        }
+      } else {
+        targetUuid = indexOrUuid;
+      }
+
+      if (targetUuid) {
+        setSelectedSection(targetUuid);
+        setIsIncompleteModalOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -138,6 +170,10 @@ export function useAtlasController(contextSectionLabel: string) {
     next: handleNext,
     previous: handlePrevious,
     jumpToSection: handleJumpToSection,
+
+    // Modal handlers
+    closeIncompleteModal: () => setIsIncompleteModalOpen(false),
+    confirmNextLevel: forceNextLevel,
   };
 
   const loadingState = {
@@ -165,6 +201,8 @@ export function useAtlasController(contextSectionLabel: string) {
       isContextSelected,
       isShareModalOpen,
       shareUrl,
+      isIncompleteModalOpen,
+      incompleteSections,
       navigation: {
         showNext: navigationState.hasNextSection || navigationState.hasNextLevel,
         showPrevious: navigationState.hasPrevSection || navigationState.hasPrevLevel,

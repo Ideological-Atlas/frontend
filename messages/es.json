@@ -11,7 +11,7 @@
     "profile": "Perfil",
     "logout": "Cerrar Sesión",
     "cancel": "Cancelar",
-    "beta_warning": "Página en modo pruebas. Es posible que los datos se borren antes de la versión definitiva y ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
+    "beta_warning": "Página en modo pruebas. Es posible que ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
     "home": "Inicio",
     "theme_select": "Tema",
     "info": "Información"
@@ -186,7 +186,11 @@
     },
     "previous_label": "Anterior",
     "next_section_label": "Siguiente Sección",
-    "next_level_label": "Siguiente Nivel"
+    "next_level_label": "Siguiente Nivel",
+    "incomplete_modal_title": "Secciones incompletas",
+    "incomplete_modal_description": "Aún te faltan preguntas por responder en este nivel. Te recomendamos completarlas antes de avanzar para obtener un resultado más preciso.",
+    "incomplete_modal_continue": "Avanzar de todos modos",
+    "incomplete_modal_cancel": "Revisar secciones"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
