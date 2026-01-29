@@ -15,6 +15,7 @@ interface SectionTabsProps {
   isLoading: boolean;
   affinityMap?: Record<string, number | null>;
   variant?: 'default' | 'other';
+  sectionProgressMap?: Record<string, number>;
 }
 
 interface SectionTabProps {
@@ -24,9 +25,10 @@ interface SectionTabProps {
   affinity?: number | null;
   variant: 'default' | 'other';
   index: number;
+  progress?: number;
 }
 
-function SectionTab({ section, isSelected, onSelect, affinity, variant, index }: SectionTabProps) {
+function SectionTab({ section, isSelected, onSelect, affinity, variant, index, progress }: SectionTabProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const tCommon = useTranslations('Common');
   const isOther = variant === 'other';
@@ -34,6 +36,8 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index }:
   const hasAffinity = affinity !== undefined && affinity !== null;
   const affinityStyle = hasAffinity ? getAffinityBadgeStyles(affinity as number) : null;
   const isContext = section.uuid === 'context';
+
+  const isCompleted = progress === 100;
 
   return (
     <div
@@ -43,8 +47,15 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index }:
         isSelected ? (isOther ? 'text-other-user' : 'text-primary') : 'text-muted-foreground hover:text-foreground',
       )}
     >
-      <button onClick={onSelect} className="focus:outline-none">
+      <button onClick={onSelect} className="flex items-center gap-2 focus:outline-none">
         <span>{section.name}</span>
+        {progress !== undefined &&
+          !isContext &&
+          (isCompleted ? (
+            <span className="material-symbols-outlined text-[18px] text-green-500">check_circle</span>
+          ) : (
+            <span className="text-muted-foreground text-xs font-bold opacity-70 transition-colors">{progress}%</span>
+          ))}
       </button>
 
       {section.description && (
@@ -152,6 +163,7 @@ export function SectionTabs({
   isLoading,
   affinityMap,
   variant = 'default',
+  sectionProgressMap = {},
 }: SectionTabsProps) {
   if (isLoading) {
     return (
@@ -175,6 +187,8 @@ export function SectionTabs({
           }
         }
 
+        const progress = sectionProgressMap[sec.uuid];
+
         return (
           <SectionTab
             key={sec.uuid}
@@ -184,6 +198,7 @@ export function SectionTabs({
             affinity={affinity}
             variant={variant}
             index={index}
+            progress={progress}
           />
         );
       })}

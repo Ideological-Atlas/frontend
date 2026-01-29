@@ -8,7 +8,7 @@ import type { ApiResult } from '@/lib/client/core/ApiResult';
 import { CancelablePromise } from '@/lib/client/core/CancelablePromise';
 import type { OnCancel } from '@/lib/client/core/CancelablePromise';
 import type { OpenAPIConfig } from '@/lib/client/core/OpenAPI';
-import { refreshAuthTokenAction } from '@/actions/auth';
+import { refreshAuthTokenClean } from '@/lib/client/auth/clean-actions'; // IMPORTACIÓN LIMPIA
 import { useAuthStore } from '@/store/useAuthStore';
 
 let refreshPromise: Promise<boolean> | null = null;
@@ -314,7 +314,7 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
           if (!refreshPromise) {
             refreshPromise = (async () => {
               try {
-                const result = await refreshAuthTokenAction();
+                const result = await refreshAuthTokenClean();
                 return result.success;
               } catch (error) {
                 console.error('Failed to execute refresh token action', error);
@@ -328,7 +328,8 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
           const success = await refreshPromise;
 
           if (success) {
-            response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+            const newHeaders = await getHeaders(config, options);
+            response = await sendRequest(config, options, url, body, formData, newHeaders, onCancel);
           } else {
             useAuthStore.getState().logout();
           }

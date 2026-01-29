@@ -10,7 +10,6 @@ import type { AxisBreakdown } from '@/lib/client/models/AxisBreakdown';
 import type { ComplexityAffinity } from '@/lib/client/models/ComplexityAffinity';
 import { checkVisibility } from '@/lib/domain/atlas-logic';
 
-const CONTEXT_SECTION_UUID = 'context';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 export function usePublicAtlasController(uuid: string, contextSectionLabel: string) {
@@ -215,7 +214,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
     if (visibleConditioners.length > 0) {
       const contextSection: IdeologySection = {
-        uuid: CONTEXT_SECTION_UUID,
+        uuid: `context_${selectedComplexity}`,
         name: contextSectionLabel,
         description: null,
         icon: 'info',
@@ -237,37 +236,57 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     }
   }, [displaySections, selectedSection]);
 
-  const progressMap = useMemo(() => {
-    const map: Record<string, number> = {};
+  const { progressMap, sectionProgressMap } = useMemo(() => {
+    const cMap: Record<string, number> = {};
+    const sMap: Record<string, number> = {};
+
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       const compConditioners = conditioners[c.uuid] || [];
       let totalItems = 0;
       let answeredItems = 0;
 
+      let contextTotal = 0;
+      let contextAnswered = 0;
+
       compConditioners.forEach(cond => {
         if (cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules)) {
           totalItems++;
-          if (theirConditionerAnswers[cond.uuid]) answeredItems++;
+          contextTotal++;
+          if (theirConditionerAnswers[cond.uuid]) {
+            answeredItems++;
+            contextAnswered++;
+          }
         }
       });
+
+      if (contextTotal > 0) {
+        sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
+      }
+
       compSections.forEach(sec => {
+        let secTotal = 0;
+        let secAnswered = 0;
+
         if (visibilityChecker(sec.condition_rules)) {
           const secAxes = axes[sec.uuid] || [];
           secAxes.forEach(axis => {
             if (visibilityChecker(axis.condition_rules)) {
+              secTotal++;
               totalItems++;
               const ans = theirAxisAnswers[axis.uuid];
               if (ans && (ans.value !== null || ans.is_indifferent)) {
+                secAnswered++;
                 answeredItems++;
               }
             }
           });
         }
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
       });
-      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
     });
-    return map;
+    return { progressMap: cMap, sectionProgressMap: sMap };
   }, [complexities, sections, axes, theirAxisAnswers, conditioners, theirConditionerAnswers, visibilityChecker]);
 
   const myProgressMap = useMemo(() => {
@@ -296,16 +315,18 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     return map;
   }, [complexities, sections, axes, myAxisAnswers, visibilityChecker, isAuthenticated]);
 
+  const isContextSelected = !!selectedSection && selectedSection.startsWith('context_');
+
   const currentConditioners = useMemo(() => {
     const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
     return raw.filter(cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules));
   }, [selectedComplexity, conditioners, visibilityChecker]);
 
   const currentAxes = useMemo(() => {
-    if (!selectedSection || selectedSection === CONTEXT_SECTION_UUID) return [];
+    if (!selectedSection || isContextSelected) return [];
     const rawAxes = axes[selectedSection] || [];
     return rawAxes.filter(axis => visibilityChecker(axis.condition_rules));
-  }, [selectedSection, axes, visibilityChecker]);
+  }, [selectedSection, axes, visibilityChecker, isContextSelected]);
 
   const dependencyNameMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -372,11 +393,12 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       complexityAffinityMap,
       sectionAffinityMap,
       progressMap,
+      sectionProgressMap,
       myProgressMap,
       selectedComplexityObj,
       selectedProgress,
       dependencyNameMap,
-      CONTEXT_SECTION_UUID,
+      isContextSelected,
       answerData,
       affinity: effectiveAffinity,
     },

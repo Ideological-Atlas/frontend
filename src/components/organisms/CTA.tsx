@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/components/atoms/SmartLink';
 import { Button } from '../atoms/Button';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -18,9 +18,7 @@ export function CTA() {
     setMounted(true);
   }, []);
 
-  if (mounted && isAuthenticated) {
-    return null;
-  }
+  if (mounted && isAuthenticated) return null;
 
   return (
     <div className="flex flex-1 justify-center px-5 py-5 md:px-20 xl:px-40">
