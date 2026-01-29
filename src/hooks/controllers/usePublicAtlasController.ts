@@ -178,11 +178,16 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
         const axisAnswer = normSourceAxis[sourceUuid];
         let result = 'false';
-        if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
-          const val = axisAnswer.value;
-          const min = cond.axis_min_value ?? -Infinity;
-          const max = cond.axis_max_value ?? Infinity;
-          if (val > min && val <= max) result = 'true';
+
+        if (axisAnswer) {
+          if (axisAnswer.is_indifferent) {
+            result = 'true';
+          } else if (axisAnswer.value !== null) {
+            const val = axisAnswer.value;
+            const min = cond.axis_min_value ?? -Infinity;
+            const max = cond.axis_max_value ?? Infinity;
+            if (val > min && val <= max) result = 'true';
+          }
         }
         computed[normalizeUuid(cond.uuid)] = result;
       }
