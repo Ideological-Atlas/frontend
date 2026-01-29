@@ -178,11 +178,16 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
         const axisAnswer = normSourceAxis[sourceUuid];
         let result = 'false';
-        if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
-          const val = axisAnswer.value;
-          const min = cond.axis_min_value ?? -Infinity;
-          const max = cond.axis_max_value ?? Infinity;
-          if (val > min && val <= max) result = 'true';
+
+        if (axisAnswer) {
+          if (axisAnswer.is_indifferent) {
+            result = 'true';
+          } else if (axisAnswer.value !== null) {
+            const val = axisAnswer.value;
+            const min = cond.axis_min_value ?? -Infinity;
+            const max = cond.axis_max_value ?? Infinity;
+            if (val > min && val <= max) result = 'true';
+          }
         }
         computed[normalizeUuid(cond.uuid)] = result;
       }
@@ -376,6 +381,60 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     return affinity;
   }, [affinity, isAuthenticated, complexities, progressMap, myProgressMap, complexityAffinityMap]);
 
+  const sortedComplexities = useMemo(() => {
+    return [...complexities].sort((a, b) => a.complexity - b.complexity);
+  }, [complexities]);
+
+  const navigationState = useMemo(() => {
+    const currentSectionIndex = displaySections.findIndex(s => s.uuid === selectedSection);
+    const currentCompIndex = sortedComplexities.findIndex(c => c.uuid === selectedComplexity);
+
+    const hasNextSection = currentSectionIndex < displaySections.length - 1;
+    const hasNextLevel = !hasNextSection && currentCompIndex < sortedComplexities.length - 1;
+    const hasPrevSection = currentSectionIndex > 0;
+    const hasPrevLevel = !hasPrevSection && currentCompIndex > 0;
+
+    return {
+      hasNextSection,
+      hasNextLevel,
+      hasPrevSection,
+      hasPrevLevel,
+      currentSectionIndex: currentSectionIndex !== -1 ? currentSectionIndex : 0,
+      totalSections: displaySections.length,
+      currentCompIndex,
+    };
+  }, [displaySections, selectedSection, sortedComplexities, selectedComplexity]);
+
+  const handleNext = useCallback(() => {
+    if (navigationState.hasNextSection) {
+      setSelectedSection(displaySections[navigationState.currentSectionIndex + 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (navigationState.hasNextLevel) {
+      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex + 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
+
+  const handlePrevious = useCallback(() => {
+    if (navigationState.hasPrevSection) {
+      setSelectedSection(displaySections[navigationState.currentSectionIndex - 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (navigationState.hasPrevLevel) {
+      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex - 1].uuid);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
+
+  const handleJumpToSection = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < displaySections.length) {
+        setSelectedSection(displaySections[index].uuid);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    [displaySections, setSelectedSection],
+  );
+
   return {
     state: {
       complexities,
@@ -401,6 +460,13 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       isContextSelected,
       answerData,
       affinity: effectiveAffinity,
+      navigation: {
+        showNext: navigationState.hasNextSection || navigationState.hasNextLevel,
+        showPrevious: navigationState.hasPrevSection || navigationState.hasPrevLevel,
+        isNextLevel: navigationState.hasNextLevel,
+        currentIndex: navigationState.currentSectionIndex,
+        totalSteps: navigationState.totalSections,
+      },
     },
     loading: {
       isGlobalLoading: (!isInitialized && complexities.length === 0) || isLoadingAnswer,
@@ -412,6 +478,9 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
       saveAnswer: handleSaveAnswer,
       deleteAnswer: handleDeleteAnswer,
       saveConditioner: handleSaveConditioner,
+      next: handleNext,
+      previous: handlePrevious,
+      jumpToSection: handleJumpToSection,
     },
   };
 }

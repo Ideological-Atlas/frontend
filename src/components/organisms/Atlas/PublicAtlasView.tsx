@@ -10,6 +10,7 @@ import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProfileHeader } from '@/components/molecules/ProfileHeader';
 import { usePublicAtlasController } from '@/hooks/controllers/usePublicAtlasController';
 import { useAuthStore } from '@/store/useAuthStore';
+import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 
 interface PublicAtlasViewProps {
   uuid: string;
@@ -55,6 +56,8 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const effectiveSectionAffinity = isSelfView ? undefined : state.sectionAffinityMap;
   const effectiveAxisAffinity = isSelfView ? undefined : state.axisAffinityMap;
 
+  const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
+
   return (
     <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
       <aside className="w-full lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start">
@@ -82,6 +85,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
           user={targetUser || null}
           affinity={effectiveAffinity}
           isPublic={targetUser?.is_public ?? false}
+          createdDate={state.answerData?.created}
         />
 
         <PageHeader
@@ -128,6 +132,18 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
               variant={effectiveVariant}
             />
           )}
+
+          <SectionNavigation
+            onNext={actions.next}
+            onPrevious={actions.previous}
+            onStepClick={actions.jumpToSection}
+            showNext={state.navigation.showNext}
+            showPrevious={state.navigation.showPrevious}
+            isNextLevel={state.navigation.isNextLevel}
+            currentIndex={state.navigation.currentIndex}
+            totalSteps={state.navigation.totalSteps}
+            completedSteps={completedSteps}
+          />
         </div>
       </main>
     </div>

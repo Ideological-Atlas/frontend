@@ -11,7 +11,7 @@
     "profile": "Perfil",
     "logout": "Cerrar Sesión",
     "cancel": "Cancelar",
-    "beta_warning": "Página en modo pruebas. Es posible que los datos se borren antes de la versión definitiva y ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
+    "beta_warning": "Página en modo pruebas. Es posible que ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
     "home": "Inicio",
     "theme_select": "Tema",
     "info": "Información"
@@ -183,7 +183,15 @@
       "description": "Estás explorando como invitado. Puedes completar todo el atlas, pero tus respuestas NO se guardarán si actualizas la página o cierras el navegador. Para guardar tu progreso y compararte con otros, debes iniciar sesión.",
       "continue_guest": "Entendido, continuar como invitado",
       "login": "Iniciar sesión para guardar"
-    }
+    },
+    "previous_label": "Anterior",
+    "next_section_label": "Siguiente Sección",
+    "next_level_label": "Siguiente Nivel",
+    "incomplete_modal_title": "Secciones incompletas",
+    "incomplete_modal_description": "Aún te faltan preguntas por responder en este nivel. Te recomendamos completarlas antes de avanzar para obtener un resultado más preciso.",
+    "incomplete_modal_continue": "Avanzar de todos modos",
+    "incomplete_modal_cancel": "Revisar secciones",
+    "answered_on": "Respondido el {date}"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -218,7 +226,8 @@
     "bio_placeholder": "",
     "preferences_desc": "Personaliza tu experiencia en la aplicación.",
     "security_desc": "Protege tu cuenta y datos sensibles.",
-    "privacy_desc": "Controla quién puede ver tu actividad."
+    "privacy_desc": "Controla quién puede ver tu actividad.",
+    "email_not_verified_warning": "Usuario no verificado, por favor revisa tu correo."
   },
   "Legal": {
     "table_of_contents": "Tabla de Contenidos",

@@ -94,13 +94,17 @@ const computeVirtualConditioners = (
 
       let result = 'false';
 
-      if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
-        const val = axisAnswer.value;
-        const min = cond.axis_min_value ?? -Infinity;
-        const max = cond.axis_max_value ?? Infinity;
-
-        if (val > min && val <= max) {
+      if (axisAnswer) {
+        if (axisAnswer.is_indifferent) {
           result = 'true';
+        } else if (axisAnswer.value !== null) {
+          const val = axisAnswer.value;
+          const min = cond.axis_min_value ?? -Infinity;
+          const max = cond.axis_max_value ?? Infinity;
+
+          if (val > min && val <= max) {
+            result = 'true';
+          }
         }
       }
 
