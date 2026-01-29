@@ -1,36 +1,12 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
-import type { IdeologySection } from '@/lib/client/models/IdeologySection';
-import type { IdeologySectionConditioner } from '@/lib/client/models/IdeologySectionConditioner';
-import type { IdeologyAxisConditioner } from '@/lib/client/models/IdeologyAxisConditioner';
-import type { IdeologyConditioner } from '@/lib/client/models/IdeologyConditioner';
-import { TypeEnum } from '@/lib/client/models/TypeEnum';
-import { AnswersService } from '@/lib/client/services/AnswersService';
-import type { CompletedAnswerRequest } from '@/lib/client/models/CompletedAnswerRequest';
-
-interface LocalConditionerRule {
-  uuid?: string;
-  source_conditioner_uuid: string;
-  condition_values: string | number | boolean | (string | number | boolean)[];
-  conditioner?: IdeologyConditioner;
-}
+import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
+import { useAtlasVisibility } from '@/hooks/features/atlas/useAtlasVisibility';
+import { useAtlasNavigation } from '@/hooks/features/atlas/useAtlasNavigation';
+import { useAtlasProgress } from '@/hooks/features/atlas/useAtlasProgress';
+import { useAtlasSharing } from '@/hooks/features/atlas/useAtlasSharing';
 
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
-
-type ConditionRule = IdeologySectionConditioner | IdeologyAxisConditioner | LocalConditionerRule;
-
-const parseRules = (rules: string | unknown[]): ConditionRule[] => {
-  if (Array.isArray(rules)) return rules as ConditionRule[];
-  if (typeof rules === 'string') {
-    try {
-      return JSON.parse(rules) as ConditionRule[];
-    } catch {
-      return [];
-    }
-  }
-  return [];
-};
 
 export function useAtlasController(contextSectionLabel: string) {
   const { isAuthenticated } = useAuthStore();
@@ -50,12 +26,22 @@ export function useAtlasController(contextSectionLabel: string) {
     deleteConditionerAnswer,
   } = useAtlasStore();
 
-  const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const { checkVisibility } = useAtlasVisibility();
 
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [shareUrl, setShareUrl] = useState('');
-  const [isGeneratingShare, setIsGeneratingShare] = useState(false);
+  const {
+    selectedComplexity,
+    setSelectedComplexity,
+    selectedSection,
+    setSelectedSection,
+    displaySections,
+    currentConditioners,
+    currentAxes,
+    isContextSelected,
+  } = useAtlasNavigation({ checkVisibility, contextSectionLabel });
+
+  const { progressMap, sectionProgressMap } = useAtlasProgress({ checkVisibility });
+
+  const { isShareModalOpen, shareUrl, isGeneratingShare, handleShare, closeShareModal } = useAtlasSharing();
 
   useEffect(() => {
     if (!isInitialized) {
@@ -63,181 +49,19 @@ export function useAtlasController(contextSectionLabel: string) {
     }
   }, [isInitialized, isAuthenticated, fetchAllData]);
 
-  useEffect(() => {
-    if (complexities.length > 0 && !selectedComplexity) {
-      const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
-      setSelectedComplexity(sorted[0].uuid);
-    }
-  }, [complexities, selectedComplexity]);
-
-  const normalizedAnswers = useMemo(() => {
-    const map: Record<string, AnswerData> = {};
-    Object.entries(answers).forEach(([key, value]) => {
-      map[normalizeUuid(key)] = value;
-    });
-    return map;
-  }, [answers]);
-
-  const normalizedConditionerAnswers = useMemo(() => {
+  const dependencyNameMap = useMemo(() => {
     const map: Record<string, string> = {};
-    Object.entries(conditionerAnswers).forEach(([key, value]) => {
-      map[normalizeUuid(key)] = value;
-    });
-    return map;
-  }, [conditionerAnswers]);
-
-  const virtualConditionerAnswers = useMemo(() => {
-    const computed: Record<string, string> = {};
-    const allConditioners = Object.values(conditioners).flat();
-
-    allConditioners.forEach(cond => {
-      if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
-        const sourceUuid = normalizeUuid(cond.source_axis_uuid);
-        const axisAnswer = normalizedAnswers[sourceUuid];
-
-        let result = 'false';
-
-        if (axisAnswer && axisAnswer.value !== null && !axisAnswer.is_indifferent) {
-          const val = axisAnswer.value;
-          const min = cond.axis_min_value ?? -Infinity;
-          const max = cond.axis_max_value ?? Infinity;
-
-          if (val > min && val <= max) {
-            result = 'true';
-          }
-        }
-
-        computed[normalizeUuid(cond.uuid)] = result;
-      }
-    });
-
-    return computed;
-  }, [conditioners, normalizedAnswers]);
-
-  const combinedConditionerAnswers = useMemo(() => {
-    return { ...normalizedConditionerAnswers, ...virtualConditionerAnswers };
-  }, [normalizedConditionerAnswers, virtualConditionerAnswers]);
-
-  const checkVisibility = useCallback(
-    (rulesInput: string | ConditionRule[]) => {
-      const rules = parseRules(rulesInput);
-      if (!rules || rules.length === 0) return true;
-
-      return rules.every(rule => {
-        const nestedConditioner = rule.conditioner;
-
-        let rawSourceUuid: string | undefined;
-
-        if ('source_conditioner_uuid' in rule && rule.source_conditioner_uuid) {
-          rawSourceUuid = rule.source_conditioner_uuid;
-        } else if (nestedConditioner?.uuid) {
-          rawSourceUuid = nestedConditioner.uuid;
-        }
-
-        if (!rawSourceUuid) return true;
-
-        const sourceUuid = normalizeUuid(rawSourceUuid);
-        const userAnswer = combinedConditionerAnswers[sourceUuid];
-
-        if (!userAnswer) return false;
-
-        let accepted = rule.condition_values;
-
-        const isAxisRange = nestedConditioner?.type === TypeEnum.AXIS_RANGE;
-        const hasNoValues = !accepted || (Array.isArray(accepted) && accepted.length === 0);
-
-        if (hasNoValues && isAxisRange) {
-          accepted = ['true'];
-        }
-
-        if (Array.isArray(accepted)) {
-          return accepted.includes(userAnswer);
-        }
-        return accepted === userAnswer;
+    Object.values(conditioners)
+      .flat()
+      .forEach(cond => {
+        map[cond.uuid] = cond.name;
+        map[normalizeUuid(cond.uuid)] = cond.name;
       });
-    },
-    [combinedConditionerAnswers],
-  );
+    return map;
+  }, [conditioners]);
 
-  const displaySections: IdeologySection[] = useMemo(() => {
-    const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
-    const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-
-    const filteredSections = rawSections.filter(section => checkVisibility(section.condition_rules));
-
-    const visibleConditioners = rawConditioners.filter(
-      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[]),
-    );
-
-    if (visibleConditioners.length > 0) {
-      const contextSection: IdeologySection = {
-        uuid: `context_${selectedComplexity}`,
-        name: contextSectionLabel,
-        description: null,
-        icon: 'info',
-        condition_rules: [],
-      };
-      return [contextSection, ...filteredSections];
-    }
-
-    return filteredSections;
-  }, [selectedComplexity, sections, conditioners, checkVisibility, contextSectionLabel]);
-
-  useEffect(() => {
-    if (displaySections.length > 0) {
-      const isSelectedVisible = displaySections.some(s => s.uuid === selectedSection);
-      if (!selectedSection || !isSelectedVisible) {
-        setSelectedSection(displaySections[0].uuid);
-      }
-    } else {
-      setSelectedSection(null);
-    }
-  }, [displaySections, selectedSection]);
-
-  const handleSelectComplexity = (uuid: string) => {
-    setSelectedComplexity(uuid);
-    setSelectedSection(null);
-  };
-
-  const handleSelectSection = (uuid: string) => {
-    setSelectedSection(uuid);
-  };
-
-  const handleShare = async () => {
-    setIsGeneratingShare(true);
-    try {
-      let requestBody: CompletedAnswerRequest | undefined = undefined;
-
-      if (!isAuthenticated) {
-        const axisList = Object.entries(answers).map(([uuid, data]) => ({
-          uuid,
-          value: data.value,
-          margin_left: data.margin_left ?? 0,
-          margin_right: data.margin_right ?? 0,
-        }));
-
-        const conditionersList = Object.entries(conditionerAnswers).map(([uuid, value]) => ({
-          uuid,
-          value,
-        }));
-
-        requestBody = {
-          axis: axisList,
-          conditioners: conditionersList,
-        };
-      }
-
-      const response = await AnswersService.answersCompletedGenerateCreate(requestBody);
-      const origin = window.location.origin;
-      const url = `${origin}/answers/${response.uuid}`;
-      setShareUrl(url);
-      setIsShareModalOpen(true);
-    } catch (error) {
-      console.error('Error generating completed answer:', error);
-    } finally {
-      setIsGeneratingShare(false);
-    }
-  };
+  const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
+  const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
@@ -252,95 +76,11 @@ export function useAtlasController(contextSectionLabel: string) {
     deleteConditioner: (condUuid: string) => {
       deleteConditionerAnswer(condUuid, isAuthenticated);
     },
-    selectComplexity: handleSelectComplexity,
-    selectSection: handleSelectSection,
+    selectComplexity: setSelectedComplexity,
+    selectSection: setSelectedSection,
     share: handleShare,
-    closeShareModal: () => setIsShareModalOpen(false),
+    closeShareModal,
   };
-
-  const { progressMap, sectionProgressMap } = useMemo(() => {
-    const cMap: Record<string, number> = {};
-    const sMap: Record<string, number> = {};
-
-    complexities.forEach(c => {
-      const compSections = sections[c.uuid] || [];
-      const compConditioners = conditioners[c.uuid] || [];
-
-      let totalItems = 0;
-      let answeredItems = 0;
-
-      let contextTotal = 0;
-      let contextAnswered = 0;
-
-      compConditioners.forEach(cond => {
-        if (cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[])) {
-          totalItems++;
-          contextTotal++;
-          if (conditionerAnswers[cond.uuid]) {
-            answeredItems++;
-            contextAnswered++;
-          }
-        }
-      });
-
-      if (contextTotal > 0) {
-        sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
-      }
-
-      compSections.forEach(sec => {
-        let secTotal = 0;
-        let secAnswered = 0;
-
-        if (checkVisibility(sec.condition_rules)) {
-          const secAxes = axes[sec.uuid] || [];
-          secAxes.forEach(axis => {
-            if (checkVisibility(axis.condition_rules)) {
-              secTotal++;
-              totalItems++;
-              if (answers[axis.uuid]) {
-                secAnswered++;
-                answeredItems++;
-              }
-            }
-          });
-        }
-        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
-      });
-
-      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
-    });
-
-    return { progressMap: cMap, sectionProgressMap: sMap };
-  }, [complexities, sections, axes, answers, conditioners, conditionerAnswers, checkVisibility]);
-
-  const dependencyNameMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    Object.values(conditioners)
-      .flat()
-      .forEach(cond => {
-        map[cond.uuid] = cond.name;
-        map[normalizeUuid(cond.uuid)] = cond.name;
-      });
-    return map;
-  }, [conditioners]);
-
-  const currentConditioners = useMemo(() => {
-    const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-    return raw.filter(
-      cond => cond.type !== TypeEnum.AXIS_RANGE && checkVisibility(cond.condition_rules as unknown as ConditionRule[]),
-    );
-  }, [selectedComplexity, conditioners, checkVisibility]);
-
-  const isContextSelected = !!selectedSection && selectedSection.startsWith('context_');
-
-  const currentAxes = useMemo(() => {
-    if (!selectedSection || isContextSelected) return [];
-    const rawAxes = axes[selectedSection] || [];
-    return rawAxes.filter(axis => checkVisibility(axis.condition_rules));
-  }, [selectedSection, axes, checkVisibility, isContextSelected]);
-
-  const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
-  const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
   const loadingState = {
     isGlobalLoading: !isInitialized && complexities.length === 0,
