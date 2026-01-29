@@ -56,7 +56,6 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const effectiveSectionAffinity = isSelfView ? undefined : state.sectionAffinityMap;
   const effectiveAxisAffinity = isSelfView ? undefined : state.axisAffinityMap;
 
-  // Calcular array de booleanos para los pasos completados
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
 
   return (
@@ -86,6 +85,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
           user={targetUser || null}
           affinity={effectiveAffinity}
           isPublic={targetUser?.is_public ?? false}
+          createdDate={state.answerData?.created}
         />
 
         <PageHeader

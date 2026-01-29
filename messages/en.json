@@ -190,7 +190,8 @@
     "incomplete_modal_title": "Incomplete Sections",
     "incomplete_modal_description": "You still have unanswered questions in this level. We recommend completing them before proceeding for a more accurate result.",
     "incomplete_modal_continue": "Continue anyway",
-    "incomplete_modal_cancel": "Review sections"
+    "incomplete_modal_cancel": "Review sections",
+    "answered_on": "Answered on {date}"
   },
   "Profile": {
     "page_title": "Profile Settings",

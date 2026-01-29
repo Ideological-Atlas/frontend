@@ -33,7 +33,6 @@ export function SectionNavigation({
 
   return (
     <div className="border-border mt-8 flex w-full items-center justify-between border-t pt-8">
-      {/* Lado Izquierdo (Anterior) */}
       <div className="flex flex-1 justify-start">
         {showPrevious ? (
           <Button variant="secondary" onClick={onPrevious} className="h-10 gap-2 px-5 text-xs font-bold">
@@ -45,7 +44,6 @@ export function SectionNavigation({
         )}
       </div>
 
-      {/* Centro (Indicadores Interactivos) - Oculto en móvil */}
       <div className="hidden flex-wrap justify-center gap-3 px-4 md:flex">
         {Array.from({ length: totalSteps }).map((_, i) => {
           const isCompleted = completedSteps[i] ?? false;
@@ -58,9 +56,7 @@ export function SectionNavigation({
               aria-label={`Ir a la sección ${i + 1}`}
               className={clsx(
                 'focus:ring-offset-background h-2.5 rounded-full transition-all duration-300 focus:ring-2 focus:ring-offset-2 focus:outline-none',
-                // Ring color
                 isCompleted ? 'focus:ring-accent-strong/50' : 'focus:ring-primary/50',
-                // Base styles depending on state
                 isActive
                   ? clsx(
                       'w-10 cursor-default shadow-sm',
@@ -76,7 +72,6 @@ export function SectionNavigation({
         })}
       </div>
 
-      {/* Lado Derecho (Siguiente) */}
       <div className="flex flex-1 justify-end">
         {showNext && (
           <Button

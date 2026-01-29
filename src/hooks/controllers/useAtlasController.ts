@@ -44,7 +44,6 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const { isShareModalOpen, shareUrl, isGeneratingShare, handleShare, closeShareModal } = useAtlasSharing();
 
-  // Modal State
   const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const [incompleteSections, setIncompleteSections] = useState<IdeologySection[]>([]);
 
@@ -68,7 +67,6 @@ export function useAtlasController(contextSectionLabel: string) {
   const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
-  // Navigation Logic
   const sortedComplexities = useMemo(() => {
     return [...complexities].sort((a, b) => a.complexity - b.complexity);
   }, [complexities]);
@@ -104,7 +102,6 @@ export function useAtlasController(contextSectionLabel: string) {
       setSelectedSection(displaySections[navigationState.currentSectionIndex + 1].uuid);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (navigationState.hasNextLevel) {
-      // Check for incomplete sections
       const incomplete = displaySections.filter(sec => {
         const progress = sectionProgressMap[sec.uuid] || 0;
         return progress < 100;
@@ -171,7 +168,6 @@ export function useAtlasController(contextSectionLabel: string) {
     previous: handlePrevious,
     jumpToSection: handleJumpToSection,
 
-    // Modal handlers
     closeIncompleteModal: () => setIsIncompleteModalOpen(false),
     confirmNextLevel: forceNextLevel,
   };

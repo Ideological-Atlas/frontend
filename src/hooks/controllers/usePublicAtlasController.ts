@@ -381,7 +381,6 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     return affinity;
   }, [affinity, isAuthenticated, complexities, progressMap, myProgressMap, complexityAffinityMap]);
 
-  // Navigation Logic
   const sortedComplexities = useMemo(() => {
     return [...complexities].sort((a, b) => a.complexity - b.complexity);
   }, [complexities]);

@@ -190,7 +190,8 @@
     "incomplete_modal_title": "Secciones incompletas",
     "incomplete_modal_description": "Aún te faltan preguntas por responder en este nivel. Te recomendamos completarlas antes de avanzar para obtener un resultado más preciso.",
     "incomplete_modal_continue": "Avanzar de todos modos",
-    "incomplete_modal_cancel": "Revisar secciones"
+    "incomplete_modal_cancel": "Revisar secciones",
+    "answered_on": "Respondido el {date}"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
