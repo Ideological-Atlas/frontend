@@ -8,7 +8,7 @@ import type { ApiResult } from '@/lib/client/core/ApiResult';
 import { CancelablePromise } from '@/lib/client/core/CancelablePromise';
 import type { OnCancel } from '@/lib/client/core/CancelablePromise';
 import type { OpenAPIConfig } from '@/lib/client/core/OpenAPI';
-import { refreshAuthTokenClean } from '@/lib/client/auth/clean-actions'; // IMPORTACIÓN LIMPIA
+import { refreshAuthTokenClean } from '@/lib/client/auth/clean-actions';
 import { useAuthStore } from '@/store/useAuthStore';
 
 let refreshPromise: Promise<boolean> | null = null;

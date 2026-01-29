@@ -4,6 +4,8 @@ services:
     hostname: frontend
     image: ${PROJECT_NAME}_frontend_image
     restart: always
+    extra_hosts:
+      - "localhost:host-gateway"
     build:
       context: .
       dockerfile: docker/frontend/Dockerfile

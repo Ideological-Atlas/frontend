@@ -141,7 +141,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         value: item.value,
         margin_left: item.margin_left,
         margin_right: item.margin_right,
-        is_indifferent: item.is_indifferent ?? false,
+        is_indifferent: item.is_indifferent ?? item.value === null,
       };
     });
     const condMap: Record<string, string> = {};

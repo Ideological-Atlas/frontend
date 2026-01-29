@@ -412,28 +412,26 @@ export const Slider = ({
           )}
 
           <div className="relative">
-            <Track
-              cPercent={centerPercent}
-              lPercent={leftPercent}
-              rPercent={rightPercent}
-              color={activeColor}
-              label={hasOther ? bottomLabel : undefined}
-              isInteractive={!readOnly && !isIndifferent && !isNotAnswered && !primaryOverlay}
-              isIndifferent={isIndifferent}
-              indifferentLabel={indifferentLabel}
-              isNotAnswered={isNotAnswered}
-              notAnsweredLabel={notAnsweredLabel}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerLeave={handlePointerLeave}
-              isDragging={isDragging ? isDragging : undefined}
-            />
-
-            {primaryOverlay && (
-              <div className="bg-background/20 absolute inset-0 z-50 flex items-center justify-center rounded-lg backdrop-blur-[1px]">
-                {primaryOverlay}
-              </div>
+            {primaryOverlay ? (
+              <div className="flex w-full items-center justify-center py-1">{primaryOverlay}</div>
+            ) : (
+              <Track
+                cPercent={centerPercent}
+                lPercent={leftPercent}
+                rPercent={rightPercent}
+                color={activeColor}
+                label={hasOther ? bottomLabel : undefined}
+                isInteractive={!readOnly && !isIndifferent && !isNotAnswered}
+                isIndifferent={isIndifferent}
+                indifferentLabel={indifferentLabel}
+                isNotAnswered={isNotAnswered}
+                notAnsweredLabel={notAnsweredLabel}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
+                isDragging={isDragging ? isDragging : undefined}
+              />
             )}
           </div>
         </div>
