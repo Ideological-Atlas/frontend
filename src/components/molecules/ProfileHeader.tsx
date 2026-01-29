@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { motion, useMotionValue, useTransform, animate, type MotionValue } from 'framer-motion';
 import type { SimpleUser } from '@/lib/client/models/SimpleUser';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -13,6 +13,7 @@ interface ProfileHeaderProps {
   user: SimpleUser | null;
   affinity?: number | null;
   isPublic?: boolean;
+  createdDate?: string;
 }
 
 function Counter({ value }: { value: MotionValue<number> }) {
@@ -35,8 +36,9 @@ const CSS_VARS = [
   '--affinity-identical',
 ];
 
-export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) {
+export function ProfileHeader({ user, affinity, isPublic, createdDate }: ProfileHeaderProps) {
   const t = useTranslations('Atlas');
+  const locale = useLocale();
   const { user: authUser } = useAuthStore();
   const { resolvedTheme } = useTheme();
 
@@ -47,6 +49,14 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
   const displayName = isAnonymous ? t('anonymous_user') || 'Usuario Anónimo' : `@${user.username}`;
   const displayBio =
     !isAnonymous && user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
+
+  const formattedDate = createdDate
+    ? new Date(createdDate).toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
 
   const progress = useMotionValue(0);
   const [palette, setPalette] = useState<string[]>(Array(8).fill('rgba(0,0,0,0)'));
@@ -117,15 +127,24 @@ export function ProfileHeader({ user, affinity, isPublic }: ProfileHeaderProps) 
 
         <div className="flex min-w-0 flex-col gap-1.5">
           <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">{displayName}</h1>
+
+          {formattedDate && (
+            <div className="text-muted-foreground/80 flex items-center gap-1.5 text-xs font-medium">
+              <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+              <span>{t('answered_on', { date: formattedDate })}</span>
+            </div>
+          )}
+
           {!isAnonymous && isPublic && (
-            <div className="flex flex-wrap gap-2">
+            <div className="mt-1 flex flex-wrap gap-2">
               <div className="bg-primary/20 text-primary border-primary/20 flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-widest whitespace-nowrap uppercase">
                 {t('public_profile_badge')}
               </div>
             </div>
           )}
+
           {displayBio && (
-            <p className="text-muted-foreground max-w-[500px] text-sm leading-relaxed break-words">{displayBio}</p>
+            <p className="text-muted-foreground mt-1 max-w-[500px] text-sm leading-relaxed break-words">{displayBio}</p>
           )}
         </div>
       </div>

@@ -11,7 +11,7 @@
     "profile": "Profile",
     "logout": "Logout",
     "cancel": "Cancel",
-    "beta_warning": "Page in testing mode. Data may be wiped before the final release and errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
+    "beta_warning": "Page in testing mode. Errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
     "home": "Home",
     "theme_select": "Theme",
     "info": "Info"
@@ -183,7 +183,15 @@
       "description": "You are currently exploring as a guest. You can complete the full atlas, but your answers will NOT be saved if you refresh the page or close the browser. To save your progress and compare with others, you must log in.",
       "continue_guest": "I understand, continue as guest",
       "login": "Log In to Save"
-    }
+    },
+    "previous_label": "Previous",
+    "next_section_label": "Next Section",
+    "next_level_label": "Next Level",
+    "incomplete_modal_title": "Incomplete Sections",
+    "incomplete_modal_description": "You still have unanswered questions in this level. We recommend completing them before proceeding for a more accurate result.",
+    "incomplete_modal_continue": "Continue anyway",
+    "incomplete_modal_cancel": "Review sections",
+    "answered_on": "Answered on {date}"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -216,7 +224,8 @@
     "visibility_label": "Profile Visibility",
     "visibility_description": "Define who can see your position on the spectrum.",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "email_not_verified_warning": "User not verified, please check your email."
   },
   "Legal": {
     "table_of_contents": "Table of Contents",

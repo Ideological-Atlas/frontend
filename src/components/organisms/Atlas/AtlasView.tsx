@@ -13,6 +13,8 @@ import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
 import { GuestWarningModal } from './GuestWarningModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
+import { SectionNavigation } from '@/components/molecules/SectionNavigation';
+import { IncompleteLevelModal } from '@/components/molecules/IncompleteLevelModal';
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
@@ -43,11 +45,21 @@ export function AtlasView() {
     window.dispatchEvent(new Event('start-atlas-tour'));
   };
 
+  const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
+
   return (
     <>
       <GuestWarningModal />
       <AtlasOnboarding />
       <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
+
+      <IncompleteLevelModal
+        isOpen={state.isIncompleteModalOpen}
+        onClose={actions.closeIncompleteModal}
+        onContinue={actions.confirmNextLevel}
+        onSelectSection={actions.jumpToSection}
+        incompleteSections={state.incompleteSections}
+      />
 
       <div
         id="atlas-view-container"
@@ -136,6 +148,18 @@ export function AtlasView() {
                 />
               </div>
             )}
+
+            <SectionNavigation
+              onNext={actions.next}
+              onPrevious={actions.previous}
+              onStepClick={actions.jumpToSection}
+              showNext={state.navigation.showNext}
+              showPrevious={state.navigation.showPrevious}
+              isNextLevel={state.navigation.isNextLevel}
+              currentIndex={state.navigation.currentIndex}
+              totalSteps={state.navigation.totalSteps}
+              completedSteps={completedSteps}
+            />
           </div>
         </main>
       </div>

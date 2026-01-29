@@ -228,11 +228,21 @@ export function ProfileForm() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email">{tAuth('email_label')}</Label>
+                  
+                  {!user.is_verified && (
+                    <div className="mb-2 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs font-medium text-amber-600 dark:text-amber-500">
+                      <span className="material-symbols-outlined text-[18px]">mark_email_unread</span>
+                      {t('email_not_verified_warning')}
+                    </div>
+                  )}
+
                   <div className="relative">
                     <Input id="email" {...register('email')} disabled className="bg-secondary/50 pr-10 opacity-70" />
-                    <span className="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-[20px] text-green-500">
-                      verified
-                    </span>
+                    {user.is_verified && (
+                      <span className="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-[20px] text-green-500">
+                        verified
+                      </span>
+                    )}
                   </div>
                 </div>
 

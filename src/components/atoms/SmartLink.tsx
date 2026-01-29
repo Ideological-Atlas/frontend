@@ -10,7 +10,6 @@ export function Link({ href, onClick, children, ...props }: Props) {
   const locale = useLocale();
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Lógica automática: Si vamos al inicio, activamos la animación de "volver"
     const targetPath = href.toString();
     const isHome = targetPath === `/${locale}` || targetPath === '/';
 

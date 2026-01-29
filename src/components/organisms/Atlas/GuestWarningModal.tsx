@@ -17,7 +17,6 @@ export function GuestWarningModal() {
     if (!isAuthenticated) {
       const hasSeenWarning = sessionStorage.getItem('atlas_guest_warning_seen');
       if (!hasSeenWarning) {
-        // Usamos setTimeout para evitar la actualización síncrona dentro del efecto
         const timer = setTimeout(() => setIsOpen(true), 0);
         return () => clearTimeout(timer);
       }
