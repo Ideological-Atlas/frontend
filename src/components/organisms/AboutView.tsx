@@ -73,9 +73,7 @@ export function AboutView() {
 
           <section className="mb-32">
             <div className="mb-16 text-center">
-              <h2 className="text-foreground text-3xl font-black tracking-tight md:text-4xl">
-                {t('algorithm.title')}
-              </h2>
+              <h2 className="text-foreground text-3xl font-black tracking-tight md:text-4xl">{t('algorithm.title')}</h2>
               <p className="text-muted-foreground mt-4 text-lg">{t('algorithm.subtitle')}</p>
             </div>
 
