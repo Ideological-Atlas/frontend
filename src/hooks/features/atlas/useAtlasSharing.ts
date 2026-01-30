@@ -5,7 +5,7 @@ import { useAtlasStore } from '@/store/useAtlasStore';
 import type { CompletedAnswerRequest } from '@/lib/client/models/CompletedAnswerRequest';
 
 export function useAtlasSharing() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { answers, conditionerAnswers } = useAtlasStore();
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -16,8 +16,10 @@ export function useAtlasSharing() {
     setIsGeneratingShare(true);
     try {
       let requestBody: CompletedAnswerRequest | undefined = undefined;
+      const isVerified = user?.is_verified ?? false;
 
-      if (!isAuthenticated) {
+      // If not authenticated OR authenticated but not verified, send local state
+      if (!isAuthenticated || !isVerified) {
         const axisList = Object.entries(answers).map(([uuid, data]) => ({
           uuid,
           value: data.value,

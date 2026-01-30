@@ -10,7 +10,8 @@ import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 export function useAtlasController(contextSectionLabel: string) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const isVerified = user?.is_verified ?? false;
 
   const {
     complexities,
@@ -149,16 +150,16 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
-      saveAnswer(axisUuid, data, isAuthenticated);
+      saveAnswer(axisUuid, data, isAuthenticated, isVerified);
     },
     deleteAnswer: (axisUuid: string) => {
-      deleteAnswer(axisUuid, isAuthenticated);
+      deleteAnswer(axisUuid, isAuthenticated, isVerified);
     },
     saveConditioner: (condUuid: string, value: string) => {
-      saveConditionerAnswer(condUuid, value, isAuthenticated);
+      saveConditionerAnswer(condUuid, value, isAuthenticated, isVerified);
     },
     deleteConditioner: (condUuid: string) => {
-      deleteConditionerAnswer(condUuid, isAuthenticated);
+      deleteConditionerAnswer(condUuid, isAuthenticated, isVerified);
     },
     selectComplexity: setSelectedComplexity,
     selectSection: setSelectedSection,

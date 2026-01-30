@@ -27,7 +27,8 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     saveConditionerAnswer: saveConditionerToStore,
   } = useAtlasStore();
 
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const isVerified = user?.is_verified ?? false;
 
   const [answerData, setAnswerData] = useState<CompletedAnswer | null>(null);
   const [affinity, setAffinity] = useState<number | null>(null);
@@ -349,19 +350,23 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
     if (!isAuthenticated) return;
-    await saveAnswerToStore(axisUuid, data, true);
-    await refreshAffinity();
+    await saveAnswerToStore(axisUuid, data, true, isVerified);
+    if (isVerified) {
+      await refreshAffinity();
+    }
   };
 
   const handleDeleteAnswer = async (axisUuid: string) => {
     if (!isAuthenticated) return;
-    await deleteAnswerFromStore(axisUuid, true);
-    await refreshAffinity();
+    await deleteAnswerFromStore(axisUuid, true, isVerified);
+    if (isVerified) {
+      await refreshAffinity();
+    }
   };
 
   const handleSaveConditioner = async (uuid: string, value: string) => {
     if (!isAuthenticated) return;
-    await saveConditionerToStore(uuid, value, true);
+    await saveConditionerToStore(uuid, value, true, isVerified);
   };
 
   const effectiveAffinity = useMemo(() => {

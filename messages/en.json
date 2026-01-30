@@ -126,6 +126,11 @@
     "description_already_verified": "Your account has already been verified. No further action is required."
   },
   "Atlas": {
+    "unverified_warning": {
+      "title": "Verify your account",
+      "description": "To save your progress and update your ideological profile, you need to verify your email. Please check your inbox (and spam).",
+      "dismiss": "Understood"
+    },
     "title": "Ideological Atlas",
     "complexity_level": "Abstraction Level",
     "context_configuration": "Context Configuration",

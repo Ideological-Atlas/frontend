@@ -60,8 +60,14 @@ export function AtlasOnboarding() {
     const axisUuid = getFirstAxisUuid();
     if (axisUuid) {
       const { saveAnswer } = useAtlasStore.getState();
-      const isAuth = useAuthStore.getState().isAuthenticated;
-      saveAnswer(axisUuid, { value: 85, margin_left: 50, margin_right: 10, is_indifferent: false }, isAuth);
+      const { isAuthenticated, user } = useAuthStore.getState();
+      const isVerified = user?.is_verified ?? false;
+      saveAnswer(
+        axisUuid,
+        { value: 85, margin_left: 50, margin_right: 10, is_indifferent: false },
+        isAuthenticated,
+        isVerified,
+      );
     }
   }, [getFirstAxisUuid]);
 
@@ -69,8 +75,14 @@ export function AtlasOnboarding() {
     const axisUuid = getFirstAxisUuid();
     if (axisUuid) {
       const { saveAnswer } = useAtlasStore.getState();
-      const isAuth = useAuthStore.getState().isAuthenticated;
-      saveAnswer(axisUuid, { value: -60, margin_left: 20, margin_right: 20, is_indifferent: false }, isAuth);
+      const { isAuthenticated, user } = useAuthStore.getState();
+      const isVerified = user?.is_verified ?? false;
+      saveAnswer(
+        axisUuid,
+        { value: -60, margin_left: 20, margin_right: 20, is_indifferent: false },
+        isAuthenticated,
+        isVerified,
+      );
     }
   }, [getFirstAxisUuid]);
 
@@ -96,8 +108,9 @@ export function AtlasOnboarding() {
     const axisUuid = getFirstAxisUuid();
     if (axisUuid) {
       const { deleteAnswer } = useAtlasStore.getState();
-      const isAuth = useAuthStore.getState().isAuthenticated;
-      deleteAnswer(axisUuid, isAuth);
+      const { isAuthenticated, user } = useAuthStore.getState();
+      const isVerified = user?.is_verified ?? false;
+      deleteAnswer(axisUuid, isAuthenticated, isVerified);
     }
   }, [getFirstAxisUuid]);
 

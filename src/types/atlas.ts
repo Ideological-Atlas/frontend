@@ -41,10 +41,20 @@ export interface StructureSlice {
 export interface AnswersSlice {
   answers: Record<string, AnswerData>;
   conditionerAnswers: Record<string, string>;
-  saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
-  deleteAnswer: (axisUuid: string, isAuthenticated: boolean) => Promise<void>;
-  saveConditionerAnswer: (conditionerUuid: string, value: string, isAuthenticated: boolean) => Promise<void>;
-  deleteConditionerAnswer: (conditionerUuid: string, isAuthenticated: boolean) => Promise<void>;
+  saveAnswer: (
+    axisUuid: string,
+    data: AnswerUpdatePayload,
+    isAuthenticated: boolean,
+    isVerified: boolean,
+  ) => Promise<void>;
+  deleteAnswer: (axisUuid: string, isAuthenticated: boolean, isVerified: boolean) => Promise<void>;
+  saveConditionerAnswer: (
+    conditionerUuid: string,
+    value: string,
+    isAuthenticated: boolean,
+    isVerified: boolean,
+  ) => Promise<void>;
+  deleteConditionerAnswer: (conditionerUuid: string, isAuthenticated: boolean, isVerified: boolean) => Promise<void>;
   resetAnswers: () => void;
 }
 
