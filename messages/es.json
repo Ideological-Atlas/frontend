@@ -128,9 +128,9 @@
   },
   "Atlas": {
     "unverified_warning": {
-      "title": "Verifica tu cuenta",
-      "description": "Para guardar tu progreso y actualizar tu perfil ideológico, necesitas verificar tu correo electrónico. Por favor, revisa tu bandeja de entrada (y spam).",
-      "dismiss": "Entendido"
+      "title": "Verificación Pendiente",
+      "description": "Puedes completar tu Atlas y ver los resultados en tiempo real, pero tus respuestas NO se guardarán en la nube hasta que verifiques tu cuenta. Por favor, revisa tu correo electrónico.",
+      "dismiss": "Entendido, continuaré sin guardar"
     },
     "title": "Atlas Ideológico",
     "complexity_level": "Nivel de Abstracción",

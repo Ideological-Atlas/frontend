@@ -146,7 +146,7 @@ export function AtlasOnboarding() {
         element: '#atlas-header',
         popover: {
           title: t('tour.header.title'),
-          description: t('tour.header.desc'),
+          description: t.raw('tour.header.desc') as string,
           side: 'bottom',
           align: 'center',
         },
@@ -305,15 +305,28 @@ export function AtlasOnboarding() {
     };
     window.addEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
 
+    const handleUnverifiedWarningDismissed = () => {
+      setTimeout(() => startTour(), 300);
+    };
+    window.addEventListener('unverified-warning-dismissed', handleUnverifiedWarningDismissed);
+
     if (isAuthenticated && user) {
       if (user.atlas_onboarding_completed === false) {
-        startTour();
+        const isUnverified = !user.is_verified;
+        const hasSeenUnverifiedWarning = sessionStorage.getItem('atlas_unverified_warning_seen');
+
+        if (isUnverified && !hasSeenUnverifiedWarning) {
+          console.log('Waiting for not verified message closed...');
+        } else {
+          startTour();
+        }
       }
     }
 
     return () => {
       window.removeEventListener('start-atlas-tour', handleStartTour);
       window.removeEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
+      window.removeEventListener('unverified-warning-dismissed', handleUnverifiedWarningDismissed);
       if (driverObj.current) {
         driverObj.current.destroy();
       }

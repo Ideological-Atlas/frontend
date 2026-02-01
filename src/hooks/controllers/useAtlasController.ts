@@ -50,9 +50,9 @@ export function useAtlasController(contextSectionLabel: string) {
 
   useEffect(() => {
     if (!isInitialized) {
-      fetchAllData(isAuthenticated);
+      fetchAllData(isAuthenticated, isVerified);
     }
-  }, [isInitialized, isAuthenticated, fetchAllData]);
+  }, [isInitialized, isAuthenticated, isVerified, fetchAllData]);
 
   const dependencyNameMap = useMemo(() => {
     const map: Record<string, string> = {};

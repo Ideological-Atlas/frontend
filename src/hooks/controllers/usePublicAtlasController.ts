@@ -45,9 +45,9 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
   useEffect(() => {
     if (!isInitialized) {
-      fetchAllData(isAuthenticated);
+      fetchAllData(isAuthenticated, isVerified);
     }
-  }, [isInitialized, fetchAllData, isAuthenticated]);
+  }, [isInitialized, fetchAllData, isAuthenticated, isVerified]);
 
   const refreshAffinity = useCallback(async () => {
     if (!isAuthenticated || !uuid) return;

@@ -3,6 +3,7 @@
 /* tslint:disable */
 
 import type { Affinity } from '../models/Affinity';
+import type { IdeologyAffinity } from '../models/IdeologyAffinity';
 import type { Me } from '../models/Me';
 import type { MeRequest } from '../models/MeRequest';
 import type { PatchedMeRequest } from '../models/PatchedMeRequest';
@@ -95,6 +96,22 @@ export class UsersService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/users/affinity/{uuid}/',
+      path: {
+        uuid: uuid,
+      },
+    });
+  }
+  /**
+   * Get affinity with an Ideology
+   * Calculates the ideological affinity (0-100%) between the current user's active answers and the defined values of a specific Ideology (identified by UUID).
+   * @param uuid
+   * @returns IdeologyAffinity
+   * @throws ApiError
+   */
+  public static usersAffinityIdeologyRetrieve(uuid: string): CancelablePromise<IdeologyAffinity> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/users/affinity/ideology/{uuid}/',
       path: {
         uuid: uuid,
       },

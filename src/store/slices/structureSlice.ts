@@ -22,15 +22,17 @@ export const createStructureSlice: StateCreator<AtlasStore, [], [], StructureSli
     });
   },
 
-  fetchAllData: async isAuthenticated => {
+  fetchAllData: async (isAuthenticated, isVerified) => {
     const { isInitialized, isAnswersInitialized } = get();
 
-    if (isInitialized && (!isAuthenticated || isAnswersInitialized)) {
+    const shouldFetchAnswers = isAuthenticated && isVerified;
+
+    if (isInitialized && (!shouldFetchAnswers || isAnswersInitialized)) {
       return;
     }
 
     const shouldFetchStructure = !isInitialized;
-    const shouldFetchAnswers = isAuthenticated;
+
     try {
       let currentComplexities = get().complexities;
 

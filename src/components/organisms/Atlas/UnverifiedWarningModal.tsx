@@ -15,7 +15,7 @@ export function UnverifiedWarningModal() {
     if (isAuthenticated && user && !user.is_verified) {
       const hasSeenWarning = sessionStorage.getItem('atlas_unverified_warning_seen');
       if (!hasSeenWarning) {
-        const timer = setTimeout(() => setIsOpen(true), 1000);
+        const timer = setTimeout(() => setIsOpen(true), 500);
         return () => clearTimeout(timer);
       }
     }
@@ -24,6 +24,7 @@ export function UnverifiedWarningModal() {
   const handleDismiss = () => {
     sessionStorage.setItem('atlas_unverified_warning_seen', 'true');
     setIsOpen(false);
+    window.dispatchEvent(new Event('unverified-warning-dismissed'));
   };
 
   return (
@@ -44,7 +45,7 @@ export function UnverifiedWarningModal() {
           >
             <div className="flex flex-col items-center bg-amber-500/5 p-8 text-center">
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-500">
-                <span className="material-symbols-outlined text-[32px]">mark_email_unread</span>
+                <span className="material-symbols-outlined text-[32px]">cloud_off</span>
               </div>
 
               <h2 className="text-foreground mb-3 text-2xl font-bold">{t('unverified_warning.title')}</h2>

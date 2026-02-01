@@ -128,9 +128,9 @@
   },
   "Atlas": {
     "unverified_warning": {
-      "title": "Verify your account",
-      "description": "To save your progress and update your ideological profile, you need to verify your email. Please check your inbox (and spam).",
-      "dismiss": "Understood"
+      "title": "Verification Pending",
+      "description": "You can complete your Atlas and see real-time results, but your answers will NOT be saved to the cloud until you verify your account. Please check your email.",
+      "dismiss": "Understood, I will continue without saving"
     },
     "title": "Ideological Atlas",
     "complexity_level": "Abstraction Level",

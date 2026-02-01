@@ -135,7 +135,7 @@ export function IdeologyCard({ ideology, index, onClick }: IdeologyCardProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.2 }}
-                className="text-muted-foreground line-clamp-3 text-sm leading-relaxed font-medium"
+                className="text-muted-foreground line-clamp-3 text-sm leading-relaxed font-medium whitespace-pre-line"
               >
                 {currentDescription || t('no_description')}
               </motion.p>

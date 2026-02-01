@@ -27,6 +27,7 @@ export type { CustomTokenObtainPairRequest } from './models/CustomTokenObtainPai
 export type { GoogleLoginRequest } from './models/GoogleLoginRequest';
 export type { GoogleLoginResponse } from './models/GoogleLoginResponse';
 export type { IdeologyAbstractionComplexity } from './models/IdeologyAbstractionComplexity';
+export type { IdeologyAffinity } from './models/IdeologyAffinity';
 export type { IdeologyAxis } from './models/IdeologyAxis';
 export type { IdeologyAxisConditioner } from './models/IdeologyAxisConditioner';
 export type { IdeologyAxisDefinition } from './models/IdeologyAxisDefinition';
@@ -67,6 +68,7 @@ export type { SimpleComplexity } from './models/SimpleComplexity';
 export type { SimpleSection } from './models/SimpleSection';
 export type { SimpleUser } from './models/SimpleUser';
 export type { SimpleUserRequest } from './models/SimpleUserRequest';
+export type { TargetIdeology } from './models/TargetIdeology';
 export type { TokenObtainPairResponse } from './models/TokenObtainPairResponse';
 export type { TokenRefresh } from './models/TokenRefresh';
 export type { TokenRefreshRequest } from './models/TokenRefreshRequest';

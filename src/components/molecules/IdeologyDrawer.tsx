@@ -162,7 +162,7 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
                 transition={{ duration: 0.3 }}
               >
                 <div className="prose prose-invert prose-lg max-w-none">
-                  <p className="text-lg leading-relaxed font-light text-zinc-300">
+                  <p className="text-lg leading-relaxed font-light whitespace-pre-line text-zinc-300">
                     {currentDescription || t('no_description')}
                   </p>
                 </div>

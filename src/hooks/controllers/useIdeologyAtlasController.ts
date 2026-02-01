@@ -28,7 +28,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
   useEffect(() => {
     if (!isInitialized) {
-      fetchAllData(false);
+      fetchAllData(false, false);
     }
   }, [isInitialized, fetchAllData]);
 

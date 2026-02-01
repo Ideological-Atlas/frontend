@@ -147,7 +147,7 @@ const Track = ({
           )}
         >
           <span className="text-[10px] leading-none font-bold tracking-widest uppercase">
-            {isNotAnswered ? notAnsweredLabel || 'Not Answered' : indifferentLabel || 'Indifferent'}
+            {isNotAnswered ? notAnsweredLabel : indifferentLabel}
           </span>
         </div>
       </div>
