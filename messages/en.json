@@ -14,7 +14,8 @@
     "beta_warning": "Page in testing mode. Errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
     "home": "Home",
     "theme_select": "Theme",
-    "info": "Info"
+    "info": "Info",
+    "explore_ideologies": "Explore ideologies"
   },
   "Navigation": {
     "home": "Home",
@@ -200,7 +201,21 @@
     "answered_on": "Answered on {date}",
     "ideology_definition_label": "Ideological Definition",
     "back_to_encyclopedia": "Back to Encyclopedia",
-    "admin_mode_label": "Ideology Editing Mode"
+    "admin_mode_label": "Ideology Editing Mode",
+    "discover_ideology_btn": "Discover My Ideology",
+    "discovery_title": "Ideological Affinity Analysis",
+    "discovery_subtitle": "Calculating your compatibility with defined ideologies in real-time based on your current answers.",
+    "calculating_affinity": "Calculating...",
+    "affinity_score": "Affinity",
+    "discovery_modal_title": "Ideology Found!",
+    "discovery_modal_subtitle": "Based on your answers, your closest ideology is:",
+    "view_comparison": "Compare Answers",
+    "close_modal": "Close",
+    "affinity_pending": "Pending...",
+    "discovery_lock_title": "Restricted Access",
+    "discovery_lock_desc": "To discover your ideological affinity you need an active and verified account. This allows us to save your answers and compare them accurately.",
+    "discovery_lock_login": "Sign In",
+    "discovery_lock_cancel": "Cancel"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -533,6 +548,15 @@
     "ideology_tag": "Ideology",
     "close": "Close",
     "explore_in_atlas": "Explore atlas",
-    "no_description": "No description available."
+    "no_description": "No description available.",
+    "sort_label": "Sort by",
+    "sort_name": "Name",
+    "sort_affinity": "Affinity",
+    "affinity_label": "Affinity",
+    "sort_name_asc": "Name (A-Z)",
+    "sort_name_desc": "Name (Z-A)",
+    "sort_affinity_desc": "Highest Affinity",
+    "sort_affinity_asc": "Lowest Affinity",
+    "affinity_loading": "Calculating..."
   }
 }

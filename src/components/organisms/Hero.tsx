@@ -49,9 +49,9 @@ export function Hero() {
                 <Button
                   variant="outline"
                   className="h-12 px-6 text-base"
-                  onClick={() => router.push(`/${locale}/about`)}
+                  onClick={() => router.push(`/${locale}/encyclopedia`)}
                 >
-                  {tCommon('learn_more')}
+                  {tCommon('explore_ideologies')}
                 </Button>
               </motion.div>
             </div>

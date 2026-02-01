@@ -14,7 +14,8 @@
     "beta_warning": "Página en modo pruebas. Es posible que ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
     "home": "Inicio",
     "theme_select": "Tema",
-    "info": "Información"
+    "info": "Información",
+    "explore_ideologies": "Explorar ideologías"
   },
   "Navigation": {
     "home": "Inicio",
@@ -200,7 +201,21 @@
     "answered_on": "Respondido el {date}",
     "ideology_definition_label": "Definición Ideológica",
     "back_to_encyclopedia": "Volver a la Enciclopedia",
-    "admin_mode_label": "Modo Edición de Ideología"
+    "admin_mode_label": "Modo Edición de Ideología",
+    "discover_ideology_btn": "Descubrir mi Ideología",
+    "discovery_title": "Análisis de Afinidad Ideológica",
+    "discovery_subtitle": "Calculando tu compatibilidad con las ideologías definidas en el sistema en tiempo real basado en tus respuestas actuales.",
+    "calculating_affinity": "Calculando...",
+    "affinity_score": "Afinidad",
+    "discovery_modal_title": "¡Ideología Encontrada!",
+    "discovery_modal_subtitle": "Basado en tus respuestas, tu ideología más afín es:",
+    "view_comparison": "Comparar Respuestas",
+    "close_modal": "Cerrar",
+    "affinity_pending": "Pendiente...",
+    "discovery_lock_title": "Acceso Restringido",
+    "discovery_lock_desc": "Para descubrir tu afinidad ideológica necesitas tener una cuenta activa y verificada. Esto nos permite guardar tus respuestas y compararlas con precisión.",
+    "discovery_lock_login": "Iniciar Sesión",
+    "discovery_lock_cancel": "Cancelar"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -535,6 +550,15 @@
     "ideology_tag": "Ideología",
     "close": "Cerrar",
     "explore_in_atlas": "Explorar atlas",
-    "no_description": "Sin descripción disponible."
+    "no_description": "Sin descripción disponible.",
+    "sort_label": "Ordenar por",
+    "sort_name": "Nombre",
+    "sort_affinity": "Afinidad",
+    "affinity_label": "Afinidad",
+    "sort_name_asc": "Nombre (A-Z)",
+    "sort_name_desc": "Nombre (Z-A)",
+    "sort_affinity_desc": "Mayor Afinidad",
+    "sort_affinity_asc": "Menor Afinidad",
+    "affinity_loading": "Calculando..."
   }
 }

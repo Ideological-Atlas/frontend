@@ -7,16 +7,19 @@ import { useTranslations } from 'next-intl';
 import { clsx } from 'clsx';
 import { Link } from '@/components/atoms/SmartLink';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
+import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
 
 interface IdeologyCardProps {
   ideology: IdeologyList;
   index: number;
   onClick: () => void;
+  affinity?: number | null;
+  isLoading?: boolean;
 }
 
 type TabType = 'neutral' | 'supporter' | 'detractor';
 
-export function IdeologyCard({ ideology, index, onClick }: IdeologyCardProps) {
+export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = false }: IdeologyCardProps) {
   const t = useTranslations('Encyclopedia');
   const [activeTab, setActiveTab] = useState<TabType>('neutral');
 
@@ -55,8 +58,12 @@ export function IdeologyCard({ ideology, index, onClick }: IdeologyCardProps) {
     },
   ];
 
+  const hasAffinity = affinity !== undefined && affinity !== null;
+  const affinityStyle = hasAffinity ? getAffinityBadgeStyles(affinity) : null;
+
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -94,6 +101,38 @@ export function IdeologyCard({ ideology, index, onClick }: IdeologyCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-white/5" />
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-soft-light" />
         </div>
+
+        {(isLoading || (affinityStyle && hasAffinity)) && (
+          <div className="absolute top-3 right-3 z-30">
+            {isLoading ? (
+              <div className="bg-background/20 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-md">
+                <svg
+                  className="h-3 w-3 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              </div>
+            ) : (
+              <div
+                className={clsx(
+                  'flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold shadow-lg backdrop-blur-md',
+                  affinityStyle?.solidClass,
+                )}
+              >
+                <span className="material-symbols-outlined text-[14px]">{affinityStyle?.icon}</span>
+                {Math.round(affinity || 0)}%
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="relative flex flex-1 flex-col px-6 pt-5 pb-6">

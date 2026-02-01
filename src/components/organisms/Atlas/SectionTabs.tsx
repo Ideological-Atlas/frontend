@@ -45,6 +45,7 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
       className={clsx(
         'group relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
         isSelected ? (isOther ? 'text-other-user' : 'text-primary') : 'text-muted-foreground hover:text-foreground',
+        showTooltip ? 'z-50' : 'z-0',
       )}
     >
       <button onClick={onSelect} className="flex items-center gap-2 focus:outline-none">
@@ -102,12 +103,12 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
                   exit={{ opacity: 0, y: 5, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className={clsx(
-                    'fixed top-1/2 left-1/2 z-[101] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default md:absolute md:top-full md:left-1/2 md:z-50 md:mt-2 md:w-64 md:translate-x-[-50%] md:translate-y-0',
+                    'fixed top-1/2 left-1/2 z-[101] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default md:absolute md:top-full md:left-1/2 md:z-50 md:mt-2 md:w-80 md:translate-x-[-50%] md:translate-y-0',
                     'max-h-[50vh] overflow-y-auto rounded-xl shadow-2xl md:max-h-none md:overflow-visible',
                   )}
                   onClick={e => e.stopPropagation()}
                 >
-                  <div className="bg-popover text-popover-foreground border-border relative flex flex-col rounded-xl border p-5 text-left shadow-2xl md:p-3 md:shadow-xl">
+                  <div className="bg-popover text-popover-foreground border-border relative flex flex-col rounded-xl border p-5 text-left shadow-2xl md:p-4 md:shadow-xl">
                     <div className="bg-popover border-t-border border-l-border absolute -top-1.5 left-1/2 hidden h-3 w-3 -translate-x-1/2 rotate-45 border-t border-l md:block" />
 
                     <div className="mb-3 flex shrink-0 items-center justify-between md:hidden">
@@ -124,7 +125,9 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
                     </div>
 
                     <div>
-                      <p className="text-base leading-relaxed font-normal md:text-xs">{section.description}</p>
+                      <p className="text-base leading-relaxed font-normal whitespace-pre-line md:text-xs">
+                        {section.description}
+                      </p>
                     </div>
                   </div>
                 </motion.div>

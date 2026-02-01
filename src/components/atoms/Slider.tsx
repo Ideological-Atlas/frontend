@@ -34,6 +34,7 @@ interface SliderProps {
   readOnly?: boolean;
   variant?: 'default' | 'other';
   customHexColor?: string;
+  otherCustomColor?: string;
 
   primaryOverlay?: React.ReactNode;
 }
@@ -246,6 +247,7 @@ export const Slider = ({
   readOnly = false,
   variant = 'default',
   customHexColor,
+  otherCustomColor,
   primaryOverlay,
 }: SliderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -263,7 +265,8 @@ export const Slider = ({
 
   const hasOther = otherValue !== undefined || otherIsNotAnswered || otherIsIndifferent;
   const otherCenterPercent = hasOther && otherValue !== null && otherValue !== undefined ? toPercent(otherValue) : 50;
-  const otherColor = 'var(--other-user-strong)';
+
+  const otherColor = otherCustomColor || 'var(--other-user-strong)';
 
   let otherLeftPercent = 0;
   let otherRightPercent = 0;

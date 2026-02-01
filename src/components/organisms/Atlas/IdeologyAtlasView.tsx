@@ -16,6 +16,7 @@ import Image from 'next/image';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
 import { Link } from '@/components/atoms/SmartLink';
 import { Button } from '@/components/atoms/Button';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface IdeologyAtlasViewProps {
   uuid: string;
@@ -23,6 +24,7 @@ interface IdeologyAtlasViewProps {
 
 export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
   const t = useTranslations('Atlas');
+  const { isAuthenticated, user } = useAuthStore();
   const { state, loading, actions } = useIdeologyAtlasController(uuid, t('context_section'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -48,6 +50,12 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
   const ideologyColor = state.ideologyData?.color || '#64748b';
 
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
+
+  // Si el usuario está autenticado y no es admin, activamos el modo comparación ("other")
+  const viewVariant = isAuthenticated && !state.isSuperUser ? 'other' : 'default';
+
+  // Habilitar edición si es SuperUser (edita ideología) O si es usuario autenticado (edita su respuesta)
+  const canEdit = state.isSuperUser || isAuthenticated;
 
   return (
     <>
@@ -133,6 +141,12 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
             onSelect={actions.selectComplexity}
             isLoading={false}
             progressMap={state.progressMap}
+            myProgressMap={viewVariant === 'other' ? state.myProgressMap : undefined}
+            targetUsername={ideologyName}
+            viewerUsername={user?.username}
+            affinityMap={viewVariant === 'other' ? state.complexityAffinityMap : undefined}
+            variant={viewVariant}
+            customHexColor={ideologyColor}
           />
 
           <div className="border-border/50 mt-8 border-t pt-6">
@@ -153,6 +167,12 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
           <PageHeader
             title={state.selectedComplexityObj?.name || t('header_title')}
             description={state.selectedComplexityObj?.description || t('header_description')}
+            affinity={
+              viewVariant === 'other' && state.selectedComplexity
+                ? state.complexityAffinityMap[state.selectedComplexity]
+                : undefined
+            }
+            variant={viewVariant}
           />
 
           <div className="flex flex-col gap-6">
@@ -162,6 +182,8 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
               onSelect={actions.selectSection}
               isLoading={false}
               sectionProgressMap={state.sectionProgressMap}
+              affinityMap={viewVariant === 'other' ? state.sectionAffinityMap : undefined}
+              variant={viewVariant}
             />
 
             {state.isContextSelected ? (
@@ -169,19 +191,25 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
                 conditioners={state.currentConditioners}
                 answers={state.conditionerAnswers}
                 onSaveAnswer={actions.saveConditioner}
+                onResetAnswer={actions.deleteConditioner}
                 isLoading={false}
                 dependencyNameMap={state.dependencyNameMap}
-                readOnly={!state.isSuperUser}
+                readOnly={!canEdit}
               />
             ) : (
               <AxisList
                 axes={state.currentAxes}
                 answers={state.axisAnswers}
+                myAnswers={viewVariant === 'other' ? state.myUserAnswers : undefined}
+                targetUsername={ideologyName}
                 onSaveAnswer={actions.saveAnswer}
+                onDeleteAnswer={actions.deleteAnswer}
                 isLoading={false}
                 isLevelLoading={false}
-                readOnly={!state.isSuperUser}
+                readOnly={!canEdit}
                 customHexColor={ideologyColor}
+                variant={viewVariant}
+                axisAffinityMap={viewVariant === 'other' ? state.axisAffinityMap : undefined}
               />
             )}
 

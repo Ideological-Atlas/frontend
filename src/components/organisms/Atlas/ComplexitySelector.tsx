@@ -18,6 +18,7 @@ interface ComplexitySelectorProps {
   viewerUsername?: string;
   affinityMap?: Record<string, number | null>;
   variant?: 'default' | 'other';
+  customHexColor?: string;
 }
 
 export function ComplexitySelector({
@@ -31,6 +32,7 @@ export function ComplexitySelector({
   viewerUsername,
   affinityMap,
   variant = 'default',
+  customHexColor,
 }: ComplexitySelectorProps) {
   const t = useTranslations('Atlas');
 
@@ -45,7 +47,11 @@ export function ComplexitySelector({
   }
 
   const isComparison = variant === 'other' && Object.keys(myProgressMap).length > 0;
-  const targetLabel = targetUsername ? `@${targetUsername}` : t('anonymous_user') || 'Anónimo';
+  const targetLabel = targetUsername
+    ? targetUsername.startsWith('@')
+      ? targetUsername
+      : targetUsername
+    : t('anonymous_user');
 
   return (
     <div className="flex flex-col gap-2">
@@ -58,10 +64,14 @@ export function ComplexitySelector({
         const isSelected = selectedId === c.uuid;
         const theirCompleted = theirProgress === 100;
         const myCompleted = myProgress === 100;
-        const bothCompleted = theirCompleted && myCompleted;
 
         const hasAffinity = affinity !== undefined && affinity !== null;
         const affinityStyle = hasAffinity ? getAffinityLevel(affinity as number) : null;
+
+        // Estilos dinámicos para la barra "Other" (Ideología)
+        const otherBarStyle = customHexColor ? { backgroundColor: customHexColor } : undefined;
+
+        const otherBarClass = customHexColor ? '' : isSelected ? 'bg-white' : 'bg-other-user';
 
         if (!isComparison) {
           return (
@@ -119,33 +129,24 @@ export function ComplexitySelector({
             className={clsx(
               'group relative flex w-full flex-col gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-200',
               isSelected
-                ? 'bg-other-user shadow-other-user/20 text-white shadow-lg'
+                ? 'bg-card border-primary border-2 shadow-lg'
                 : 'bg-card border-border hover:bg-secondary/50 border',
             )}
           >
             <div className="relative z-10 flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className={clsx('font-bold', isSelected ? 'text-white' : 'text-foreground')}>{c.name}</span>
+                <span className={clsx('font-bold', isSelected ? 'text-primary' : 'text-foreground')}>{c.name}</span>
                 <div className="flex items-center -space-x-1">
                   {theirCompleted && (
                     <span
-                      className={clsx(
-                        'material-symbols-outlined text-[16px]',
-                        isSelected ? 'text-white/80' : 'text-other-user',
-                      )}
+                      className={clsx('material-symbols-outlined text-[16px]', customHexColor ? '' : 'text-other-user')}
+                      style={customHexColor ? { color: customHexColor } : undefined}
                     >
                       check_circle
                     </span>
                   )}
                   {myCompleted && (
-                    <span
-                      className={clsx(
-                        'material-symbols-outlined text-[16px]',
-                        isSelected ? 'text-white/80' : 'text-primary',
-                      )}
-                    >
-                      check_circle
-                    </span>
+                    <span className="material-symbols-outlined text-primary text-[16px]">check_circle</span>
                   )}
                 </div>
               </div>
@@ -153,50 +154,39 @@ export function ComplexitySelector({
               <span
                 className={clsx(
                   'text-xs font-black',
-                  isSelected
-                    ? 'text-white'
-                    : bothCompleted && hasAffinity && affinityStyle
-                      ? affinityStyle.colorClass
-                      : 'text-muted-foreground/50',
+                  hasAffinity && affinityStyle ? affinityStyle.colorClass : 'text-muted-foreground/50',
                 )}
               >
-                {bothCompleted && hasAffinity ? `${Math.round(affinity as number)}%` : 'N/A'}
+                {hasAffinity ? `${Math.round(affinity as number)}%` : 'N/A'}
               </span>
             </div>
+
             <div className="relative z-10 flex w-full flex-col gap-2">
+              {/* Barra de la Ideología (Target) */}
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-[10px] font-bold tracking-wider uppercase opacity-70">
-                  <span>{targetLabel}</span>
+                  <span style={customHexColor ? { color: customHexColor } : undefined}>{targetLabel}</span>
                   <span>{theirProgress}%</span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/20">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
                   <div
-                    className={clsx('h-full rounded-full', isSelected ? 'bg-white' : 'bg-other-user')}
-                    style={{ width: `${theirProgress}%` }}
+                    className={clsx('h-full rounded-full', otherBarClass)}
+                    style={{ width: `${theirProgress}%`, ...otherBarStyle }}
                   />
                 </div>
               </div>
+
+              {/* Barra del Usuario (Viewer) */}
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-[10px] font-bold tracking-wider uppercase opacity-70">
-                  <span>@{viewerUsername}</span>
+                  <span className="text-primary">@{viewerUsername}</span>
                   <span>{myProgress}%</span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/20">
-                  <div
-                    className={clsx('h-full rounded-full', isSelected ? 'bg-white/60' : 'bg-primary')}
-                    style={{ width: `${myProgress}%` }}
-                  />
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
+                  <div className="bg-primary h-full rounded-full" style={{ width: `${myProgress}%` }} />
                 </div>
               </div>
             </div>
-            {isSelected && (
-              <motion.span
-                layoutId="complexity-active"
-                className="absolute inset-0 z-0 rounded-xl bg-white/10"
-                initial={false}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            )}
           </button>
         );
       })}
