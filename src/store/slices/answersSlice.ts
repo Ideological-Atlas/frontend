@@ -13,7 +13,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     set({ answers: {}, conditionerAnswers: {} });
   },
 
-  saveAnswer: async (axisUuid, payload, isAuthenticated) => {
+  saveAnswer: async (axisUuid, payload, isAuthenticated, isVerified) => {
     let newData: AnswerData;
 
     if (payload.is_indifferent) {
@@ -52,7 +52,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       conditionerAnswers: nextCondAnswers,
     });
 
-    if (isAuthenticated) {
+    if (isAuthenticated && isVerified) {
       try {
         const promises = [
           AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest),
@@ -66,7 +66,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     }
   },
 
-  deleteAnswer: async (axisUuid, isAuthenticated) => {
+  deleteAnswer: async (axisUuid, isAuthenticated, isVerified) => {
     const { conditioners, sections, axes, conditionerAnswers, answers } = get();
     const allConditioners = Object.values(conditioners).flat();
     const allSections = Object.values(sections).flat();
@@ -87,7 +87,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       conditionerAnswers: nextCondAnswers,
     });
 
-    if (isAuthenticated) {
+    if (isAuthenticated && isVerified) {
       try {
         await AnswersService.answersAxisDeleteDestroy(axisUuid);
         await Promise.all([
@@ -100,7 +100,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     }
   },
 
-  saveConditionerAnswer: async (conditionerUuid, value, isAuthenticated) => {
+  saveConditionerAnswer: async (conditionerUuid, value, isAuthenticated, isVerified) => {
     const { conditioners, sections, axes, conditionerAnswers, answers } = get();
     const allConditioners = Object.values(conditioners).flat();
     const allSections = Object.values(sections).flat();
@@ -120,7 +120,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       answers: nextAxisAnswers,
     });
 
-    if (isAuthenticated) {
+    if (isAuthenticated && isVerified) {
       try {
         const promises = [
           AnswersService.answersConditionerCreate(conditionerUuid, {
@@ -136,7 +136,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     }
   },
 
-  deleteConditionerAnswer: async (conditionerUuid, isAuthenticated) => {
+  deleteConditionerAnswer: async (conditionerUuid, isAuthenticated, isVerified) => {
     const { conditioners, sections, axes, conditionerAnswers, answers } = get();
     const allConditioners = Object.values(conditioners).flat();
     const allSections = Object.values(sections).flat();
@@ -155,7 +155,7 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       answers: nextAxisAnswers,
     });
 
-    if (isAuthenticated) {
+    if (isAuthenticated && isVerified) {
       try {
         await AnswersService.answersConditionerDeleteDestroy(conditionerUuid);
         await Promise.all([

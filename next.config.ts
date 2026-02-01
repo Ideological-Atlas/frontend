@@ -21,6 +21,14 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'googleusercontent.com',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
     ],
   },
 };

@@ -57,6 +57,7 @@ export function Header() {
   const navLinks = [
     { key: 'home', href: `/${locale}` },
     { key: 'features', href: `/${locale}/features` },
+    { key: 'encyclopedia', href: `/${locale}/encyclopedia` },
     { key: 'about', href: `/${locale}/about` },
   ];
 

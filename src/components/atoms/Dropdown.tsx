@@ -57,22 +57,24 @@ export function Dropdown<T extends string | number>({
         whileTap={{ scale: 0.97 }}
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
-          'flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-1.5 transition-colors',
+          'flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 transition-colors',
           'bg-secondary/50 border-border hover:bg-secondary',
           isOpen ? `${activeRing} ring-2` : '',
         )}
       >
-        <div className="flex items-center gap-2">
-          {label && <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">{label}</span>}
-          <div className="flex items-center gap-1">
-            <span className="text-foreground min-w-[3ch] truncate text-left text-sm font-bold">
-              {value}
-              {suffix}
+        <div className="flex min-w-0 flex-1 flex-col items-start overflow-hidden">
+          {label && (
+            <span className="text-muted-foreground truncate text-[10px] font-bold tracking-wider uppercase">
+              {label}
             </span>
-          </div>
+          )}
+          <span className="text-foreground w-full truncate text-left text-sm leading-tight font-bold">
+            {value}
+            {suffix}
+          </span>
         </div>
         <span
-          className="material-symbols-outlined text-muted-foreground text-[16px] transition-transform duration-300"
+          className="material-symbols-outlined text-muted-foreground shrink-0 text-[20px] transition-transform duration-300"
           style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
         >
           keyboard_arrow_down
@@ -81,7 +83,7 @@ export function Dropdown<T extends string | number>({
 
       <nav
         className={clsx(
-          'border-border/50 absolute top-full z-50 mt-2 w-full min-w-[140px] rounded-xl border shadow-2xl',
+          'border-border/50 absolute top-full z-50 mt-2 w-max min-w-full rounded-xl border shadow-2xl',
           'bg-zinc-900',
           align === 'end' ? 'right-0 origin-top-right' : 'left-0 origin-top-left',
           !isOpen && 'pointer-events-none',
@@ -101,11 +103,11 @@ export function Dropdown<T extends string | number>({
                 setIsOpen(false);
               }}
             >
-              <span className="truncate">
+              <span className="mr-4 truncate">
                 {option}
                 {suffix}
               </span>
-              <span className="ml-2 text-xs font-normal opacity-50">{value === option && t('current')}</span>
+              {value === option && <span className="text-[10px] font-normal opacity-70">{t('current')}</span>}
             </motion.li>
           ))}
         </ul>

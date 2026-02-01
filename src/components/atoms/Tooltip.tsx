@@ -36,7 +36,7 @@ export function Tooltip({ content, className }: TooltipProps) {
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 px-2"
           >
-            <div className="bg-popover text-popover-foreground border-border relative rounded-lg border p-3 text-xs leading-relaxed font-normal shadow-xl">
+            <div className="bg-popover text-popover-foreground border-border relative rounded-lg border p-3 text-xs leading-relaxed font-normal whitespace-pre-line shadow-xl">
               {content}
               <div className="bg-popover border-r-border border-b-border absolute -bottom-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-r border-b" />
             </div>

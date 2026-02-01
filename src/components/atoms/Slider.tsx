@@ -33,6 +33,8 @@ interface SliderProps {
   className?: string;
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  customHexColor?: string;
+  otherCustomColor?: string;
 
   primaryOverlay?: React.ReactNode;
 }
@@ -118,10 +120,11 @@ const Track = ({
           'absolute -top-5 left-0 text-xs font-bold tracking-wider uppercase',
           isNotAnswered
             ? 'text-muted-foreground opacity-70'
-            : color.includes('other')
+            : color.startsWith('var(--other') || color.includes('other-user')
               ? 'text-other-user'
               : 'text-primary',
         )}
+        style={!color.startsWith('var(--') ? { color } : undefined}
       >
         {label}
       </div>
@@ -145,7 +148,7 @@ const Track = ({
           )}
         >
           <span className="text-[10px] leading-none font-bold tracking-widest uppercase">
-            {isNotAnswered ? notAnsweredLabel || 'Not Answered' : indifferentLabel || 'Indifferent'}
+            {isNotAnswered ? notAnsweredLabel : indifferentLabel}
           </span>
         </div>
       </div>
@@ -243,6 +246,8 @@ export const Slider = ({
   onThumbWheel,
   readOnly = false,
   variant = 'default',
+  customHexColor,
+  otherCustomColor,
   primaryOverlay,
 }: SliderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -256,11 +261,12 @@ export const Slider = ({
   const leftPercent = isIndifferent ? 0 : toPercent(leftBoundVal);
   const rightPercent = isIndifferent ? 0 : toPercent(rightBoundVal);
 
-  const activeColor = variant === 'other' ? 'var(--other-user)' : 'var(--primary)';
+  const activeColor = customHexColor ? customHexColor : variant === 'other' ? 'var(--other-user)' : 'var(--primary)';
 
   const hasOther = otherValue !== undefined || otherIsNotAnswered || otherIsIndifferent;
   const otherCenterPercent = hasOther && otherValue !== null && otherValue !== undefined ? toPercent(otherValue) : 50;
-  const otherColor = 'var(--other-user-strong)';
+
+  const otherColor = otherCustomColor || 'var(--other-user-strong)';
 
   let otherLeftPercent = 0;
   let otherRightPercent = 0;

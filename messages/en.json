@@ -14,13 +14,15 @@
     "beta_warning": "Page in testing mode. Errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
     "home": "Home",
     "theme_select": "Theme",
-    "info": "Info"
+    "info": "Info",
+    "explore_ideologies": "Explore ideologies"
   },
   "Navigation": {
     "home": "Home",
     "features": "Features",
     "explore": "Explore",
-    "about": "About"
+    "about": "About",
+    "encyclopedia": "Encyclopedia"
   },
   "Hero": {
     "title": "Discover your true ideological position",
@@ -126,6 +128,11 @@
     "description_already_verified": "Your account has already been verified. No further action is required."
   },
   "Atlas": {
+    "unverified_warning": {
+      "title": "Verification Pending",
+      "description": "You can complete your Atlas and see real-time results, but your answers will NOT be saved to the cloud until you verify your account. Please check your email.",
+      "dismiss": "Understood, I will continue without saving"
+    },
     "title": "Ideological Atlas",
     "complexity_level": "Abstraction Level",
     "context_configuration": "Context Configuration",
@@ -191,7 +198,24 @@
     "incomplete_modal_description": "You still have unanswered questions in this level. We recommend completing them before proceeding for a more accurate result.",
     "incomplete_modal_continue": "Continue anyway",
     "incomplete_modal_cancel": "Review sections",
-    "answered_on": "Answered on {date}"
+    "answered_on": "Answered on {date}",
+    "ideology_definition_label": "Ideological Definition",
+    "back_to_encyclopedia": "Back to Encyclopedia",
+    "admin_mode_label": "Ideology Editing Mode",
+    "discover_ideology_btn": "Discover My Ideology",
+    "discovery_title": "Ideological Affinity Analysis",
+    "discovery_subtitle": "Calculating your compatibility with defined ideologies in real-time based on your current answers.",
+    "calculating_affinity": "Calculating...",
+    "affinity_score": "Affinity",
+    "discovery_modal_title": "Ideology Found!",
+    "discovery_modal_subtitle": "Based on your answers, your closest ideology is:",
+    "view_comparison": "Compare Answers",
+    "close_modal": "Close",
+    "affinity_pending": "Pending...",
+    "discovery_lock_title": "Restricted Access",
+    "discovery_lock_desc": "To discover your ideological affinity you need an active and verified account. This allows us to save your answers and compare them accurately.",
+    "discovery_lock_login": "Sign In",
+    "discovery_lock_cancel": "Cancel"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -511,5 +535,28 @@
         "desc": "If the level description takes up too much space, you can collapse or expand it using this button to focus on the axes."
       }
     }
+  },
+  "Encyclopedia": {
+    "title": "Ideological Encyclopedia",
+    "subtitle": "Explore and understand the different currents of thought that make up the political spectrum.",
+    "search_placeholder": "Search ideology...",
+    "no_results": "No ideologies found",
+    "read_more": "Read more",
+    "tab_supporter": "Supporter",
+    "tab_neutral": "Neutral",
+    "tab_detractor": "Detractor",
+    "ideology_tag": "Ideology",
+    "close": "Close",
+    "explore_in_atlas": "Explore atlas",
+    "no_description": "No description available.",
+    "sort_label": "Sort by",
+    "sort_name": "Name",
+    "sort_affinity": "Affinity",
+    "affinity_label": "Affinity",
+    "sort_name_asc": "Name (A-Z)",
+    "sort_name_desc": "Name (Z-A)",
+    "sort_affinity_desc": "Highest Affinity",
+    "sort_affinity_asc": "Lowest Affinity",
+    "affinity_loading": "Calculating..."
   }
 }

@@ -28,6 +28,8 @@ interface AxisCardProps {
   dependencyNames: string[];
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  customHexColor?: string;
+  otherCustomColor?: string;
 }
 
 export function AxisCard({
@@ -44,14 +46,28 @@ export function AxisCard({
   dependencyNames,
   readOnly = false,
   variant = 'default',
+  customHexColor,
+  otherCustomColor,
 }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const tCommon = useTranslations('Common');
   const [showDescription, setShowDescription] = useState(false);
 
+  // Lógica de detección de vista
+  const effectiveHasTarget = hasTargetUser || !!targetUsername;
+  const isAnonymousView = effectiveHasTarget && !viewerUsername;
+  const isComparisonView = effectiveHasTarget && !!viewerUsername;
+
+  // Swapping de datos para vista anónima:
+  // Si es anónimo, 'answerData' trae la info de la Ideología (Target),
+  // pero visualmente queremos que eso se pinte en el slot "Other" (arriba)
+  // y dejar el slot "Primary" (abajo) vacío para el overlay de Login.
+  const sliderUserAnswer = isAnonymousView ? undefined : answerData;
+  const sliderOtherAnswer = isAnonymousView ? answerData : otherAnswerData;
+
   const { state, actions } = useAxisInteraction({
     axisUuid: axis.uuid,
-    answerData,
+    answerData: sliderUserAnswer,
     onSave,
     onDelete,
     readOnly,
@@ -60,15 +76,18 @@ export function AxisCard({
   const { value, marginLeft, marginRight, isIndifferent, isDropdownOpen } = state;
 
   const isOther = variant === 'other';
-  const effectiveHasTarget = hasTargetUser || !!targetUsername;
-  const isAnonymousView = effectiveHasTarget && !viewerUsername;
-  const isComparisonView = effectiveHasTarget && !!viewerUsername;
 
-  const meHasAnswer = answerData && (answerData.value !== null || answerData.is_indifferent);
-  const themHasAnswer = otherAnswerData && (otherAnswerData.value !== null || otherAnswerData.is_indifferent);
-  const themIsIndifferent = otherAnswerData?.is_indifferent ?? false;
+  // Lógica de visualización basada en los datos "swapeados"
+  const meHasAnswer = sliderUserAnswer && (sliderUserAnswer.value !== null || sliderUserAnswer.is_indifferent);
+  const themHasAnswer = sliderOtherAnswer && (sliderOtherAnswer.value !== null || sliderOtherAnswer.is_indifferent);
+  const themIsIndifferent = sliderOtherAnswer?.is_indifferent ?? false;
+
+  // En modo anónimo, el "otro" es la ideología, si no tiene respuesta, no la pintamos.
   const themIsNotAnswered = !themHasAnswer;
+
+  // Mostrar "No respondido" para el otro solo si estamos comparando realmente
   const showThemAsNotAnswered = (isComparisonView || isAnonymousView) && themIsNotAnswered;
+
   const canCopy = meHasAnswer && (themHasAnswer || themIsIndifferent);
 
   const marginOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50];
@@ -86,6 +105,11 @@ export function AxisCard({
         ? `${activeBorderClass} ${activeBgClass}`
         : 'bg-card border-border';
 
+  const customStyle =
+    customHexColor && meHasAnswer && !isIndifferent
+      ? { borderColor: customHexColor, backgroundColor: `${customHexColor}0D` }
+      : undefined;
+
   const affinityStyle = affinity !== undefined && !themIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
 
   const sliderBottomLabel = isAnonymousView
@@ -94,8 +118,17 @@ export function AxisCard({
       ? `@${viewerUsername}`
       : t('your_answer_label');
 
-  const sliderTopLabel = targetUsername ? `@${targetUsername}` : t('their_answer_label');
+  const sliderTopLabel = targetUsername
+    ? targetUsername.startsWith('@')
+      ? targetUsername
+      : `@${targetUsername}`
+    : t('their_answer_label');
   const isTarget = id === 'atlas-first-axis';
+
+  // Si estamos en modo anónimo, el color custom (de la ideología) debe aplicarse a la parte "Other"
+  const effectiveOtherCustomColor = isAnonymousView ? customHexColor : otherCustomColor;
+  // Y el color "Primary" (el overlay o usuario futuro) vuelve a ser default
+  const effectiveCustomHexColor = isAnonymousView ? undefined : customHexColor;
 
   return (
     <div
@@ -103,10 +136,11 @@ export function AxisCard({
       className={clsx(
         'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
         !readOnly && 'hover:shadow-md',
-        cardStyle,
-        isIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
+        !customHexColor && cardStyle,
+        isIndifferent && !sliderOtherAnswer && !isAnonymousView ? 'opacity-75' : '',
         isDropdownOpen || showDescription ? 'z-50' : 'z-0',
       )}
+      style={customStyle}
     >
       <DependencyBadge names={dependencyNames} variant={variant} />
 
@@ -118,8 +152,14 @@ export function AxisCard({
                 id={isTarget ? 'atlas-axis-title' : undefined}
                 className={clsx(
                   'text-lg font-bold',
-                  !otherAnswerData && meHasAnswer && !isIndifferent ? activeTitleClass : 'text-foreground',
+                  !customHexColor &&
+                    (!sliderOtherAnswer && meHasAnswer && !isIndifferent ? activeTitleClass : 'text-foreground'),
                 )}
+                style={
+                  customHexColor && !sliderOtherAnswer && meHasAnswer && !isIndifferent
+                    ? { color: customHexColor }
+                    : undefined
+                }
               >
                 {axis.name}
               </h4>
@@ -183,7 +223,9 @@ export function AxisCard({
                               </button>
                             </div>
                             <div>
-                              <p className="text-base leading-relaxed font-normal md:text-sm">{axis.description}</p>
+                              <p className="text-base leading-relaxed font-normal whitespace-pre-line md:text-sm">
+                                {axis.description}
+                              </p>
                             </div>
                           </div>
                         </motion.div>
@@ -196,11 +238,11 @@ export function AxisCard({
 
             {!isAnonymousView && isComparisonView && affinityStyle && (
               <div className="mt-2 flex items-center gap-3">
-                {!readOnly && canCopy && otherAnswerData && (
+                {!readOnly && canCopy && sliderOtherAnswer && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => actions.handleCopyFromOther(otherAnswerData)}
+                    onClick={() => actions.handleCopyFromOther(sliderOtherAnswer)}
                     className="text-muted-foreground hover:text-primary hover:border-border hover:bg-secondary h-7 gap-1.5 border border-transparent px-2 text-xs"
                   >
                     <span className="material-symbols-outlined text-[16px]">content_copy</span>
@@ -221,7 +263,7 @@ export function AxisCard({
           </div>
         </div>
 
-        {!otherAnswerData && meHasAnswer && !isAnonymousView && (
+        {!sliderOtherAnswer && meHasAnswer && !isAnonymousView && (
           <div className="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start">
             <button
               onClick={actions.handleReset}
@@ -259,6 +301,11 @@ export function AxisCard({
                 : 'border-muted-foreground hover:border-foreground bg-transparent',
               readOnly && 'cursor-default opacity-50',
             )}
+            style={
+              isIndifferent && effectiveCustomHexColor
+                ? { backgroundColor: effectiveCustomHexColor, borderColor: effectiveCustomHexColor }
+                : undefined
+            }
           >
             {isIndifferent && (
               <span className={clsx('material-symbols-outlined text-primary-foreground text-[16px] font-bold')}>
@@ -280,7 +327,7 @@ export function AxisCard({
         id={isTarget ? 'atlas-axis-slider' : undefined}
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
-          isIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
+          isIndifferent && !sliderOtherAnswer && !isAnonymousView ? 'opacity-75' : '',
         )}
       >
         <Slider
@@ -294,9 +341,9 @@ export function AxisCard({
           indifferentLabel={t('indifferent_status')}
           isNotAnswered={false}
           notAnsweredLabel={t('not_answered_status')}
-          otherValue={otherAnswerData?.value ?? undefined}
-          otherMarginLeft={otherAnswerData?.margin_left ?? undefined}
-          otherMarginRight={otherAnswerData?.margin_right ?? undefined}
+          otherValue={sliderOtherAnswer?.value ?? undefined}
+          otherMarginLeft={sliderOtherAnswer?.margin_left ?? undefined}
+          otherMarginRight={sliderOtherAnswer?.margin_right ?? undefined}
           otherIsIndifferent={themIsIndifferent}
           otherIsNotAnswered={showThemAsNotAnswered}
           otherNotAnsweredLabel={t('not_answered_status')}
@@ -307,6 +354,8 @@ export function AxisCard({
           onThumbWheel={actions.handleThumbWheel}
           readOnly={readOnly}
           variant={isAnonymousView ? 'other' : variant}
+          customHexColor={effectiveCustomHexColor}
+          otherCustomColor={effectiveOtherCustomColor}
           primaryOverlay={
             isAnonymousView ? (
               <Link href="/login" className="z-50">

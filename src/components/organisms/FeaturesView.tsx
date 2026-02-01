@@ -124,45 +124,38 @@ export function FeaturesView() {
 
               <div className="flex flex-col gap-2">
                 <RoadmapCard
-                  title={t('upcoming.explorer.title')}
-                  description={t('upcoming.explorer.desc')}
-                  icon="library_books"
-                  delay={0.2}
-                />
-
-                <RoadmapCard
                   title={t('upcoming.dashboard.title')}
                   description={t('upcoming.dashboard.desc')}
                   icon="query_stats"
-                  delay={0.3}
+                  delay={0.2}
                 />
 
                 <RoadmapCard
                   title={t('upcoming.countries.title')}
                   description={t('upcoming.countries.desc')}
                   icon="public"
-                  delay={0.4}
+                  delay={0.3}
                 />
 
                 <RoadmapCard
                   title={t('upcoming.community.title')}
                   description={t('upcoming.community.desc')}
                   icon="groups"
-                  delay={0.5}
+                  delay={0.4}
                 />
 
                 <RoadmapCard
                   title={t('upcoming.ai.title')}
                   description={t('upcoming.ai.desc')}
                   icon="psychology"
-                  delay={0.6}
+                  delay={0.5}
                 />
 
                 <RoadmapCard
                   title={t('upcoming.mobile.title')}
                   description={t('upcoming.mobile.desc')}
                   icon="smartphone"
-                  delay={0.7}
+                  delay={0.6}
                 />
               </div>
 
