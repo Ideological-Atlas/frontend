@@ -20,7 +20,8 @@
     "home": "Inicio",
     "features": "Características",
     "explore": "Explorar",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "encyclopedia": "Enciclopedia"
   },
   "Hero": {
     "title": "Descubre tu verdadera posición ideológica",
@@ -196,7 +197,10 @@
     "incomplete_modal_description": "Aún te faltan preguntas por responder en este nivel. Te recomendamos completarlas antes de avanzar para obtener un resultado más preciso.",
     "incomplete_modal_continue": "Avanzar de todos modos",
     "incomplete_modal_cancel": "Revisar secciones",
-    "answered_on": "Respondido el {date}"
+    "answered_on": "Respondido el {date}",
+    "ideology_definition_label": "Definición Ideológica",
+    "back_to_encyclopedia": "Volver a la Enciclopedia",
+    "admin_mode_label": "Modo Edición de Ideología"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -518,5 +522,19 @@
         "desc": "Si la descripción del nivel ocupa mucho espacio, puedes colapsarla o expandirla usando este botón para centrarte en los ejes."
       }
     }
+  },
+  "Encyclopedia": {
+    "title": "Enciclopedia Ideológica",
+    "subtitle": "Explora y comprende las diferentes corrientes de pensamiento que conforman el espectro político.",
+    "search_placeholder": "Buscar ideología...",
+    "no_results": "No se encontraron ideologías",
+    "read_more": "Leer más",
+    "tab_supporter": "A favor",
+    "tab_neutral": "Neutral",
+    "tab_detractor": "En contra",
+    "ideology_tag": "Ideología",
+    "close": "Cerrar",
+    "explore_in_atlas": "Explorar atlas",
+    "no_description": "Sin descripción disponible."
   }
 }

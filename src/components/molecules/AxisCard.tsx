@@ -28,6 +28,7 @@ interface AxisCardProps {
   dependencyNames: string[];
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  customHexColor?: string;
 }
 
 export function AxisCard({
@@ -44,6 +45,7 @@ export function AxisCard({
   dependencyNames,
   readOnly = false,
   variant = 'default',
+  customHexColor,
 }: AxisCardProps) {
   const t = useTranslations('Atlas');
   const tCommon = useTranslations('Common');
@@ -86,6 +88,11 @@ export function AxisCard({
         ? `${activeBorderClass} ${activeBgClass}`
         : 'bg-card border-border';
 
+  const customStyle =
+    customHexColor && meHasAnswer && !isIndifferent
+      ? { borderColor: customHexColor, backgroundColor: `${customHexColor}0D` }
+      : undefined;
+
   const affinityStyle = affinity !== undefined && !themIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
 
   const sliderBottomLabel = isAnonymousView
@@ -103,10 +110,11 @@ export function AxisCard({
       className={clsx(
         'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
         !readOnly && 'hover:shadow-md',
-        cardStyle,
+        !customHexColor && cardStyle,
         isIndifferent && !otherAnswerData && !isAnonymousView ? 'opacity-75' : '',
         isDropdownOpen || showDescription ? 'z-50' : 'z-0',
       )}
+      style={customStyle}
     >
       <DependencyBadge names={dependencyNames} variant={variant} />
 
@@ -118,8 +126,14 @@ export function AxisCard({
                 id={isTarget ? 'atlas-axis-title' : undefined}
                 className={clsx(
                   'text-lg font-bold',
-                  !otherAnswerData && meHasAnswer && !isIndifferent ? activeTitleClass : 'text-foreground',
+                  !customHexColor &&
+                    (!otherAnswerData && meHasAnswer && !isIndifferent ? activeTitleClass : 'text-foreground'),
                 )}
+                style={
+                  customHexColor && !otherAnswerData && meHasAnswer && !isIndifferent
+                    ? { color: customHexColor }
+                    : undefined
+                }
               >
                 {axis.name}
               </h4>
@@ -259,6 +273,11 @@ export function AxisCard({
                 : 'border-muted-foreground hover:border-foreground bg-transparent',
               readOnly && 'cursor-default opacity-50',
             )}
+            style={
+              isIndifferent && customHexColor
+                ? { backgroundColor: customHexColor, borderColor: customHexColor }
+                : undefined
+            }
           >
             {isIndifferent && (
               <span className={clsx('material-symbols-outlined text-primary-foreground text-[16px] font-bold')}>
@@ -307,6 +326,7 @@ export function AxisCard({
           onThumbWheel={actions.handleThumbWheel}
           readOnly={readOnly}
           variant={isAnonymousView ? 'other' : variant}
+          customHexColor={customHexColor}
           primaryOverlay={
             isAnonymousView ? (
               <Link href="/login" className="z-50">

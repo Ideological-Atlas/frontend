@@ -20,6 +20,7 @@ interface AxisListProps {
   isLevelLoading: boolean;
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  customHexColor?: string;
 }
 
 const itemVariants: Variants = {
@@ -48,6 +49,7 @@ export function AxisList({
   isLevelLoading,
   readOnly = false,
   variant = 'default',
+  customHexColor,
 }: AxisListProps) {
   const t = useTranslations('Atlas');
   const { user } = useAuthStore();
@@ -117,6 +119,7 @@ export function AxisList({
                 dependencyNames={names}
                 readOnly={readOnly}
                 variant={effectiveVariant}
+                customHexColor={customHexColor}
               />
             </motion.div>
           );

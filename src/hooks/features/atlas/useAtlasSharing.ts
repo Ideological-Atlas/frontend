@@ -18,7 +18,6 @@ export function useAtlasSharing() {
       let requestBody: CompletedAnswerRequest | undefined = undefined;
       const isVerified = user?.is_verified ?? false;
 
-      // If not authenticated OR authenticated but not verified, send local state
       if (!isAuthenticated || !isVerified) {
         const axisList = Object.entries(answers).map(([uuid, data]) => ({
           uuid,

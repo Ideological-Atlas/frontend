@@ -20,7 +20,8 @@
     "home": "Home",
     "features": "Features",
     "explore": "Explore",
-    "about": "About"
+    "about": "About",
+    "encyclopedia": "Encyclopedia"
   },
   "Hero": {
     "title": "Discover your true ideological position",
@@ -196,7 +197,10 @@
     "incomplete_modal_description": "You still have unanswered questions in this level. We recommend completing them before proceeding for a more accurate result.",
     "incomplete_modal_continue": "Continue anyway",
     "incomplete_modal_cancel": "Review sections",
-    "answered_on": "Answered on {date}"
+    "answered_on": "Answered on {date}",
+    "ideology_definition_label": "Ideological Definition",
+    "back_to_encyclopedia": "Back to Encyclopedia",
+    "admin_mode_label": "Ideology Editing Mode"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -516,5 +520,19 @@
         "desc": "If the level description takes up too much space, you can collapse or expand it using this button to focus on the axes."
       }
     }
+  },
+  "Encyclopedia": {
+    "title": "Ideological Encyclopedia",
+    "subtitle": "Explore and understand the different currents of thought that make up the political spectrum.",
+    "search_placeholder": "Search ideology...",
+    "no_results": "No ideologies found",
+    "read_more": "Read more",
+    "tab_supporter": "Supporter",
+    "tab_neutral": "Neutral",
+    "tab_detractor": "Detractor",
+    "ideology_tag": "Ideology",
+    "close": "Close",
+    "explore_in_atlas": "Explore atlas",
+    "no_description": "No description available."
   }
 }

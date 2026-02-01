@@ -52,7 +52,6 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
       conditionerAnswers: nextCondAnswers,
     });
 
-    // Only call API if authenticated AND verified
     if (isAuthenticated && isVerified) {
       try {
         const promises = [
