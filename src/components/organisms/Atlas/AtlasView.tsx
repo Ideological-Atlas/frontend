@@ -11,7 +11,6 @@ import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProgressCard } from '@/components/molecules/ProgressCard';
 import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
-import { GuestWarningModal } from './GuestWarningModal';
 import { UnverifiedWarningModal } from './UnverifiedWarningModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
 import { SectionNavigation } from '@/components/molecules/SectionNavigation';
@@ -57,10 +56,9 @@ export function AtlasView() {
 
   return (
     <>
-      <GuestWarningModal />
       <UnverifiedWarningModal />
-
       <AtlasOnboarding />
+
       <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
 
       <IncompleteLevelModal

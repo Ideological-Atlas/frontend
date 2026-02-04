@@ -11,19 +11,19 @@
     "profile": "Profile",
     "logout": "Logout",
     "cancel": "Cancel",
-    "beta_warning": "Page in testing mode. Errors may occur. For suggestions or bug reports: <email>support@ideologicalatlas.com</email>",
+    "beta_warning": "Beta mode. Errors may occur. Reports: <email>support@ideologicalatlas.com</email>",
     "home": "Home",
     "theme_select": "Theme",
     "info": "Info",
-    "explore_ideologies": "Explore ideologies",
+    "explore_ideologies": "Explore Ideologies",
     "filters": "Filters",
     "country": "Country",
     "region": "Region",
     "religion": "Religion",
     "tag": "Tag",
     "all": "All",
-    "clear_filters": "Clear filters",
-    "show_all": "Show all"
+    "clear_filters": "Clear Filters",
+    "show_all": "Show All"
   },
   "Navigation": {
     "home": "Home",
@@ -34,11 +34,11 @@
   },
   "Hero": {
     "title": "Discover your true ideological position",
-    "subtitle": "A modern, accurate, and detailed political spectrum test based on real data."
+    "subtitle": "A modern, precise, and detailed political spectrum test based on real data."
   },
   "Features": {
     "title": "Analyze your political thought",
-    "subtitle": "Our algorithm evaluates multiple dimensions to offer you an accurate result.",
+    "subtitle": "Our algorithm evaluates multiple dimensions to offer precise results.",
     "cards": {
       "spectrum": {
         "title": "Multidimensional Spectrum",
@@ -46,16 +46,16 @@
       },
       "exploration": {
         "title": "Deep Exploration",
-        "description": "Understand the historical and philosophical influences of your ideology."
+        "description": "Understand historical and philosophical influences of your ideology."
       },
       "analysis": {
         "title": "Data Analysis",
-        "description": "Compare your results with global and regional trends."
+        "description": "Compare results with global and regional trends."
       }
     }
   },
   "CTA": {
-    "title": "Ready to discover your place on the map?",
+    "title": "Ready to map your ideology?",
     "text": "Join thousands of users who have already mapped their ideology."
   },
   "Auth": {
@@ -65,57 +65,57 @@
     "username_placeholder": "user123",
     "password_label": "Password",
     "password_placeholder": "********",
-    "forgot_password": "Forgot your password?",
+    "forgot_password": "Forgot password?",
     "login_button": "Sign In",
     "logging_in": "Signing in...",
-    "no_account": "Don't have an account?",
+    "no_account": "No account?",
     "register_link": "Sign up",
     "copyright": "All rights reserved.",
     "or": "OR WITH EMAIL",
     "continue_google": "Continue with Google",
     "continue_google_loading": "Connecting...",
     "register_title": "Create Account",
-    "register_subtitle": "Register to establish your ideological profile and explore the spectrum.",
+    "register_subtitle": "Sign up to establish your ideological profile.",
     "email_label": "Email",
     "email_placeholder": "email@example.com",
-    "confirm_password_label": "Confirm password",
+    "confirm_password_label": "Confirm Password",
     "register_button": "Sign Up",
     "registering": "Registering...",
     "has_account": "Already have an account?",
     "login_link": "Sign In",
-    "password_requirements": "Password must be at least 7 characters long, cannot be entirely numeric, and must not be too common or similar to your details.",
+    "password_requirements": "Password must be at least 7 chars, not purely numeric, nor too common.",
     "password_mismatch": "Passwords do not match",
-    "register_error": "Error creating account. Please try again.",
+    "register_error": "Error creating account. Try again.",
     "network_error": "Connection error.",
     "invalid_credentials": "Invalid credentials. Please try again.",
-    "login_error": "An error occurred during login. Please try again later.",
-    "post_register_title": "Account created successfully!",
-    "post_register_subtitle": "We have sent you a confirmation email. Please check your inbox and follow the link to verify your account and start exploring the atlas.",
-    "status_completed": "Registration completed",
-    "status_pending": "Waiting for email verification...",
+    "login_error": "Login error. Try again later.",
+    "post_register_title": "Account Created!",
+    "post_register_subtitle": "We sent a confirmation email. Please check your inbox.",
+    "status_completed": "Registration Complete",
+    "status_pending": "Waiting for verification...",
     "explore_button": "Explore Atlas",
-    "dashboard_button": "Go to my Dashboard",
+    "dashboard_button": "Go to Dashboard",
     "forgot_password_title": "Recover Password",
-    "forgot_password_subtitle": "Enter your email address and we'll send you a link to reset your password.",
-    "send_recovery_link": "Send recovery link",
+    "forgot_password_subtitle": "Enter your email to receive a reset link.",
+    "send_recovery_link": "Send Recovery Link",
     "sending": "Sending...",
     "recovery_email_sent_title": "Email Sent!",
-    "recovery_email_sent_description": "If an account exists with this email, you will receive instructions shortly.",
-    "back_to_login": "Back to login",
+    "recovery_email_sent_description": "If an account exists, you will receive instructions shortly.",
+    "back_to_login": "Back to Login",
     "reset_password_title": "New Password",
-    "reset_password_subtitle": "Set a secure password to protect your Ideological Atlas account.",
+    "reset_password_subtitle": "Set a secure password for your account.",
     "new_password_label": "NEW PASSWORD",
     "confirm_new_password_label": "CONFIRM NEW PASSWORD",
     "update_password_button": "Update Password",
     "updating": "Updating...",
     "password_updated_title": "Password Updated!",
-    "password_updated_description": "Your password has been changed successfully. Your account is now secure and ready to explore.",
-    "go_to_login_button": "Go to Main Panel",
+    "password_updated_description": "Your password has been changed successfully.",
+    "go_to_login_button": "Go to Login",
     "verifying_token": "Verifying link...",
     "invalid_token_title": "Invalid Link",
-    "invalid_token_description": "This recovery link has expired or is invalid. Please request a new one.",
-    "reset_password_error": "There was an error resetting the password.",
-    "invalid_username_format": "Only letters, numbers and @/./+/-/_ (no spaces)"
+    "invalid_token_description": "This link has expired or is invalid.",
+    "reset_password_error": "Error resetting password.",
+    "invalid_username_format": "Only letters, numbers, and @/./+/-/_ allowed"
   },
   "Footer": {
     "privacy": "Privacy",
@@ -125,44 +125,51 @@
   },
   "Verify": {
     "title_loading": "Verifying...",
-    "description_loading": "We are confirming your verification link.",
+    "description_loading": "Confirming your verification link.",
     "title_success": "Profile Verified!",
-    "description_success": "Your email has been successfully confirmed. You can now explore the Ideological Atlas without restrictions.",
+    "description_success": "Your email has been confirmed. You can now explore freely.",
     "title_error": "Invalid Link",
-    "description_error": "We could not verify your account. The link may have expired or be incorrect.",
+    "description_error": "Could not verify account. Link may be expired.",
     "go_to_dashboard": "Go to Dashboard",
     "go_to_login": "Login",
-    "title_already_verified": "Profile already active",
-    "description_already_verified": "Your account has already been verified. No further action is required."
+    "title_already_verified": "Profile Active",
+    "description_already_verified": "Account was already verified."
   },
   "Atlas": {
     "you_label": "You",
-    "your_answer_label": "Your answer",
-    "their_answer_label": "Their answer",
+    "your_answer_label": "Your Answer",
+    "their_answer_label": "Their Answer",
     "anonymous_user": "Anonymous User",
     "sign_in_to_compare": "Sign in to save",
-    "discovery_lock_title": "Save your progress",
-    "discovery_lock_desc": "To discover your ideology and save it permanently, we recommend creating an account. However, you can continue anonymously.",
+    "discovery_lock_title": "Save Progress",
+    "discovery_lock_desc": "To save your ideology permanently, create an account.",
     "discovery_lock_login": "Login / Register",
-    "discovery_lock_cancel": "Continue Anonymously",
+    "discovery_lock_cancel": "Continue Anonymous",
+    "welcome_modal": {
+      "title": "Welcome to the Atlas",
+      "description": "Would you like a quick interactive tutorial to learn how to use the axes, margins, and conditioners?",
+      "start_btn": "Start Tutorial",
+      "skip_btn": "Skip Tutorial",
+      "guest_note": "Note: You are in guest mode. Answers are saved locally."
+    },
     "guest_warning": {
       "title": "Continue as Guest?",
-      "description": "You can take the test without an account, but your answers will only be saved on this device and could be lost. You will still be able to compare affinity at the end.",
-      "login": "Create Account (Recommended)",
-      "continue_guest": "Continue Anonymously"
+      "description": "You can take the test without an account, but answers are saved on this device only.",
+      "login": "Create Account",
+      "continue_guest": "Continue"
     },
     "unverified_warning": {
       "title": "Verification Pending",
-      "description": "You can complete your Atlas and see real-time results, but your answers will NOT be saved to the cloud until you verify your account. Please check your email.",
-      "dismiss": "Understood, I will continue without saving"
+      "description": "Your answers won't save to cloud until you verify email.",
+      "dismiss": "Understood"
     },
     "title": "Ideological Atlas",
     "complexity_level": "Abstraction Level",
-    "context_configuration": "Context Configuration",
+    "context_configuration": "Context Config",
     "selector_placeholder": "Selector for {type}",
-    "no_questions": "No questions available in this section.",
+    "no_questions": "No questions available.",
     "header_title": "Ideological Atlas",
-    "header_description": "Define your position on the spectrum.",
+    "header_description": "Define your position.",
     "complexity_subtitle": "Select depth level",
     "context_section": "Context",
     "select_placeholder": "Select",
@@ -170,23 +177,23 @@
     "yes": "Yes",
     "no": "No",
     "numeric_placeholder": "Numeric value",
-    "text_placeholder": "Type your answer...",
+    "text_placeholder": "Type answer...",
     "margin_label": "Margin",
-    "indifferent_label": "Mark as indifferent",
-    "reset_label": "Reset answer",
+    "indifferent_label": "Mark indifferent",
+    "reset_label": "Reset",
     "conditioned_label": "CONDITIONED",
     "depends_on_label": "Depends on",
     "asymmetric_label": "ASYMMETRIC",
-    "progress_label": "{name} Progress",
-    "share_posture_title": "Share Posture",
-    "share_posture_description": "Share your position in the ideological spectrum via this unique link. Anyone with the link will be able to see your configuration.",
+    "progress_label": "Progress {name}",
+    "share_posture_title": "Share Position",
+    "share_posture_description": "Share your position via unique link.",
     "direct_link_label": "DIRECT LINK",
     "copied": "Copied",
     "copy": "Copy",
-    "link_copied_success": "Link copied to clipboard successfully!",
+    "link_copied_success": "Link copied!",
     "share_button": "Share",
     "public_profile_badge": "PUBLIC PROFILE",
-    "similarity_label": "SIMILARITY WITH YOU",
+    "similarity_label": "SIMILARITY",
     "affinity_identical": "Identical",
     "affinity_very_high": "Very High",
     "affinity_high": "High",
@@ -198,31 +205,31 @@
     "your_answers_label": "Your Answers",
     "affinity_medium": "Medium Similarity",
     "affinity_short_label": "Affinity",
-    "affinity_almost_identical": "Very compatible",
-    "affinity_almost_opposite": "Not compatible",
-    "copy_answer_tooltip": "Copy answer from {username}",
+    "affinity_almost_identical": "Almost Identical",
+    "affinity_almost_opposite": "Almost Opposite",
+    "copy_answer_tooltip": "Copy answer",
     "copy_answer_label": "Copy",
     "indifferent_status": "Indifferent",
-    "not_answered_status": "Not Answered",
+    "not_answered_status": "Not answered",
     "previous_label": "Previous",
     "next_section_label": "Next Section",
     "next_level_label": "Next Level",
     "incomplete_modal_title": "Incomplete Sections",
-    "incomplete_modal_description": "You still have unanswered questions in this level. We recommend completing them before proceeding for a more accurate result.",
+    "incomplete_modal_description": "You have unanswered questions.",
     "incomplete_modal_continue": "Continue anyway",
-    "incomplete_modal_cancel": "Review sections",
+    "incomplete_modal_cancel": "Review",
     "answered_on": "Answered on {date}",
-    "ideology_definition_label": "Ideological Definition",
+    "ideology_definition_label": "Ideology Definition",
     "back_to_encyclopedia": "Back to Encyclopedia",
-    "admin_mode_label": "Ideology Editing Mode",
-    "discover_ideology_btn": "Check your Ideology",
-    "discovery_title": "Ideological Affinity Analysis",
-    "discovery_subtitle": "Calculating your compatibility with defined ideologies in real-time based on your current answers.",
+    "admin_mode_label": "Admin Mode",
+    "discover_ideology_btn": "Discover Ideology",
+    "discovery_title": "Affinity Analysis",
+    "discovery_subtitle": "Calculating compatibility.",
     "calculating_affinity": "Calculating...",
     "affinity_score": "Affinity",
     "discovery_modal_title": "Ideology Found!",
-    "discovery_modal_subtitle": "Based on your answers, your closest ideology is:",
-    "view_comparison": "Compare Answers",
+    "discovery_modal_subtitle": "Based on your answers:",
+    "view_comparison": "Compare",
     "close_modal": "Close",
     "affinity_pending": "Pending...",
     "read_more": "Read more",
@@ -231,351 +238,316 @@
   "Profile": {
     "page_title": "Profile Settings",
     "header_title": "Profile Settings",
-    "header_description": "Manage your identity, preferences, and privacy in the Ideological Atlas.",
-    "menu_configuration": "CONFIGURATION MENU",
-    "view_public_profile": "View Public Profile",
-    "save_changes": "Save Changes",
-    "save_all": "Save All",
-    "saved": "Saved",
+    "header_description": "Manage identity and preferences.",
     "public_profile": "Public Profile",
-    "public_profile_desc": "Information visible to other Atlas users.",
+    "website_label": "Website",
     "first_name_label": "First Name",
     "last_name_label": "Last Name",
-    "bio_label": "Biography",
-    "bio_placeholder": "",
-    "website_label": "Website",
-    "preferences_title": "General Preferences",
-    "preferences_desc": "Customize your experience in the application.",
+    "bio_label": "Bio",
+    "preferences_title": "Preferences",
     "language_label": "Language",
     "language_select": "Select language",
     "appearance_label": "Appearance",
     "theme_select": "Select theme",
     "security_title": "Security",
-    "security_desc": "Protect your account and sensitive data.",
     "change_password_title": "Change Password",
-    "new_password_label": "New password",
+    "new_password_label": "New Password",
     "privacy_title": "Privacy",
-    "privacy_desc": "Control who can see your activity.",
-    "visibility_label": "Profile Visibility",
-    "visibility_description": "Define who can see your position on the spectrum.",
+    "visibility_label": "Visibility",
+    "visibility_description": "Who can see your profile.",
     "public": "Public",
     "private": "Private",
-    "email_not_verified_warning": "User not verified, please check your email."
+    "save_all": "Save All",
+    "saved": "Saved",
+    "menu_configuration": "CONFIGURATION MENU",
+    "view_public_profile": "View Public Profile",
+    "general_preferences": "General Preferences",
+    "save_changes": "Save Changes",
+    "cancel": "Cancel",
+    "public_profile_desc": "Visible information.",
+    "bio_placeholder": "",
+    "preferences_desc": "Customize experience.",
+    "security_desc": "Protect account.",
+    "privacy_desc": "Control visibility.",
+    "email_not_verified_warning": "Email not verified."
   },
   "Legal": {
     "table_of_contents": "Table of Contents",
     "intro_title": "Introduction",
     "collection_title": "Data Collection",
-    "usage_title": "Information Usage",
-    "cookies_title": "Cookie Usage",
-    "rights_title": "User Rights",
+    "usage_title": "Usage",
+    "cookies_title": "Cookies",
+    "rights_title": "Rights",
     "contact_title": "Contact",
-    "need_help_title": "Need extra help?",
-    "need_help_desc": "Our legal team is available to answer specific questions about your data.",
+    "need_help_title": "Need help?",
+    "need_help_desc": "Contact support.",
     "open_ticket": "Contact Support",
     "privacy_policy_title": "Privacy Policy",
-    "privacy_policy_subtitle": "Your privacy is fundamental. We are committed to protecting your identity and not using invasive trackers.",
+    "privacy_policy_subtitle": "Your privacy matters.",
     "last_updated": "Last updated",
-    "intro_p1": "Welcome to Ideological Atlas. This Privacy Policy describes how we handle your personal information. By accessing our services, you agree to these practices.",
-    "intro_p2": "Our mission is to map ideologies transparently. We do not trade your data nor use hidden tracking techniques.",
-    "col_account_title": "Account Information",
-    "col_account_desc": "We collect basic data such as your name, email address, and language preferences when you register to create a personalized account.",
+    "intro_p1": "Welcome.",
+    "intro_p2": "We map ideologies transparently.",
+    "col_account_title": "Account Info",
+    "col_account_desc": "Basic registration data.",
     "col_interaction_title": "Interaction Data",
-    "col_interaction_desc": "We record your answers to ideological questionnaires, your markers in the atlas, and the time spent exploring different information nodes.",
-    "col_tech_title": "Technical Data",
-    "col_tech_desc": "We automatically collect information about your device, IP address, browser type, and operating system to optimize the visual experience of the Atlas.",
+    "col_interaction_desc": "Answers and markers.",
+    "col_tech_title": "Tech Data",
+    "col_tech_desc": "Device info.",
     "col_contrib_title": "Contributions",
-    "col_contrib_desc": "Any content you voluntarily post in community forums or comments on specific nodes will be publicly visible.",
-    "usage_intro": "We do not sell your data to third parties. We use information exclusively for:",
-    "use_algo_title": "Algorithm Improvement",
-    "use_algo_desc": "We analyze anonymous patterns to refine positioning.",
+    "col_contrib_desc": "Public posts.",
+    "usage_intro": "We do not sell data.",
+    "use_algo_title": "Algorithm",
+    "use_algo_desc": "Anonymous patterns.",
     "use_perso_title": "Personalization",
-    "use_perso_desc": "We adapt suggested content to your results.",
+    "use_perso_desc": "Adapted content.",
     "use_sec_title": "Security",
-    "use_sec_desc": "Protection against abuse and account notifications.",
-    "cookies_desc": "We use strictly necessary cookies and local storage to manage your session and authentication securely. We do not use third-party cookies for advertising tracking.",
-    "cookies_note_label": "Technical Note",
-    "cookies_note_text": "The 'access_token' and 'refresh_token' cookies are essential to keep you logged in when you reload the page.",
-    "rights_intro": "We guarantee the following rights regarding your personal data:",
-    "right_access_title": "Right of Access",
-    "right_access_desc": "Request a copy of all the data we hold about you.",
-    "right_rect_title": "Right to Rectification",
-    "right_rect_desc": "Correct any inaccurate or incomplete information in your profile.",
-    "right_del_title": "Right to Erasure",
-    "right_del_desc": "Request the total deletion of your account and associated data (\"Right to be forgotten\").",
-    "right_port_title": "Right to Portability",
-    "right_port_desc": "Receive your data in a structured format to transfer it to another service.",
-    "contact_desc": "If you have questions about this Policy or wish to exercise your rights, contact us. We respond within 48 hours.",
+    "use_sec_desc": "Protection.",
+    "cookies_desc": "Strictly necessary cookies.",
+    "cookies_note_label": "Note",
+    "cookies_note_text": "Tokens for session.",
+    "rights_intro": "Your rights:",
+    "right_access_title": "Access",
+    "right_access_desc": "Request copy.",
+    "right_rect_title": "Rectification",
+    "right_rect_desc": "Correct info.",
+    "right_del_title": "Deletion",
+    "right_del_desc": "Delete account.",
+    "right_port_title": "Portability",
+    "right_port_desc": "Receive data.",
+    "contact_desc": "Contact us.",
     "contact_btn": "Send Email"
   },
   "Terms": {
-    "table_of_contents": "Table of Contents",
+    "table_of_contents": "Contents",
     "title": "Terms of Use",
-    "subtitle": "Clear rules for an open-source and free knowledge platform.",
+    "subtitle": "Rules.",
     "last_updated": "Last updated",
-    "version": "Version 0.1",
+    "version": "v0.1",
     "sidebar": {
-      "intro": "Introduction",
-      "acceptance": "1. Acceptance",
-      "service": "2. Service",
-      "responsible": "3. Responsible Use",
-      "accounts": "4. Accounts",
-      "modifications": "5. Modifications",
-      "liability": "6. Liability"
+      "intro": "Intro",
+      "acceptance": "Acceptance",
+      "service": "Service",
+      "responsible": "Responsible Use",
+      "accounts": "Accounts",
+      "modifications": "Mods",
+      "liability": "Liability"
     },
     "intro": {
-      "p1": "Welcome to Ideological Atlas. This page describes the legal terms governing the use of our ideological data visualization platform.",
-      "p2": "By accessing our platform, you agree to be bound by the following terms and conditions. Please read them carefully."
+      "p1": "Welcome.",
+      "p2": "Terms apply."
     },
     "acceptance": {
-      "title": "Acceptance of Terms",
-      "p1": "By accessing or using the Service, you confirm that you have the legal capacity to enter into this agreement.",
-      "p2": "If you do not agree to any part of the terms, you may not access the service."
+      "title": "Acceptance",
+      "p1": "You accept.",
+      "p2": "If not, do not use."
     },
     "service": {
-      "title": "Service Description",
-      "p1": "Ideological Atlas is a non-profit, open-source project. Tools are provided \"as is\" for educational and research purposes."
+      "title": "Service",
+      "p1": "As is."
     },
     "responsible": {
-      "title": "Responsible Use & Licenses",
-      "desc": "How we share our work and what we expect from our users.",
-      "prohibitions_title": "Strict Prohibitions",
-      "prohibitions_desc": "It is strictly forbidden to use the platform to:",
-      "prohibitions_list": [
-        "Spread hate speech or discrimination.",
-        "Manipulate data for disinformation.",
-        "Abusive scraping affecting the server."
-      ],
-      "license_title": "Open Source & License",
-      "license_desc": "The code is Open Source (MIT). Data uses Creative Commons (CC BY-NC-SA).",
-      "license_quote": "Use, modification, and distribution for non-commercial purposes with proper attribution is permitted."
+      "title": "Responsible Use",
+      "desc": "Expectations.",
+      "prohibitions_title": "Prohibitions",
+      "prohibitions_desc": "Do not:",
+      "prohibitions_list": ["Hate speech", "Manipulation", "Scraping"],
+      "license_title": "License",
+      "license_desc": "MIT / CC.",
+      "license_quote": "Attribution required."
     },
     "accounts": {
-      "title": "Collaborator Accounts",
-      "p1": "To contribute data, you may need to register. We encourage verifiable identities to maintain quality.",
-      "p2": "You are responsible for the confidentiality of your account and all activities under it."
+      "title": "Accounts",
+      "p1": "Registration.",
+      "p2": "Security."
     },
     "modifications": {
-      "title": "Service Modifications",
-      "p1": "We reserve the right to modify these Terms. Substantial changes will be announced on GitHub/Discord 30 days in advance."
+      "title": "Modifications",
+      "p1": "We can change terms."
     },
     "liability": {
-      "title": "Limitation of Liability",
-      "p1": "Ideological Atlas shall not be liable for damages arising from the use of the service. The platform is an experimental educational tool."
+      "title": "Liability",
+      "p1": "Not responsible."
     },
     "contact_community": {
-      "title": "Questions about the license?",
-      "desc": "Our community can help you understand how to use the data.",
-      "btn": "Contact Community"
+      "title": "Questions?",
+      "desc": "Ask community.",
+      "btn": "Contact"
     }
   },
   "FeaturesPage": {
-    "hero_title": "The Ideological Operating System",
-    "hero_subtitle": "Map, visualize, and understand your political position with unprecedented precision.",
+    "hero_title": "Ideological OS",
+    "hero_subtitle": "Map your politics.",
     "current_title": "Current Features",
-    "roadmap_title": "Product Roadmap",
-    "roadmap_subtitle": "Our vision for the future of ideological analysis.",
+    "roadmap_title": "Roadmap",
+    "roadmap_subtitle": "Future vision.",
     "cards": {
       "multidimensional": {
         "title": "Multidimensional",
-        "desc": "Beyond left and right. A complete multi-axis analysis."
+        "desc": "Multiple axes."
       },
       "contextual": {
         "title": "Contextual",
-        "desc": "Questions adapt dynamically based on your previous answers."
+        "desc": "Dynamic questions."
       },
       "privacy": {
-        "title": "Total Privacy",
-        "desc": "Your data is yours. Open source and no hidden trackers."
+        "title": "Privacy",
+        "desc": "Open source."
       }
     },
     "upcoming": {
       "explorer": {
-        "title": "Ideology Explorer",
-        "desc": "Browse a comprehensive library of human ideologies and definitions."
+        "title": "Explorer",
+        "desc": "Library."
       },
       "dashboard": {
-        "title": "Analytics Dashboard",
-        "desc": "Visualize your statistics, evolution over time, and deep metrics."
+        "title": "Dashboard",
+        "desc": "Stats."
       },
       "countries": {
-        "title": "Atlas by Country",
-        "desc": "Compare ideological trends globally, regionally, and nationally."
+        "title": "Countries",
+        "desc": "Trends."
       },
       "community": {
-        "title": "Community & Groups",
-        "desc": "Connect with like-minded people, form groups, and debate in moderated spaces."
+        "title": "Community",
+        "desc": "Groups."
       },
       "ai": {
-        "title": "Ideology AI",
-        "desc": "Analyze texts, news, and speeches to identify biases automatically."
+        "title": "AI",
+        "desc": "Analysis."
       },
       "mobile": {
-        "title": "Mobile Versions",
-        "desc": "Take your ideological profile with you. Native apps for iOS and Android."
+        "title": "Mobile",
+        "desc": "Apps."
       }
     },
     "coming_soon": "Coming Soon",
-    "help_wanted_title": "We need your help",
-    "help_wanted_desc": "This is an ambitious open-source project. If you are a developer, designer, or researcher, your help is welcome.",
-    "contact_us": "Contact us"
+    "help_wanted_title": "Help Wanted",
+    "help_wanted_desc": "Join us.",
+    "contact_us": "Contact Us"
   },
   "AboutPage": {
     "hero": {
-      "title": "Beyond Left and Right",
-      "subtitle": "An open-source initiative to dismantle biased diagrams and build a transparent, rigorous standard for political measurement.",
-      "mission_btn": "Our Mission",
-      "github_btn": "View Code"
+      "title": "Beyond Left/Right",
+      "subtitle": "New standard.",
+      "mission_btn": "Mission",
+      "github_btn": "Code"
     },
     "story": {
-      "title": "Our Story",
-      "content_p1": "Ideological Atlas was born in late 2025 out of frustration with circular political discussions. We realized complex thinkers were forced into simplistic labels because obsolete tools like the Nolan Chart couldn't represent them.",
-      "content_p2": "We are a small team operating from Spain using VPS hosted in Germany, non-profit, with a clear goal: to prove that human ideology has more dimensions than a simple Cartesian plane.",
-      "quote": "Political reality is too complex to fit into two axes."
+      "title": "Story",
+      "content_p1": "Frustration with simplicity.",
+      "content_p2": "Small team.",
+      "quote": "Reality is complex."
     },
     "algorithm": {
-      "title": "The Affinity Engine",
-      "subtitle": "Forget simple averages. We use a Quadratic Decay model to calculate real compatibility.",
-      "indifference_title": "Indifference Logic",
-      "indifference_desc": "The system respects apathy. If both users are indifferent, affinity is total (100%). If only one is, we penalize slightly (75%) for the lack of connection.",
-      "quadratic_title": "Quadratic Decay",
-      "quadratic_desc": "Affinity does not drop linearly. We gently penalize small deviations (nuance) but severely punish large differences (conflict).",
-      "phases_title": "Two Calculation Phases",
-      "phases_overlap": "Contact Phase (50-100%): When tolerance ranges touch.",
-      "phases_gap": "Gap Phase (0-50%): When positions are irreconcilable.",
-      "aggregation_title": "Hierarchical Aggregation",
-      "aggregation_desc": "Axis → Section → Complexity. Affinity is built layer by layer."
+      "title": "Affinity Engine",
+      "subtitle": "Quadratic decay.",
+      "indifference_title": "Indifference",
+      "indifference_desc": "Respects apathy.",
+      "quadratic_title": "Quadratic",
+      "quadratic_desc": "Nuance vs conflict.",
+      "phases_title": "Phases",
+      "phases_overlap": "Overlap",
+      "phases_gap": "Gap",
+      "aggregation_title": "Aggregation",
+      "aggregation_desc": "Hierarchical."
     },
     "contribute": {
-      "title": "Join the Resistance",
-      "subtitle": "This project is Open Source and community-maintained. We need your brain.",
-      "role_dev": "Developers",
-      "role_dev_desc": "Help with React, Python (Django) code, and data visualization.",
-      "role_research": "Researchers",
-      "role_research_desc": "Help define new axes, review bibliography, and neutralize bias.",
-      "role_translate": "Translators",
-      "role_translate_desc": "Currently in ES/EN. Help us reach more cultures.",
-      "role_design": "Design & UX",
-      "role_design_desc": "Design intuitive interfaces and improve user experience.",
+      "title": "Join Us",
+      "subtitle": "Open source.",
+      "role_dev": "Devs",
+      "role_dev_desc": "Code.",
+      "role_research": "Research",
+      "role_research_desc": "Biblio.",
+      "role_translate": "Translate",
+      "role_translate_desc": "Cultures.",
+      "role_design": "Design",
+      "role_design_desc": "UX/UI.",
       "role_product": "Product",
-      "role_product_desc": "Help define features and project direction.",
-      "role_data": "Data & Analytics",
-      "role_data_desc": "Extract value from data to empower user analysis."
+      "role_product_desc": "Direction.",
+      "role_data": "Data",
+      "role_data_desc": "Value."
     }
   },
   "Onboarding": {
     "tour": {
       "welcome": {
-        "desc": "Welcome to the Ideological Atlas. This guide will show you how to define your political stance and discover your affinity with different ideologies, even without creating an account.",
-        "title": "Welcome to the Atlas!"
+        "desc": "Welcome guide.",
+        "title": "Welcome!"
       },
       "discovery": {
-        "desc": "Once you complete a complexity level, you can discover which ideologies you have the highest affinity with based on your current answers.",
-        "title": "Discover your Ideology"
+        "desc": "Discover affinity.",
+        "title": "Discovery"
       },
       "share": {
-        "desc": "Share your ideological profile with others or save it for later. If you haven't logged in, a temporary public link will be generated.",
+        "desc": "Share profile.",
         "title": "Share"
       },
       "levels": {
-        "title": "Abstraction Levels",
-        "desc": "These are the different abstraction levels configured for the atlas. As you progress to less abstract levels, the defined ideologies will become more complex and closer to reality."
+        "title": "Levels",
+        "desc": "Abstraction levels."
       },
       "progress": {
-        "title": "Your Progress",
-        "desc": "As you advance in your ideology definition, this percentage will increase. Please note that it is independent per level and indicates how much of the *current level* you have completed."
+        "title": "Progress",
+        "desc": "Level progress."
       },
       "header": {
-        "title": "Level Information",
-        "desc": "Here you will find detailed information about the abstraction level you are currently in. It is an indicative description. <br/><span style='color: #f59e0b; font-weight: bold;'>For now, descriptions have been generated by AI and suggestions are welcome.</span>"
+        "title": "Level Info",
+        "desc": "Details."
       },
       "sections": {
         "title": "Sections",
-        "desc": "In this first level there is only one section, but other levels may have multiple thematic sections."
+        "desc": "Thematic sections."
       },
       "section_help": {
-        "title": "Section Help",
-        "desc": "If you need more information about what a specific section covers, you can find it by clicking here."
+        "title": "Help",
+        "desc": "More info."
       },
       "axis": {
-        "title": "Ideological Axis",
-        "desc": "This is an ideological axis. It marks a range of values between which you perceive yourself at this moment. The central ball is your desired value, and the other balls are the maximum position you would be willing to accept on either side."
+        "title": "Axis",
+        "desc": "Range of values."
       },
       "axis_title": {
-        "title": "Axis Name",
-        "desc": "This is the name of the axis opposing two ideological positions."
+        "title": "Name",
+        "desc": "Axis name."
       },
       "axis_help": {
-        "title": "Axis Help",
-        "desc": "If you need help with concepts or explanations of the two terms, here is where you find the context."
+        "title": "Help",
+        "desc": "Context."
       },
       "axis_indifferent": {
         "title": "Indifference",
-        "desc": "If an axis is indifferent to you and any value works, you can check this box."
+        "desc": "Mark indifferent."
       },
       "slider_value": {
-        "title": "Set Values",
-        "desc": "You can move the values by dragging the central ball to one side or the other to indicate your ideal position."
+        "title": "Value",
+        "desc": "Your position."
       },
       "slider_margin": {
-        "title": "Tolerance Margins",
-        "desc": "Each margin is independent. The wider the margin, the more willing you are to accept other positions even if they are not your ideal."
+        "title": "Margins",
+        "desc": "Tolerance."
       },
       "conditioners": {
-        "title": "Conditioning Questions",
-        "desc": "These questions will activate or deactivate certain axes or entire sections. They apply mostly in lower abstraction levels."
+        "title": "Conditioners",
+        "desc": "Logic."
       },
       "complete_level": {
-        "title": "Complete Level",
-        "desc": "Once you have completed a level, you will see the progress at 100% and the bar full."
+        "title": "Complete",
+        "desc": "100%."
       },
       "finish": {
-        "title": "We hope you enjoy it!",
-        "desc": "You are ready to start defining your atlas."
+        "title": "Enjoy!",
+        "desc": "Ready."
       },
       "header_toggle": {
-        "title": "Collapse Description",
-        "desc": "If the level description takes up too much space, you can collapse or expand it using this button to focus on the axes."
+        "title": "Toggle",
+        "desc": "Expand/Collapse."
       }
-    },
-    "guest_prompt": {
-      "title": "Continue as guest?",
-      "subtitle": "You can explore the Atlas without an account, but your answers won't be saved permanently.",
-      "yes": "Create Account",
-      "no": "Continue"
     },
     "buttons": {
       "next": "Next",
-      "prev": "Previous",
-      "done": "Finish"
+      "prev": "Prev",
+      "done": "Done"
     },
-    "restart_tutorial": "View Tutorial"
-  },
-  "Encyclopedia": {
-    "title": "Ideological Encyclopedia",
-    "subtitle": "Explore and understand the different currents of thought that make up the political spectrum.",
-    "search_placeholder": "Search ideology...",
-    "no_results": "No ideologies found",
-    "read_more": "Read more",
-    "tab_supporter": "Supporter",
-    "tab_neutral": "Neutral",
-    "tab_detractor": "Detractor",
-    "ideology_tag": "Ideology",
-    "close": "Close",
-    "explore_in_atlas": "Explore atlas",
-    "no_description": "No description available.",
-    "sort_label": "Sort by",
-    "sort_name": "Name",
-    "sort_affinity": "Affinity",
-    "affinity_label": "Affinity",
-    "sort_name_asc": "Name (A-Z)",
-    "sort_name_desc": "Name (Z-A)",
-    "sort_affinity_desc": "Highest Affinity",
-    "sort_affinity_asc": "Lowest Affinity",
-    "affinity_loading": "Calculating...",
-    "secular": "Secular",
-    "location_label": "Location",
-    "religion_label": "Belief",
-    "read_full_article": "Read full article"
+    "restart_tutorial": "Tutorial"
   }
 }

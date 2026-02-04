@@ -22,10 +22,7 @@ export function ProfilePublicSection({ register, errors }: ProfilePublicSectionP
   };
 
   return (
-    <section
-      id="public-profile"
-      className="bg-card border-border scroll-mt-28 rounded-2xl border p-6 shadow-sm md:p-8"
-    >
+    <section id="public-profile" className="bg-card border-border scroll-mt-28 rounded-2xl border p-6 shadow-sm md:p-8">
       <div className="border-border mb-6 border-b pb-4">
         <h2 className="text-foreground text-xl font-bold">{t('public_profile')}</h2>
         <p className="text-muted-foreground mt-1 text-sm">{t('public_profile_desc')}</p>

@@ -3,7 +3,6 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { ThemeSwitch } from '../atoms/ThemeSwitch';
-import { BetaBanner } from '../molecules/BetaBanner';
 import { Link } from '@/components/atoms/SmartLink';
 import Image from 'next/image';
 import { clsx } from 'clsx';
@@ -246,7 +245,6 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-      <BetaBanner />
     </div>
   );
 }

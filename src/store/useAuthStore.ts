@@ -25,13 +25,10 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       setIsLoading: loading => set({ isLoading: loading }),
-
       setUser: user => set({ user, isAuthenticated: true }),
-
       setTokens: (access, refresh) => {
         set({ accessToken: access, refreshToken: refresh });
       },
-
       loginSuccess: (user, access, refresh) => {
         set({
           isAuthenticated: true,
@@ -40,7 +37,6 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: refresh,
         });
       },
-
       logout: async () => {
         await logoutAction();
         set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
@@ -51,8 +47,6 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({
         user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
     },
