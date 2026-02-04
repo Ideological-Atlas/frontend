@@ -25,27 +25,24 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
 
   const bgColor = ideology.color || '#64748b';
 
-  const tabs: { id: TabType; icon: string; label: string; colorClass: string; bgClass: string }[] = [
+  const tabs: { id: TabType; icon: string; label: string; activeClass: string }[] = [
     {
       id: 'supporter',
       icon: 'thumb_up',
       label: t('tab_supporter'),
-      colorClass: 'text-affinity-identical',
-      bgClass: 'bg-affinity-identical/10 border-affinity-identical/20',
+      activeClass: 'bg-zinc-800 text-green-400 border-green-500/50',
     },
     {
       id: 'neutral',
       icon: 'balance',
       label: t('tab_neutral'),
-      colorClass: 'text-affinity-compatible',
-      bgClass: 'bg-affinity-compatible/10 border-affinity-compatible/20',
+      activeClass: 'bg-zinc-800 text-blue-400 border-blue-500/50',
     },
     {
       id: 'detractor',
       icon: 'thumb_down',
       label: t('tab_detractor'),
-      colorClass: 'text-affinity-opposite',
-      bgClass: 'bg-affinity-opposite/10 border-affinity-opposite/20',
+      activeClass: 'bg-zinc-800 text-red-400 border-red-500/50',
     },
   ];
 
@@ -71,12 +68,12 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-2xl flex-col border-l border-white/10 bg-zinc-950 shadow-2xl"
+        className="fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl flex-col border-l border-white/10 bg-zinc-950 shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
-        <div className="relative h-96 w-full shrink-0 overflow-hidden bg-zinc-950">
+        <div className="relative h-64 w-full shrink-0 overflow-hidden bg-zinc-950">
           <div
-            className="absolute inset-0 z-0 opacity-50 transition-colors duration-700"
+            className="absolute inset-0 z-0 opacity-60 transition-colors duration-700"
             style={{ backgroundColor: bgColor }}
           />
 
@@ -84,57 +81,54 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
             <div
               className="absolute inset-0 z-10 h-full w-full"
               style={{
-                maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+                maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
               }}
             >
-              <Image src={ideology.flag} alt={ideology.name} fill className="object-cover opacity-100" unoptimized />
+              <Image
+                src={ideology.flag}
+                alt={ideology.name}
+                fill
+                className="object-cover opacity-80 mix-blend-overlay"
+                unoptimized
+              />
             </div>
           )}
 
+          <div className="absolute inset-0 z-20 bg-gradient-to-t from-zinc-950 via-transparent to-black/30" />
+
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white/70 backdrop-blur-md transition-colors hover:bg-white hover:text-black"
+            className="absolute top-6 right-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white/70 backdrop-blur-md transition-colors hover:bg-white hover:text-black"
           >
-            <span className="material-symbols-outlined text-xl">close</span>
+            <span className="material-symbols-outlined text-lg">close</span>
           </button>
 
-          <div className="absolute bottom-0 left-0 z-30 flex w-full flex-col p-8 md:p-12">
-            <div className="mb-6 flex flex-wrap items-center gap-2">
-              <span className="rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md">
+          <div className="absolute bottom-0 left-0 z-30 flex w-full flex-col p-8">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="rounded border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-white uppercase backdrop-blur-md">
                 {t('ideology_tag')}
               </span>
               {ideology.associated_countries.map(c => (
                 <span
                   key={c.id}
-                  className="flex items-center gap-1 rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md"
+                  className="flex items-center gap-1 rounded border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-white uppercase backdrop-blur-md"
                 >
-                  <span className="material-symbols-outlined text-[14px]">public</span>
+                  <span className="material-symbols-outlined text-[12px]">public</span>
                   {c.name}
-                </span>
-              ))}
-              {ideology.associated_regions.map(r => (
-                <span
-                  key={r.id}
-                  className="flex items-center gap-1 rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md"
-                >
-                  <span className="material-symbols-outlined text-[14px]">location_on</span>
-                  {r.name}
                 </span>
               ))}
             </div>
 
-            <div className="flex items-end gap-6">
-              <h2 className="text-5xl leading-[0.9] font-black tracking-tighter text-white drop-shadow-2xl md:text-6xl">
-                {ideology.name}
-              </h2>
-            </div>
+            <h2 className="text-4xl leading-none font-black tracking-tight text-white drop-shadow-xl md:text-5xl">
+              {ideology.name}
+            </h2>
           </div>
         </div>
 
         <div className="flex flex-1 flex-col overflow-y-auto bg-zinc-950">
-          <div className="px-8 py-8 md:px-12">
-            <div className="mb-10 grid grid-cols-3 gap-4">
+          <div className="p-6 md:p-8">
+            <div className="mb-8 flex overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 p-1">
               {tabs.map(tab => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -142,28 +136,14 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={clsx(
-                      'flex flex-col items-center justify-center gap-3 rounded-xl border py-5 transition-all duration-300',
+                      'flex flex-1 flex-col items-center justify-center gap-1.5 rounded-lg py-3 transition-all duration-200',
                       isActive
-                        ? `${tab.bgClass} border-opacity-100 bg-opacity-10 shadow-lg`
-                        : 'text-muted-foreground border-white/5 bg-zinc-900/40 hover:border-white/10 hover:bg-zinc-900',
+                        ? `${tab.activeClass} border shadow-sm`
+                        : 'text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300',
                     )}
                   >
-                    <span
-                      className={clsx(
-                        'material-symbols-outlined text-2xl transition-colors',
-                        isActive ? tab.colorClass : 'text-muted-foreground opacity-60',
-                      )}
-                    >
-                      {tab.icon}
-                    </span>
-                    <span
-                      className={clsx(
-                        'text-xs font-bold tracking-wider uppercase',
-                        isActive ? 'text-foreground' : 'text-muted-foreground opacity-60',
-                      )}
-                    >
-                      {tab.label}
-                    </span>
+                    <span className="material-symbols-outlined text-xl">{tab.icon}</span>
+                    <span className="text-[10px] font-bold tracking-widest uppercase">{tab.label}</span>
                   </button>
                 );
               })}
@@ -175,10 +155,10 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
               >
                 <div className="prose prose-invert prose-lg max-w-none">
-                  <p className="text-lg leading-relaxed font-light whitespace-pre-line text-zinc-300">
+                  <p className="text-base leading-relaxed font-normal whitespace-pre-line text-zinc-400">
                     {currentDescription || t('no_description')}
                   </p>
                 </div>
@@ -187,20 +167,23 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
           </div>
         </div>
 
-        <div className="border-t border-white/10 bg-zinc-950 p-6 pb-10 md:px-12">
-          <div className="flex gap-4">
-            <Button onClick={onClose} variant="ghost" className="h-14 flex-1 text-zinc-400 hover:text-white">
+        <div className="border-t border-zinc-800 bg-zinc-950 p-6">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              onClick={onClose}
+              className="text-xs font-bold text-zinc-500 uppercase transition-colors hover:text-white"
+            >
               {t('close')}
-            </Button>
+            </button>
 
             {showExploreAction && (
-              <Link href={`/encyclopedia/${ideology.uuid}/definitions`} className="flex-[2]">
+              <Link href={`/encyclopedia/${ideology.uuid}/definitions`}>
                 <Button
                   variant="primary"
-                  className="shadow-primary/20 h-14 w-full border-none bg-green-600 text-lg font-bold text-white shadow-xl hover:bg-green-700"
+                  className="border-none bg-green-600 px-6 text-white shadow-lg shadow-green-900/20 hover:bg-green-500"
                 >
                   {t('explore_in_atlas')}
-                  <span className="material-symbols-outlined ml-2 text-xl">explore</span>
+                  <span className="material-symbols-outlined ml-2 text-lg">explore</span>
                 </Button>
               </Link>
             )}

@@ -11,33 +11,29 @@ import { PageHeader } from '@/components/molecules/PageHeader';
 import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 import { useIdeologyAtlasController } from '@/hooks/controllers/useIdeologyAtlasController';
 import { IdeologyDrawer } from '@/components/molecules/IdeologyDrawer';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
 import { Link } from '@/components/atoms/SmartLink';
 import { Button } from '@/components/atoms/Button';
 import { useAuthStore } from '@/store/useAuthStore';
-import { clsx } from 'clsx';
 
 interface IdeologyAtlasViewProps {
   uuid: string;
 }
 
-type TabType = 'neutral' | 'supporter' | 'detractor';
-
 export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
   const t = useTranslations('Atlas');
   const tEnc = useTranslations('Encyclopedia');
-  const { isAuthenticated, user } = useAuthStore();
+  const { user } = useAuthStore();
   const { state, loading, actions } = useIdeologyAtlasController(uuid, t('context_section'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [activeDescriptionTab, setActiveDescriptionTab] = useState<TabType>('neutral');
 
   if (loading.isGlobalLoading) {
     return (
       <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-5 py-8 md:px-10 lg:flex-row">
         <aside className="w-full lg:w-[320px] lg:shrink-0">
-          <Skeleton className="mb-6 h-[500px] w-full rounded-3xl" />
+          <Skeleton className="mb-6 h-[400px] w-full rounded-3xl" />
         </aside>
         <main className="flex-1 space-y-8">
           <Skeleton className="h-32 w-full rounded-2xl" />
@@ -52,21 +48,13 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
 
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
 
-  const hasMyAnswers = Object.keys(state.myUserAnswers).length > 0 || Object.keys(state.myUserCondAnswers).length > 0;
-  const viewVariant = (isAuthenticated || hasMyAnswers) && !state.isSuperUser ? 'other' : 'default';
+  const isSuperUser = state.isSuperUser;
+  const viewVariant = isSuperUser ? 'default' : 'other';
 
-  const canEdit = state.isSuperUser || isAuthenticated || hasMyAnswers;
+  const canEdit = true;
 
   const conditionerAnswers = viewVariant === 'other' ? state.myUserCondAnswers : state.conditionerAnswers;
   const conditionerOtherAnswers = viewVariant === 'other' ? state.conditionerAnswers : undefined;
-
-  const currentDescription = state.ideologyData
-    ? activeDescriptionTab === 'neutral'
-      ? state.ideologyData.description_neutral
-      : activeDescriptionTab === 'supporter'
-        ? state.ideologyData.description_supporter
-        : state.ideologyData.description_detractor
-    : '';
 
   const locationText = state.ideologyData?.associated_countries.length
     ? state.ideologyData.associated_countries.map(c => c.name).join(', ')
@@ -86,14 +74,14 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
             key={state.ideologyData.uuid}
             ideology={state.ideologyData as unknown as IdeologyList}
             onClose={() => setIsDrawerOpen(false)}
-            showExploreAction={false}
+            showExploreAction={true}
           />
         )}
       </AnimatePresence>
 
       <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
         <aside className="flex w-full flex-col gap-6 lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start">
-          {state.isSuperUser && (
+          {isSuperUser && (
             <div className="w-full">
               <div className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-[10px] font-black tracking-widest text-amber-500 uppercase select-none">
                 <span className="material-symbols-outlined text-sm">edit_document</span>
@@ -159,56 +147,14 @@ export function IdeologyAtlasView({ uuid }: IdeologyAtlasViewProps) {
               </div>
             </div>
 
-            <div className="px-4">
-              <div className="bg-secondary/80 flex gap-1 rounded-lg p-1">
-                {[
-                  { id: 'neutral', icon: 'info', label: 'Neutral' },
-                  { id: 'supporter', icon: 'thumb_up', label: 'Afín' },
-                  { id: 'detractor', icon: 'thumb_down', label: 'Contra' },
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveDescriptionTab(tab.id as TabType)}
-                    className={clsx(
-                      'flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-[10px] font-bold uppercase transition-all',
-                      activeDescriptionTab === tab.id
-                        ? 'bg-card text-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5',
-                    )}
-                  >
-                    <span className="material-symbols-outlined text-[14px]">{tab.icon}</span>
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="bg-secondary/30 border-primary rounded-xl border-l-2 p-4">
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={activeDescriptionTab}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line"
-                  >
-                    {currentDescription || tEnc('no_description')}
-                  </motion.p>
-                </AnimatePresence>
-              </div>
-            </div>
-
-            <div className="p-4 pt-0">
+            <div className="p-4 pt-0 pb-6">
               <Button
                 variant="primary"
-                className="group w-full justify-between border-none bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700"
+                className="group relative w-full justify-center gap-2 overflow-hidden bg-blue-600 py-6 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 hover:shadow-blue-500/40"
                 onClick={() => setIsDrawerOpen(true)}
               >
-                <span className="text-xs font-bold uppercase">
-                  {tEnc('read_full_article') || 'Leer artículo completo'}
-                </span>
-                <span className="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">
+                <span>{tEnc('read_full_article') || 'Leer artículo completo'}</span>
+                <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">
                   arrow_forward
                 </span>
               </Button>

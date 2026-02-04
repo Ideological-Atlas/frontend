@@ -224,7 +224,9 @@
     "discovery_modal_subtitle": "Based on your answers, your closest ideology is:",
     "view_comparison": "Compare Answers",
     "close_modal": "Close",
-    "affinity_pending": "Pending..."
+    "affinity_pending": "Pending...",
+    "read_more": "Read more",
+    "read_less": "Read less"
   },
   "Profile": {
     "page_title": "Profile Settings",
@@ -570,6 +572,10 @@
     "sort_name_desc": "Name (Z-A)",
     "sort_affinity_desc": "Highest Affinity",
     "sort_affinity_asc": "Lowest Affinity",
-    "affinity_loading": "Calculating..."
+    "affinity_loading": "Calculating...",
+    "secular": "Secular",
+    "location_label": "Location",
+    "religion_label": "Belief",
+    "read_full_article": "Read full article"
   }
 }

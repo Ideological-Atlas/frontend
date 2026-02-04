@@ -224,7 +224,9 @@
     "discovery_modal_subtitle": "Basado en tus respuestas, tu ideología más afín es:",
     "view_comparison": "Comparar Respuestas",
     "close_modal": "Cerrar",
-    "affinity_pending": "Pendiente..."
+    "affinity_pending": "Pendiente...",
+    "read_more": "Leer más",
+    "read_less": "Leer menos"
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -572,6 +574,10 @@
     "sort_name_desc": "Nombre (Z-A)",
     "sort_affinity_desc": "Mayor Afinidad",
     "sort_affinity_asc": "Menor Afinidad",
-    "affinity_loading": "Calculando..."
+    "affinity_loading": "Calculando...",
+    "secular": "Laico",
+    "location_label": "Ubicación",
+    "religion_label": "Creencia",
+    "read_full_article": "Leer artículo completo"
   }
 }
