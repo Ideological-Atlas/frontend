@@ -37,6 +37,8 @@ export function useAtlasProgress({ checkVisibility }: UseAtlasProgressProps) {
 
       if (contextTotal > 0) {
         sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
+      } else {
+        sMap[`context_${c.uuid}`] = 100;
       }
 
       compSections.forEach(sec => {
@@ -56,10 +58,10 @@ export function useAtlasProgress({ checkVisibility }: UseAtlasProgressProps) {
             }
           });
         }
-        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 100;
       });
 
-      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
     });
 
     return { progressMap: cMap, sectionProgressMap: sMap };

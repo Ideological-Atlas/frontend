@@ -53,17 +53,17 @@ export function AxisCard({
   const tCommon = useTranslations('Common');
   const [showDescription, setShowDescription] = useState(false);
 
-  // Lógica de detección de vista
   const effectiveHasTarget = hasTargetUser || !!targetUsername;
-  const isAnonymousView = effectiveHasTarget && !viewerUsername;
-  const isComparisonView = effectiveHasTarget && !!viewerUsername;
 
-  // Swapping de datos para vista anónima:
-  // Si es anónimo, 'answerData' trae la info de la Ideología (Target),
-  // pero visualmente queremos que eso se pinte en el slot "Other" (arriba)
-  // y dejar el slot "Primary" (abajo) vacío para el overlay de Login.
-  const sliderUserAnswer = isAnonymousView ? undefined : answerData;
-  const sliderOtherAnswer = isAnonymousView ? answerData : otherAnswerData;
+  const isAnonymousView = effectiveHasTarget && !viewerUsername;
+
+  const hasLocalAnswer = answerData && (answerData.value !== null || answerData.is_indifferent);
+  const isComparisonView = effectiveHasTarget && (!!viewerUsername || !!hasLocalAnswer);
+
+  const shouldSwap = isAnonymousView && !hasLocalAnswer && !otherAnswerData;
+
+  const sliderUserAnswer = shouldSwap ? undefined : answerData;
+  const sliderOtherAnswer = shouldSwap ? answerData : otherAnswerData;
 
   const { state, actions } = useAxisInteraction({
     axisUuid: axis.uuid,
@@ -77,15 +77,11 @@ export function AxisCard({
 
   const isOther = variant === 'other';
 
-  // Lógica de visualización basada en los datos "swapeados"
   const meHasAnswer = sliderUserAnswer && (sliderUserAnswer.value !== null || sliderUserAnswer.is_indifferent);
   const themHasAnswer = sliderOtherAnswer && (sliderOtherAnswer.value !== null || sliderOtherAnswer.is_indifferent);
   const themIsIndifferent = sliderOtherAnswer?.is_indifferent ?? false;
 
-  // En modo anónimo, el "otro" es la ideología, si no tiene respuesta, no la pintamos.
   const themIsNotAnswered = !themHasAnswer;
-
-  // Mostrar "No respondido" para el otro solo si estamos comparando realmente
   const showThemAsNotAnswered = (isComparisonView || isAnonymousView) && themIsNotAnswered;
 
   const canCopy = meHasAnswer && (themHasAnswer || themIsIndifferent);
@@ -112,23 +108,18 @@ export function AxisCard({
 
   const affinityStyle = affinity !== undefined && !themIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
 
-  const sliderBottomLabel = isAnonymousView
-    ? undefined
-    : viewerUsername
-      ? `@${viewerUsername}`
-      : t('your_answer_label');
+  const sliderBottomLabel = shouldSwap ? undefined : viewerUsername ? `@${viewerUsername}` : t('your_answer_label');
 
   const sliderTopLabel = targetUsername
     ? targetUsername.startsWith('@')
       ? targetUsername
       : `@${targetUsername}`
     : t('their_answer_label');
+
   const isTarget = id === 'atlas-first-axis';
 
-  // Si estamos en modo anónimo, el color custom (de la ideología) debe aplicarse a la parte "Other"
-  const effectiveOtherCustomColor = isAnonymousView ? customHexColor : otherCustomColor;
-  // Y el color "Primary" (el overlay o usuario futuro) vuelve a ser default
-  const effectiveCustomHexColor = isAnonymousView ? undefined : customHexColor;
+  const effectiveOtherCustomColor = shouldSwap ? customHexColor : otherCustomColor;
+  const effectiveCustomHexColor = shouldSwap ? undefined : customHexColor;
 
   return (
     <div
@@ -236,7 +227,7 @@ export function AxisCard({
               )}
             </div>
 
-            {!isAnonymousView && isComparisonView && affinityStyle && (
+            {isComparisonView && affinityStyle && (
               <div className="mt-2 flex items-center gap-3">
                 {!readOnly && canCopy && sliderOtherAnswer && (
                   <Button
@@ -263,7 +254,7 @@ export function AxisCard({
           </div>
         </div>
 
-        {!sliderOtherAnswer && meHasAnswer && !isAnonymousView && (
+        {!sliderOtherAnswer && meHasAnswer && !shouldSwap && (
           <div className="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start">
             <button
               onClick={actions.handleReset}
@@ -289,7 +280,7 @@ export function AxisCard({
         )}
       </div>
 
-      {!readOnly && !isAnonymousView && (
+      {!readOnly && !shouldSwap && (
         <div id={isTarget ? 'atlas-axis-indifferent' : undefined} className="flex items-center gap-2">
           <button
             onClick={actions.toggleIndifferent}
@@ -308,9 +299,7 @@ export function AxisCard({
             }
           >
             {isIndifferent && (
-              <span className={clsx('material-symbols-outlined text-primary-foreground text-[16px] font-bold')}>
-                check
-              </span>
+              <span className="material-symbols-outlined text-primary-foreground text-[16px] font-bold">check</span>
             )}
           </button>
           <button
@@ -327,7 +316,7 @@ export function AxisCard({
         id={isTarget ? 'atlas-axis-slider' : undefined}
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
-          isIndifferent && !sliderOtherAnswer && !isAnonymousView ? 'opacity-75' : '',
+          isIndifferent && !sliderOtherAnswer && !shouldSwap ? 'opacity-75' : '',
         )}
       >
         <Slider
@@ -339,7 +328,7 @@ export function AxisCard({
           bottomLabel={sliderBottomLabel}
           isIndifferent={isIndifferent}
           indifferentLabel={t('indifferent_status')}
-          isNotAnswered={false}
+          isNotAnswered={!meHasAnswer}
           notAnsweredLabel={t('not_answered_status')}
           otherValue={sliderOtherAnswer?.value ?? undefined}
           otherMarginLeft={sliderOtherAnswer?.margin_left ?? undefined}
@@ -353,11 +342,11 @@ export function AxisCard({
           onCommit={actions.handleCommit}
           onThumbWheel={actions.handleThumbWheel}
           readOnly={readOnly}
-          variant={isAnonymousView ? 'other' : variant}
+          variant={shouldSwap ? 'other' : variant}
           customHexColor={effectiveCustomHexColor}
           otherCustomColor={effectiveOtherCustomColor}
           primaryOverlay={
-            isAnonymousView ? (
+            shouldSwap ? (
               <Link href="/login" className="z-50">
                 <Button
                   variant="primary"

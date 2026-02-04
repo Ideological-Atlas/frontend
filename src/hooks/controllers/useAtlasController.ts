@@ -175,6 +175,7 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const loadingState = {
     isGlobalLoading: !isInitialized && complexities.length === 0,
+    isStructureLoading: !isInitialized,
     isSectionLoading: selectedComplexity ? !sections[selectedComplexity] : true,
     isAxesLoading: selectedSection && !isContextSelected ? !axes[selectedSection] : false,
     isGeneratingShare,

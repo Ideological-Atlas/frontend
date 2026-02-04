@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { IdeologiesService } from '@/lib/client/services/IdeologiesService';
-import { UsersService } from '@/lib/client/services/UsersService';
+import { AnswersService } from '@/lib/client/services/AnswersService';
 import type { IdeologyDetail } from '@/lib/client/models/IdeologyDetail';
 import type { IdeologyAxisDefinitionUpsertRequest } from '@/lib/client/models/IdeologyAxisDefinitionUpsertRequest';
 import type { IdeologyConditionerDefinitionUpsertRequest } from '@/lib/client/models/IdeologyConditionerDefinitionUpsertRequest';
-import { checkVisibility } from '@/lib/domain/atlas-logic';
+import { checkVisibility, calculateGlobalCleanup } from '@/lib/domain/atlas-logic';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { AxisBreakdown } from '@/lib/client/models/AxisBreakdown';
@@ -36,11 +36,9 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
   const [ideologyData, setIdeologyData] = useState<IdeologyDetail | null>(null);
   const [isLoadingIdeology, setIsLoadingIdeology] = useState(true);
 
-  // Respuestas de la Ideología (Target)
   const [axisAnswers, setAxisAnswers] = useState<Record<string, AnswerData>>({});
   const [conditionerAnswers, setConditionerAnswers] = useState<Record<string, string>>({});
 
-  // Datos de Afinidad (Solo si logueado)
   const [axisAffinityMap, setAxisAffinityMap] = useState<
     Record<string, { affinity: number | null; my_answer: AnswerData | null }>
   >({});
@@ -50,17 +48,45 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
-  // Cargar estructura global y respuestas del usuario si corresponde
+  const allConditioners = useMemo(() => Object.values(conditioners).flat(), [conditioners]);
+  const allSections = useMemo(() => Object.values(sections).flat(), [sections]);
+
   useEffect(() => {
     fetchAllData(isAuthenticated, isVerified);
   }, [isInitialized, fetchAllData, isAuthenticated, isVerified]);
 
-  // Función para cargar afinidad (separada para llamarla independientemente)
   const refreshAffinity = useCallback(async () => {
-    if (!isAuthenticated || !ideologyUuid) return;
+    if (!ideologyUuid) return;
 
     try {
-      const affinityData = await UsersService.usersAffinityIdeologyRetrieve(ideologyUuid);
+      let completedAnswerUuid: string | undefined = undefined;
+
+      if (!isAuthenticated || (user && !user.is_verified)) {
+        const { answers, conditionerAnswers } = useAtlasStore.getState();
+        const axisList = Object.entries(answers).map(([key, data]) => ({
+          uuid: key,
+          value: data.value,
+          margin_left: data.margin_left ?? 0,
+          margin_right: data.margin_right ?? 0,
+        }));
+        const conditionersList = Object.entries(conditionerAnswers).map(([key, value]) => ({
+          uuid: key,
+          value,
+        }));
+
+        try {
+          const snapshot = await AnswersService.answersCompletedGenerateCreate({
+            axis: axisList,
+            conditioners: conditionersList,
+          });
+          completedAnswerUuid = snapshot.uuid;
+        } catch (e) {
+          console.error('Error creating snapshot for affinity', e);
+          return;
+        }
+      }
+
+      const affinityData = await IdeologiesService.ideologiesAffinityRetrieve(ideologyUuid, completedAnswerUuid);
 
       const axMap: Record<string, { affinity: number | null; my_answer: AnswerData | null }> = {};
       const compMap: Record<string, number | null> = {};
@@ -93,14 +119,12 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
     } catch (err) {
       console.error('Error fetching affinity:', err);
     }
-  }, [isAuthenticated, ideologyUuid]);
+  }, [isAuthenticated, ideologyUuid, user]);
 
-  // Cargar datos de la ideología (Siempre, logueado o no)
   const refreshIdeology = useCallback(async () => {
     if (!ideologyUuid) return;
     try {
       setIsLoadingIdeology(true);
-      // Esta llamada es fundamental para obtener la estructura y respuestas de la ideología
       const data = await IdeologiesService.ideologiesRetrieve(ideologyUuid);
       setIdeologyData(data);
 
@@ -122,16 +146,13 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
       setAxisAnswers(newAxisAnswers);
       setConditionerAnswers(newCondAnswers);
 
-      // Si además estamos logueados, pedimos la afinidad
-      if (isAuthenticated) {
-        refreshAffinity();
-      }
+      refreshAffinity();
     } catch (error) {
       console.error('Error fetching ideology definitions:', error);
     } finally {
       setIsLoadingIdeology(false);
     }
-  }, [ideologyUuid, isAuthenticated, refreshAffinity]);
+  }, [ideologyUuid, refreshAffinity]);
 
   useEffect(() => {
     refreshIdeology();
@@ -146,10 +167,8 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
   const combinedConditionerAnswers = useMemo(() => {
     const computed: Record<string, string> = {};
-    const allConditioners = Object.values(conditioners).flat();
     const normSourceAxis: Record<string, AnswerData> = {};
 
-    // Usamos las respuestas de la ideología para calcular su estructura visible
     Object.entries(axisAnswers).forEach(([k, v]) => {
       normSourceAxis[normalizeUuid(k)] = v;
     });
@@ -180,7 +199,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
     });
 
     return { ...normCond, ...computed };
-  }, [conditioners, axisAnswers, conditionerAnswers]);
+  }, [allConditioners, axisAnswers, conditionerAnswers]);
 
   const visibilityChecker = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -190,14 +209,13 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
   const myVisibilityChecker = useMemo(() => {
     const computedVirtuals: Record<string, string> = {};
-    const allConds = Object.values(conditioners).flat();
     const normMyAxis: Record<string, AnswerData> = {};
 
     Object.entries(myUserAnswers).forEach(([k, v]) => {
       normMyAxis[normalizeUuid(k)] = v;
     });
 
-    allConds.forEach(cond => {
+    allConditioners.forEach(cond => {
       if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
         const ax = normMyAxis[sourceUuid];
@@ -220,7 +238,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (rules: any) => checkVisibility(rules, combined);
-  }, [conditioners, myUserAnswers, myUserCondAnswers]);
+  }, [allConditioners, myUserAnswers, myUserCondAnswers]);
 
   const displaySections: IdeologySection[] = useMemo(() => {
     const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
@@ -280,34 +298,49 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
   const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
     if (isSuperUser) {
-      // ADMIN
-      setAxisAnswers(prev => ({
-        ...prev,
-        [axisUuid]: {
-          value: data.value ?? prev[axisUuid]?.value ?? null,
-          margin_left: data.margin_left ?? prev[axisUuid]?.margin_left,
-          margin_right: data.margin_right ?? prev[axisUuid]?.margin_right,
-          is_indifferent: data.is_indifferent ?? prev[axisUuid]?.is_indifferent,
-        },
-      }));
+      const newData = {
+        value: data.value ?? axisAnswers[axisUuid]?.value ?? null,
+        margin_left: data.margin_left ?? axisAnswers[axisUuid]?.margin_left,
+        margin_right: data.margin_right ?? axisAnswers[axisUuid]?.margin_right,
+        is_indifferent: data.is_indifferent ?? axisAnswers[axisUuid]?.is_indifferent,
+      };
+
+      const proposedAxisAnswers = { ...axisAnswers, [axisUuid]: newData };
+
+      const { nextCondAnswers, nextAxisAnswers, condsToRemoveRemote, axesToRemoveRemote } = calculateGlobalCleanup(
+        proposedAxisAnswers,
+        conditionerAnswers,
+        allConditioners,
+        allSections,
+        axes,
+      );
+
+      setAxisAnswers(nextAxisAnswers);
+      setConditionerAnswers(nextCondAnswers);
 
       try {
         await IdeologiesService.ideologiesDefinitionsAxisCreate(
           axisUuid,
           ideologyUuid,
-          data as IdeologyAxisDefinitionUpsertRequest,
+          newData as IdeologyAxisDefinitionUpsertRequest,
         );
+
+        await Promise.all([
+          ...axesToRemoveRemote.map(uuid =>
+            IdeologiesService.ideologiesDefinitionsAxisDeleteDestroy(uuid, ideologyUuid),
+          ),
+          ...condsToRemoveRemote.map(uuid =>
+            IdeologiesService.ideologiesDefinitionsConditionerDeleteDestroy(uuid, ideologyUuid),
+          ),
+        ]);
       } catch (e) {
         console.error('Failed to save axis definition', e);
         refreshIdeology();
       }
-    } else if (isAuthenticated) {
-      // USER
+    } else {
       try {
-        await saveUserAnswer(axisUuid, data, true, isVerified);
-        if (isVerified) {
-          refreshAffinity();
-        }
+        await saveUserAnswer(axisUuid, data, isAuthenticated, isVerified);
+        refreshAffinity();
       } catch (e) {
         console.error('Failed to save user answer', e);
       }
@@ -315,12 +348,10 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
   };
 
   const handleDeleteAnswer = async (axisUuid: string) => {
-    if (isAuthenticated && !isSuperUser) {
+    if (!isSuperUser) {
       try {
-        await deleteUserAnswer(axisUuid, true, isVerified);
-        if (isVerified) {
-          refreshAffinity();
-        }
+        await deleteUserAnswer(axisUuid, isAuthenticated, isVerified);
+        refreshAffinity();
       } catch (e) {
         console.error('Failed to delete user answer', e);
       }
@@ -329,20 +360,40 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
 
   const handleSaveConditioner = async (condUuid: string, value: string) => {
     if (isSuperUser) {
-      // ADMIN
-      setConditionerAnswers(prev => ({ ...prev, [condUuid]: value }));
+      const proposedCondAnswers = { ...conditionerAnswers, [condUuid]: value };
+
+      const { nextCondAnswers, nextAxisAnswers, condsToRemoveRemote, axesToRemoveRemote } = calculateGlobalCleanup(
+        axisAnswers,
+        proposedCondAnswers,
+        allConditioners,
+        allSections,
+        axes,
+      );
+
+      setConditionerAnswers(nextCondAnswers);
+      setAxisAnswers(nextAxisAnswers);
+
       try {
         await IdeologiesService.ideologiesDefinitionsConditionerCreate(condUuid, ideologyUuid, {
           answer: value,
         } as IdeologyConditionerDefinitionUpsertRequest);
+
+        await Promise.all([
+          ...axesToRemoveRemote.map(uuid =>
+            IdeologiesService.ideologiesDefinitionsAxisDeleteDestroy(uuid, ideologyUuid),
+          ),
+          ...condsToRemoveRemote.map(uuid =>
+            IdeologiesService.ideologiesDefinitionsConditionerDeleteDestroy(uuid, ideologyUuid),
+          ),
+        ]);
       } catch (e) {
         console.error('Failed to save conditioner definition', e);
         refreshIdeology();
       }
-    } else if (isAuthenticated) {
-      // USER
+    } else {
       try {
-        await saveUserCondAnswer(condUuid, value, true, isVerified);
+        await saveUserCondAnswer(condUuid, value, isAuthenticated, isVerified);
+        refreshAffinity();
       } catch (e) {
         console.error('Failed to save user conditioner answer', e);
       }
@@ -350,9 +401,10 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
   };
 
   const handleDeleteConditioner = async (condUuid: string) => {
-    if (isAuthenticated && !isSuperUser) {
+    if (!isSuperUser) {
       try {
-        await deleteUserCondAnswer(condUuid, true, isVerified);
+        await deleteUserCondAnswer(condUuid, isAuthenticated, isVerified);
+        refreshAffinity();
       } catch (e) {
         console.error('Failed to delete user conditioner answer', e);
       }
@@ -401,17 +453,15 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
             }
           });
         }
-        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 100;
       });
-      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
     });
     return { progressMap: cMap, sectionProgressMap: sMap };
   }, [complexities, sections, axes, axisAnswers, conditioners, conditionerAnswers, visibilityChecker]);
 
   const myProgressMap = useMemo(() => {
     const map: Record<string, number> = {};
-    if (!isAuthenticated) return map;
-
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       let totalItems = 0;
@@ -431,10 +481,10 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
           });
         }
       });
-      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
     });
     return map;
-  }, [isAuthenticated, complexities, sections, axes, myUserAnswers, myVisibilityChecker]);
+  }, [complexities, sections, axes, myUserAnswers, myVisibilityChecker]);
 
   const sortedComplexities = useMemo(
     () => [...complexities].sort((a, b) => a.complexity - b.complexity),
@@ -479,6 +529,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
       axisAnswers,
       conditionerAnswers,
       myUserAnswers,
+      myUserCondAnswers,
       progressMap,
       myProgressMap,
       sectionProgressMap,

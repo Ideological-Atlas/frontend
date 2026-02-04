@@ -100,12 +100,28 @@ export function IdeologyDrawer({ ideology, onClose, showExploreAction = true }: 
           </button>
 
           <div className="absolute bottom-0 left-0 z-30 flex w-full flex-col p-8 md:p-12">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md">
-                  {t('ideology_tag')}
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md">
+                {t('ideology_tag')}
+              </span>
+              {ideology.associated_countries.map(c => (
+                <span
+                  key={c.id}
+                  className="flex items-center gap-1 rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md"
+                >
+                  <span className="material-symbols-outlined text-[14px]">public</span>
+                  {c.name}
                 </span>
-              </div>
+              ))}
+              {ideology.associated_regions.map(r => (
+                <span
+                  key={r.id}
+                  className="flex items-center gap-1 rounded border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg backdrop-blur-md"
+                >
+                  <span className="material-symbols-outlined text-[14px]">location_on</span>
+                  {r.name}
+                </span>
+              ))}
             </div>
 
             <div className="flex items-end gap-6">

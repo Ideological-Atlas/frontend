@@ -26,6 +26,7 @@ export function DiscoveryCard({ ideology, affinity, isLoading }: DiscoveryCardPr
     <Link href={`/encyclopedia/${ideology.uuid}/definitions`} className="block w-full">
       <motion.div
         layout
+        layoutId={ideology.uuid}
         transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -33,13 +34,14 @@ export function DiscoveryCard({ ideology, affinity, isLoading }: DiscoveryCardPr
         className="bg-card border-border hover:border-primary/50 group relative flex w-full overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md"
       >
         <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-zinc-950 md:h-auto md:w-32">
-          <div className="absolute inset-0 z-0 opacity-80" style={{ backgroundColor: bgColor }} />
+          <div className="absolute inset-0 z-0 opacity-60" style={{ backgroundColor: bgColor }} />
+
           {ideology.flag ? (
             <Image
               src={ideology.flag}
               alt={ideology.name}
               fill
-              className="object-cover opacity-80 mix-blend-overlay transition-transform duration-500 group-hover:scale-110"
+              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-110"
               unoptimized
             />
           ) : (

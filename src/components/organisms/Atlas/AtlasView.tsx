@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Skeleton } from '@/components/atoms/Skeleton';
 import { Button } from '@/components/atoms/Button';
@@ -14,11 +13,9 @@ import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
 import { GuestWarningModal } from './GuestWarningModal';
 import { UnverifiedWarningModal } from './UnverifiedWarningModal';
-import { DiscoveryLockModal } from '@/components/molecules/DiscoveryLockModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
 import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 import { IncompleteLevelModal } from '@/components/molecules/IncompleteLevelModal';
-import { useAuthStore } from '@/store/useAuthStore';
 import { useSmartRouter } from '@/hooks/useSmartRouter';
 
 export function AtlasView() {
@@ -26,10 +23,8 @@ export function AtlasView() {
   const tOnboarding = useTranslations('Onboarding');
   const locale = useLocale();
   const router = useSmartRouter();
-  const { isAuthenticated, user } = useAuthStore();
 
   const { state, loading, actions } = useAtlasController(t('context_section'));
-  const [isDiscoveryLockOpen, setIsDiscoveryLockOpen] = useState(false);
 
   if (loading.isGlobalLoading) {
     return (
@@ -55,11 +50,7 @@ export function AtlasView() {
   };
 
   const handleDiscoveryClick = () => {
-    if (!isAuthenticated || !user?.is_verified) {
-      setIsDiscoveryLockOpen(true);
-    } else {
-      router.push(`/${locale}/atlas/discovery`);
-    }
+    router.push(`/${locale}/atlas/discovery`);
   };
 
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
@@ -68,7 +59,6 @@ export function AtlasView() {
     <>
       <GuestWarningModal />
       <UnverifiedWarningModal />
-      <DiscoveryLockModal isOpen={isDiscoveryLockOpen} onClose={() => setIsDiscoveryLockOpen(false)} />
 
       <AtlasOnboarding />
       <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
@@ -98,6 +88,7 @@ export function AtlasView() {
               onSelect={actions.selectComplexity}
               isLoading={false}
               progressMap={state.progressMap}
+              isProgressLoading={loading.isStructureLoading}
             />
           </div>
 
@@ -109,12 +100,14 @@ export function AtlasView() {
                 className="mt-6"
                 onShare={actions.share}
                 isSharing={loading.isGeneratingShare}
+                isLoading={loading.isStructureLoading}
               />
 
-              <div className="mt-4">
+              <div className="mt-4" id="atlas-discovery-btn">
                 <Button
                   onClick={handleDiscoveryClick}
                   variant="primary"
+                  disabled={loading.isStructureLoading || state.selectedProgress < 100}
                   className="w-full bg-green-600 shadow-lg shadow-green-500/20 hover:bg-green-700"
                 >
                   <span className="material-symbols-outlined mr-2">explore</span>

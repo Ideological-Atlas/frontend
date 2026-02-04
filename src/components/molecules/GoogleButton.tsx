@@ -8,13 +8,14 @@ import { googleLoginAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
 import { useRouter } from 'next/navigation';
+import { syncLocalAnswersToProfile } from '@/lib/client/auth/sync-actions';
 
 export function GoogleButton() {
   const t = useTranslations('Auth');
   const locale = useLocale();
   const router = useRouter();
   const loginSuccess = useAuthStore(state => state.loginSuccess);
-  const resetAtlas = useAtlasStore(state => state.reset);
+  const { reset, fetchAllData } = useAtlasStore();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,8 +25,13 @@ export function GoogleButton() {
         const result = await googleLoginAction(tokenResponse.access_token);
 
         if (result.success && result.user && result.access && result.refresh) {
-          resetAtlas();
           loginSuccess(result.user, result.access, result.refresh);
+
+          await syncLocalAnswersToProfile(false);
+
+          reset();
+          await fetchAllData(true, result.user.is_verified);
+
           router.push(`/${locale}`);
           router.refresh();
         } else {

@@ -110,12 +110,12 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             <ConditionerList
               conditioners={state.currentConditioners}
               answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
-              otherAnswers={isAuthenticated && !isSelfView ? state.theirConditionerAnswers : undefined}
+              otherAnswers={!isSelfView ? state.theirConditionerAnswers : undefined}
               targetUsername={targetUser?.username}
               onSaveAnswer={actions.saveConditioner}
               isLoading={false}
               dependencyNameMap={state.dependencyNameMap}
-              readOnly={!isAuthenticated}
+              readOnly={false}
               variant={effectiveVariant}
             />
           ) : (
@@ -128,7 +128,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
               onSaveAnswer={actions.saveAnswer}
               isLoading={false}
               isLevelLoading={false}
-              readOnly={!isAuthenticated}
+              readOnly={false}
               variant={effectiveVariant}
             />
           )}

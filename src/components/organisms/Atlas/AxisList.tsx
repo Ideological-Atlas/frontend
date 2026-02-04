@@ -83,7 +83,7 @@ export function AxisList({
             return rule.conditioner?.name || 'Unknown';
           });
 
-          const storeAnswer = answers[axis.uuid]; // Respuesta de la ideología (si estamos en enciclopedia)
+          const storeAnswer = answers[axis.uuid];
           const comparisonData = axisAffinityMap ? axisAffinityMap[axis.uuid] : undefined;
 
           let primaryAnswer: AnswerData | undefined;
@@ -93,29 +93,21 @@ export function AxisList({
           let activeCustomHexColor = customHexColor;
           let otherCustomColor = undefined;
 
-          // Si estamos en modo comparación (variant other)
           if (variant === 'other') {
-            primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined; // Yo (Usuario)
-            secondaryAnswer = storeAnswer; // El otro (Ideología)
+            primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined;
+            secondaryAnswer = storeAnswer;
             affinityValue = comparisonData?.affinity;
 
-            effectiveVariant = 'default'; // Para que AxisCard use el estilo primario para 'mí'
+            effectiveVariant = 'default';
 
-            // Lógica específica para Ideologías (si hay un color personalizado de ideología)
-            // Si hay customHexColor, significa que el "otro" es una ideología.
-            // Queremos que "YO" sea Verde (Primary/Default) y "ELLOS" (Ideología) sean del color custom.
             if (customHexColor) {
-              // primaryAnswer (YO) => Se queda con estilo default (Verde)
-              // secondaryAnswer (IDEOLOGIA) => Se le aplica el color custom
-              activeCustomHexColor = undefined; // Quitamos custom color del primario para que sea Verde
-              otherCustomColor = customHexColor; // Aplicamos custom color al secundario
+              activeCustomHexColor = undefined;
+              otherCustomColor = customHexColor;
             }
           } else {
-            // Modo "Ver solo la ideología" (sin login o admin)
             primaryAnswer = storeAnswer;
             secondaryAnswer = undefined;
             effectiveVariant = 'default';
-            // Aquí customHexColor se aplica a primaryAnswer (la ideología), lo cual es correcto para modo visualización simple
           }
 
           return (

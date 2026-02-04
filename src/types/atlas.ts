@@ -41,6 +41,8 @@ export interface StructureSlice {
 export interface AnswersSlice {
   answers: Record<string, AnswerData>;
   conditionerAnswers: Record<string, string>;
+  tempCompletedAnswerUuid: string | null;
+  setTempCompletedAnswerUuid: (uuid: string | null) => void;
   saveAnswer: (
     axisUuid: string,
     data: AnswerUpdatePayload,
