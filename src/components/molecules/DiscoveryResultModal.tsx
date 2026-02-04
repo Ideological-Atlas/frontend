@@ -22,6 +22,7 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
   const t = useTranslations('Atlas');
   const tEnc = useTranslations('Encyclopedia');
   const [activeTab, setActiveTab] = useState<TabType>('neutral');
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (!winner) return null;
 
@@ -68,9 +69,9 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
             initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 50 }}
-            className="bg-card border-border relative w-full max-w-lg overflow-hidden rounded-3xl border shadow-2xl"
+            className="bg-card border-border relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl border shadow-2xl"
           >
-            <div className="relative h-40 w-full overflow-hidden bg-zinc-900">
+            <div className="relative h-40 w-full shrink-0 overflow-hidden bg-zinc-900">
               <div className="absolute inset-0 opacity-60" style={{ backgroundColor: winner.color || '#333' }} />
               {winner.flag && (
                 <Image
@@ -98,13 +99,13 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
               </div>
             </div>
 
-            <div className="flex flex-col items-center p-8 text-center">
+            <div className="flex flex-1 flex-col overflow-y-auto p-6 text-center md:p-8">
               <p className="text-muted-foreground mb-4 text-sm font-medium tracking-widest uppercase">
                 {t('discovery_modal_subtitle')}
               </p>
 
               <h1 className="text-foreground mb-2 text-4xl font-black">{winner.name}</h1>
-              <div className="bg-primary/10 text-primary mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm font-bold">
+              <div className="bg-primary/10 text-primary mx-auto mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm font-bold">
                 <span className="material-symbols-outlined text-lg">verified</span>
                 {Math.round(affinity)}% {t('affinity_score')}
               </div>
@@ -118,6 +119,7 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
                       onClick={e => {
                         e.stopPropagation();
                         setActiveTab(tab.id);
+                        setIsExpanded(false);
                       }}
                       className={clsx(
                         'relative flex h-9 flex-1 items-center justify-center rounded-md transition-all',
@@ -138,7 +140,7 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
                 })}
               </div>
 
-              <div className="relative mb-8 min-h-[100px] w-full">
+              <div className="relative mb-6 w-full">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -147,14 +149,30 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
                     exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <p className="text-muted-foreground text-base leading-relaxed whitespace-pre-line">
-                      {currentDescription || tEnc('no_description')}
-                    </p>
+                    <div
+                      className={clsx(
+                        'relative transition-all duration-300',
+                        !isExpanded && 'max-h-[140px] overflow-hidden md:max-h-none md:overflow-visible',
+                      )}
+                    >
+                      <p className="text-muted-foreground text-base leading-relaxed whitespace-pre-line">
+                        {currentDescription || tEnc('no_description')}
+                      </p>
+                      {!isExpanded && (
+                        <div className="from-card absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t to-transparent md:hidden" />
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      className="text-primary mt-2 text-xs font-bold tracking-wider uppercase hover:underline md:hidden"
+                    >
+                      {isExpanded ? t('read_less') : t('read_more')}
+                    </button>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              <div className="flex w-full flex-col gap-3">
+              <div className="mt-auto flex w-full flex-col gap-3">
                 <Link href={`/encyclopedia/${winner.uuid}/definitions`} className="w-full">
                   <Button variant="primary" size="lg" className="shadow-primary/20 w-full shadow-lg">
                     {t('view_comparison')}

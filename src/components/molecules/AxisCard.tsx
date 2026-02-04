@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/components/atoms/SmartLink';
 import { Slider } from '@/components/atoms/Slider';
 import { Dropdown } from '@/components/atoms/Dropdown';
 import { DependencyBadge } from '@/components/atoms/DependencyBadge';
@@ -54,16 +53,10 @@ export function AxisCard({
   const [showDescription, setShowDescription] = useState(false);
 
   const effectiveHasTarget = hasTargetUser || !!targetUsername;
+  const isComparisonView = effectiveHasTarget;
 
-  const isAnonymousView = effectiveHasTarget && !viewerUsername;
-
-  const hasLocalAnswer = answerData && (answerData.value !== null || answerData.is_indifferent);
-  const isComparisonView = effectiveHasTarget && (!!viewerUsername || !!hasLocalAnswer);
-
-  const shouldSwap = isAnonymousView && !hasLocalAnswer && !otherAnswerData;
-
-  const sliderUserAnswer = shouldSwap ? undefined : answerData;
-  const sliderOtherAnswer = shouldSwap ? answerData : otherAnswerData;
+  const sliderUserAnswer = answerData;
+  const sliderOtherAnswer = otherAnswerData;
 
   const { state, actions } = useAxisInteraction({
     axisUuid: axis.uuid,
@@ -82,7 +75,8 @@ export function AxisCard({
   const themIsIndifferent = sliderOtherAnswer?.is_indifferent ?? false;
 
   const themIsNotAnswered = !themHasAnswer;
-  const showThemAsNotAnswered = (isComparisonView || isAnonymousView) && themIsNotAnswered;
+
+  const showThemAsNotAnswered = isComparisonView && themIsNotAnswered;
 
   const canCopy = meHasAnswer && (themHasAnswer || themIsIndifferent);
 
@@ -94,12 +88,11 @@ export function AxisCard({
   const activeBgClass = isOther ? 'bg-other-user/5' : 'bg-primary/5';
   const activeTitleClass = isOther ? 'text-other-user' : 'text-primary';
 
-  const cardStyle =
-    isComparisonView || isAnonymousView
-      ? 'bg-card border-border'
-      : meHasAnswer && !isIndifferent
-        ? `${activeBorderClass} ${activeBgClass}`
-        : 'bg-card border-border';
+  const cardStyle = isComparisonView
+    ? 'bg-card border-border'
+    : meHasAnswer && !isIndifferent
+      ? `${activeBorderClass} ${activeBgClass}`
+      : 'bg-card border-border';
 
   const customStyle =
     customHexColor && meHasAnswer && !isIndifferent
@@ -108,7 +101,7 @@ export function AxisCard({
 
   const affinityStyle = affinity !== undefined && !themIsNotAnswered ? getAffinityBadgeStyles(affinity) : null;
 
-  const sliderBottomLabel = shouldSwap ? undefined : viewerUsername ? `@${viewerUsername}` : t('your_answer_label');
+  const sliderBottomLabel = viewerUsername ? `@${viewerUsername}` : t('your_answer_label');
 
   const sliderTopLabel = targetUsername
     ? targetUsername.startsWith('@')
@@ -118,9 +111,6 @@ export function AxisCard({
 
   const isTarget = id === 'atlas-first-axis';
 
-  const effectiveOtherCustomColor = shouldSwap ? customHexColor : otherCustomColor;
-  const effectiveCustomHexColor = shouldSwap ? undefined : customHexColor;
-
   return (
     <div
       id={id}
@@ -128,7 +118,7 @@ export function AxisCard({
         'relative flex flex-col gap-6 rounded-xl border p-6 shadow-sm transition-all duration-300',
         !readOnly && 'hover:shadow-md',
         !customHexColor && cardStyle,
-        isIndifferent && !sliderOtherAnswer && !isAnonymousView ? 'opacity-75' : '',
+        isIndifferent && !sliderOtherAnswer && !effectiveHasTarget ? 'opacity-75' : '',
         isDropdownOpen || showDescription ? 'z-50' : 'z-0',
       )}
       style={customStyle}
@@ -254,7 +244,7 @@ export function AxisCard({
           </div>
         </div>
 
-        {!sliderOtherAnswer && meHasAnswer && !shouldSwap && (
+        {!sliderOtherAnswer && meHasAnswer && (
           <div className="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start">
             <button
               onClick={actions.handleReset}
@@ -280,7 +270,7 @@ export function AxisCard({
         )}
       </div>
 
-      {!readOnly && !shouldSwap && (
+      {!readOnly && (
         <div id={isTarget ? 'atlas-axis-indifferent' : undefined} className="flex items-center gap-2">
           <button
             onClick={actions.toggleIndifferent}
@@ -293,8 +283,8 @@ export function AxisCard({
               readOnly && 'cursor-default opacity-50',
             )}
             style={
-              isIndifferent && effectiveCustomHexColor
-                ? { backgroundColor: effectiveCustomHexColor, borderColor: effectiveCustomHexColor }
+              isIndifferent && customHexColor
+                ? { backgroundColor: customHexColor, borderColor: customHexColor }
                 : undefined
             }
           >
@@ -316,7 +306,7 @@ export function AxisCard({
         id={isTarget ? 'atlas-axis-slider' : undefined}
         className={clsx(
           'relative z-10 px-2 pb-2 transition-opacity duration-300',
-          isIndifferent && !sliderOtherAnswer && !shouldSwap ? 'opacity-75' : '',
+          isIndifferent && !sliderOtherAnswer ? 'opacity-75' : '',
         )}
       >
         <Slider
@@ -328,7 +318,7 @@ export function AxisCard({
           bottomLabel={sliderBottomLabel}
           isIndifferent={isIndifferent}
           indifferentLabel={t('indifferent_status')}
-          isNotAnswered={!meHasAnswer}
+          isNotAnswered={readOnly && !meHasAnswer}
           notAnsweredLabel={t('not_answered_status')}
           otherValue={sliderOtherAnswer?.value ?? undefined}
           otherMarginLeft={sliderOtherAnswer?.margin_left ?? undefined}
@@ -342,23 +332,9 @@ export function AxisCard({
           onCommit={actions.handleCommit}
           onThumbWheel={actions.handleThumbWheel}
           readOnly={readOnly}
-          variant={shouldSwap ? 'other' : variant}
-          customHexColor={effectiveCustomHexColor}
-          otherCustomColor={effectiveOtherCustomColor}
-          primaryOverlay={
-            shouldSwap ? (
-              <Link href="/login" className="z-50">
-                <Button
-                  variant="primary"
-                  size="default"
-                  className="shadow-primary/20 gap-2 px-6 text-sm font-bold shadow-lg"
-                >
-                  <span className="material-symbols-outlined text-[18px]">login</span>
-                  {t('sign_in_to_compare')}
-                </Button>
-              </Link>
-            ) : undefined
-          }
+          variant={variant}
+          customHexColor={customHexColor}
+          otherCustomColor={otherCustomColor}
         />
       </div>
     </div>
