@@ -33,7 +33,7 @@ export interface StructureSlice {
   axes: Record<string, IdeologyAxis[]>;
   isInitialized: boolean;
   isAnswersInitialized: boolean;
-  fetchAllData: (isAuthenticated: boolean) => Promise<void>;
+  fetchAllData: (isAuthenticated: boolean, isVerified: boolean) => Promise<void>;
   initializeStructure: (data: InitialServerData) => void;
   resetStructure: () => void;
 }
@@ -41,10 +41,22 @@ export interface StructureSlice {
 export interface AnswersSlice {
   answers: Record<string, AnswerData>;
   conditionerAnswers: Record<string, string>;
-  saveAnswer: (axisUuid: string, data: AnswerUpdatePayload, isAuthenticated: boolean) => Promise<void>;
-  deleteAnswer: (axisUuid: string, isAuthenticated: boolean) => Promise<void>;
-  saveConditionerAnswer: (conditionerUuid: string, value: string, isAuthenticated: boolean) => Promise<void>;
-  deleteConditionerAnswer: (conditionerUuid: string, isAuthenticated: boolean) => Promise<void>;
+  tempCompletedAnswerUuid: string | null;
+  setTempCompletedAnswerUuid: (uuid: string | null) => void;
+  saveAnswer: (
+    axisUuid: string,
+    data: AnswerUpdatePayload,
+    isAuthenticated: boolean,
+    isVerified: boolean,
+  ) => Promise<void>;
+  deleteAnswer: (axisUuid: string, isAuthenticated: boolean, isVerified: boolean) => Promise<void>;
+  saveConditionerAnswer: (
+    conditionerUuid: string,
+    value: string,
+    isAuthenticated: boolean,
+    isVerified: boolean,
+  ) => Promise<void>;
+  deleteConditionerAnswer: (conditionerUuid: string, isAuthenticated: boolean, isVerified: boolean) => Promise<void>;
   resetAnswers: () => void;
 }
 

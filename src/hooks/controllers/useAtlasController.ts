@@ -10,7 +10,8 @@ import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
 export function useAtlasController(contextSectionLabel: string) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const isVerified = user?.is_verified ?? false;
 
   const {
     complexities,
@@ -49,9 +50,9 @@ export function useAtlasController(contextSectionLabel: string) {
 
   useEffect(() => {
     if (!isInitialized) {
-      fetchAllData(isAuthenticated);
+      fetchAllData(isAuthenticated, isVerified);
     }
-  }, [isInitialized, isAuthenticated, fetchAllData]);
+  }, [isInitialized, isAuthenticated, isVerified, fetchAllData]);
 
   const dependencyNameMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -149,16 +150,16 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const handlers = {
     saveAnswer: (axisUuid: string, data: AnswerUpdatePayload) => {
-      saveAnswer(axisUuid, data, isAuthenticated);
+      saveAnswer(axisUuid, data, isAuthenticated, isVerified);
     },
     deleteAnswer: (axisUuid: string) => {
-      deleteAnswer(axisUuid, isAuthenticated);
+      deleteAnswer(axisUuid, isAuthenticated, isVerified);
     },
     saveConditioner: (condUuid: string, value: string) => {
-      saveConditionerAnswer(condUuid, value, isAuthenticated);
+      saveConditionerAnswer(condUuid, value, isAuthenticated, isVerified);
     },
     deleteConditioner: (condUuid: string) => {
-      deleteConditionerAnswer(condUuid, isAuthenticated);
+      deleteConditionerAnswer(condUuid, isAuthenticated, isVerified);
     },
     selectComplexity: setSelectedComplexity,
     selectSection: setSelectedSection,
@@ -174,6 +175,7 @@ export function useAtlasController(contextSectionLabel: string) {
 
   const loadingState = {
     isGlobalLoading: !isInitialized && complexities.length === 0,
+    isStructureLoading: !isInitialized,
     isSectionLoading: selectedComplexity ? !sections[selectedComplexity] : true,
     isAxesLoading: selectedSection && !isContextSelected ? !axes[selectedSection] : false,
     isGeneratingShare,

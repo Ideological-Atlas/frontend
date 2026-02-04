@@ -20,6 +20,7 @@ interface AxisListProps {
   isLevelLoading: boolean;
   readOnly?: boolean;
   variant?: 'default' | 'other';
+  customHexColor?: string;
 }
 
 const itemVariants: Variants = {
@@ -48,6 +49,7 @@ export function AxisList({
   isLevelLoading,
   readOnly = false,
   variant = 'default',
+  customHexColor,
 }: AxisListProps) {
   const t = useTranslations('Atlas');
   const { user } = useAuthStore();
@@ -88,6 +90,8 @@ export function AxisList({
           let secondaryAnswer: AnswerData | undefined;
           let affinityValue: number | null | undefined = undefined;
           let effectiveVariant = variant;
+          let activeCustomHexColor = customHexColor;
+          let otherCustomColor = undefined;
 
           if (variant === 'other') {
             primaryAnswer = myAnswers ? myAnswers[axis.uuid] : undefined;
@@ -95,6 +99,11 @@ export function AxisList({
             affinityValue = comparisonData?.affinity;
 
             effectiveVariant = 'default';
+
+            if (customHexColor) {
+              activeCustomHexColor = undefined;
+              otherCustomColor = customHexColor;
+            }
           } else {
             primaryAnswer = storeAnswer;
             secondaryAnswer = undefined;
@@ -117,6 +126,8 @@ export function AxisList({
                 dependencyNames={names}
                 readOnly={readOnly}
                 variant={effectiveVariant}
+                customHexColor={activeCustomHexColor}
+                otherCustomColor={otherCustomColor}
               />
             </motion.div>
           );

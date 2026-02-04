@@ -6,6 +6,7 @@ import { I18nProvider } from '@/providers/I18nProvider';
 import { GoogleAuthProvider } from '@/providers/GoogleAuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { ViewTransitions } from 'next-view-transitions';
+import { Toaster } from 'sonner';
 import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
@@ -42,6 +43,7 @@ export default async function LocaleLayout({
               <GoogleAuthProvider>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                   <AppLayout>{children}</AppLayout>
+                  <Toaster position="top-center" richColors />
                 </ThemeProvider>
               </GoogleAuthProvider>
             </ApiConfigProvider>

@@ -7,12 +7,13 @@ import { loginSchema, type LoginSchema } from '@/lib/schemas/auth';
 import { loginAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
+import { syncLocalAnswersToProfile } from '@/lib/client/auth/sync-actions';
 
 export function useLogin() {
   const locale = useLocale();
   const router = useRouter();
   const loginSuccess = useAuthStore(state => state.loginSuccess);
-  const resetAtlas = useAtlasStore(state => state.reset);
+  const { reset, fetchAllData } = useAtlasStore();
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
@@ -29,8 +30,13 @@ export function useLogin() {
     const result = await loginAction(data);
 
     if (result.success && result.user && result.access && result.refresh) {
-      resetAtlas();
       loginSuccess(result.user, result.access, result.refresh);
+
+      await syncLocalAnswersToProfile(false);
+
+      reset();
+      await fetchAllData(true, result.user.is_verified);
+
       router.push(`/${locale}`);
       router.refresh();
     } else {

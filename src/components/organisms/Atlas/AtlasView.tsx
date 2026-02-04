@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Skeleton } from '@/components/atoms/Skeleton';
 import { Button } from '@/components/atoms/Button';
 import { ComplexitySelector } from './ComplexitySelector';
@@ -12,13 +12,17 @@ import { ProgressCard } from '@/components/molecules/ProgressCard';
 import { ShareModal } from '@/components/molecules/ShareModal';
 import { AtlasOnboarding } from './AtlasOnboarding';
 import { GuestWarningModal } from './GuestWarningModal';
+import { UnverifiedWarningModal } from './UnverifiedWarningModal';
 import { useAtlasController } from '@/hooks/controllers/useAtlasController';
 import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 import { IncompleteLevelModal } from '@/components/molecules/IncompleteLevelModal';
+import { useSmartRouter } from '@/hooks/useSmartRouter';
 
 export function AtlasView() {
   const t = useTranslations('Atlas');
   const tOnboarding = useTranslations('Onboarding');
+  const locale = useLocale();
+  const router = useSmartRouter();
 
   const { state, loading, actions } = useAtlasController(t('context_section'));
 
@@ -45,11 +49,17 @@ export function AtlasView() {
     window.dispatchEvent(new Event('start-atlas-tour'));
   };
 
+  const handleDiscoveryClick = () => {
+    router.push(`/${locale}/atlas/discovery`);
+  };
+
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
 
   return (
     <>
       <GuestWarningModal />
+      <UnverifiedWarningModal />
+
       <AtlasOnboarding />
       <ShareModal isOpen={state.isShareModalOpen} onClose={actions.closeShareModal} shareUrl={state.shareUrl} />
 
@@ -78,6 +88,7 @@ export function AtlasView() {
               onSelect={actions.selectComplexity}
               isLoading={false}
               progressMap={state.progressMap}
+              isProgressLoading={loading.isStructureLoading}
             />
           </div>
 
@@ -89,7 +100,20 @@ export function AtlasView() {
                 className="mt-6"
                 onShare={actions.share}
                 isSharing={loading.isGeneratingShare}
+                isLoading={loading.isStructureLoading}
               />
+
+              <div className="mt-4" id="atlas-discovery-btn">
+                <Button
+                  onClick={handleDiscoveryClick}
+                  variant="primary"
+                  disabled={loading.isStructureLoading || state.selectedProgress < 100}
+                  className="w-full bg-green-600 shadow-lg shadow-green-500/20 hover:bg-green-700"
+                >
+                  <span className="material-symbols-outlined mr-2">explore</span>
+                  {t('discover_ideology_btn')}
+                </Button>
+              </div>
             </div>
           )}
 

@@ -35,4 +35,8 @@ export type Me = {
    * Field showing whether or not the user has completed the atlas onboarding.
    */
   atlas_onboarding_completed?: boolean;
+  /**
+   * Designates that this user has all permissions without explicitly assigning them.
+   */
+  readonly is_superuser: boolean;
 };

@@ -11,6 +11,7 @@ interface ProgressCardProps {
   onShare?: () => void;
   isSharing?: boolean;
   variant?: 'default' | 'other';
+  isLoading?: boolean;
 }
 
 export function ProgressCard({
@@ -20,6 +21,7 @@ export function ProgressCard({
   onShare,
   isSharing,
   variant = 'default',
+  isLoading = false,
 }: ProgressCardProps) {
   const t = useTranslations('Atlas');
   const isOther = variant === 'other';
@@ -29,9 +31,20 @@ export function ProgressCard({
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground text-sm font-medium">{label}</span>
-          <span className={clsx('text-lg font-black', isOther ? 'text-other-user' : 'text-primary')}>
-            {percentage}%
-          </span>
+          {isLoading ? (
+            <span
+              className={clsx(
+                'material-symbols-outlined animate-spin text-lg',
+                isOther ? 'text-other-user' : 'text-primary',
+              )}
+            >
+              progress_activity
+            </span>
+          ) : (
+            <span className={clsx('text-lg font-black', isOther ? 'text-other-user' : 'text-primary')}>
+              {percentage}%
+            </span>
+          )}
         </div>
         <div className="bg-secondary h-2.5 w-full overflow-hidden rounded-full">
           <div
@@ -39,7 +52,7 @@ export function ProgressCard({
               'h-full rounded-full transition-all duration-700 ease-out',
               isOther ? 'bg-other-user' : 'bg-primary',
             )}
-            style={{ width: `${percentage}%` }}
+            style={{ width: `${isLoading ? 0 : percentage}%` }}
           />
         </div>
       </div>
@@ -51,6 +64,7 @@ export function ProgressCard({
             className="border-border hover:bg-secondary w-full"
             onClick={onShare}
             isLoading={isSharing}
+            disabled={isLoading}
           >
             <span className="material-symbols-outlined mr-2 text-[18px]">share</span>
             {t('share_button') || 'Compartir'}

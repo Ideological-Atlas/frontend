@@ -10,6 +10,7 @@ import type { OnCancel } from '@/lib/client/core/CancelablePromise';
 import type { OpenAPIConfig } from '@/lib/client/core/OpenAPI';
 import { refreshAuthTokenClean } from '@/lib/client/auth/clean-actions';
 import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 
 let refreshPromise: Promise<boolean> | null = null;
 
@@ -351,6 +352,33 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
         resolve(result.body);
       }
     } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status !== 401) {
+          let message = 'An error occurred';
+
+          if (error.body) {
+            if (typeof error.body === 'string') {
+              message = error.body;
+            } else if (typeof error.body === 'object') {
+              if (error.body.detail) message = error.body.detail;
+              else if (error.body.message) message = error.body.message;
+              else {
+                const firstKey = Object.keys(error.body)[0];
+                if (firstKey) {
+                  const val = error.body[firstKey];
+                  if (Array.isArray(val)) message = `${firstKey}: ${val[0]}`;
+                  else message = `${firstKey}: ${val}`;
+                }
+              }
+            }
+          }
+
+          toast.error(message);
+        }
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+
       reject(error);
     }
   });

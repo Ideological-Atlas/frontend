@@ -57,7 +57,9 @@ export function PageHeader({ title, description, affinity, variant = 'default' }
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <p className="text-muted-foreground mx-auto max-w-[600px] text-base leading-relaxed">{description}</p>
+                <p className="text-muted-foreground mx-auto max-w-[600px] text-base leading-relaxed whitespace-pre-line">
+                  {description}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>

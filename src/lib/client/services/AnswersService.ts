@@ -1,7 +1,8 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
+import type { Affinity } from '../models/Affinity';
 import type { CompletedAnswer } from '../models/CompletedAnswer';
 import type { CompletedAnswerRequest } from '../models/CompletedAnswerRequest';
 import type { ConditionerAnswerRead } from '../models/ConditionerAnswerRead';
@@ -79,6 +80,29 @@ export class AnswersService {
     });
   }
   /**
+   * Calculate affinity with a Completed Answer
+   * Calculates the ideological affinity (0-100%) between a source (Authenticated User or CompletedAnswer UUID) and a target CompletedAnswer.
+   * @param targetAnswerUuid UUID of the target CompletedAnswer
+   * @param sourceAnswerUuid UUID of the source CompletedAnswer (required if anonymous)
+   * @returns Affinity
+   * @throws ApiError
+   */
+  public static answersCompletedAffinityRetrieve(
+    targetAnswerUuid: string,
+    sourceAnswerUuid?: string,
+  ): CancelablePromise<Affinity> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/answers/completed/{target_answer_uuid}/affinity/',
+      path: {
+        target_answer_uuid: targetAnswerUuid,
+      },
+      query: {
+        source_answer_uuid: sourceAnswerUuid,
+      },
+    });
+  }
+  /**
    * Retrieve specific completed answer
    * Returns the details of a specific completed answer by its UUID.
    * @param uuid
@@ -94,6 +118,22 @@ export class AnswersService {
       },
       errors: {
         404: `No response body`,
+      },
+    });
+  }
+  /**
+   * Copy answers from Completed Answer to Profile
+   * Copies all axis and conditioner answers from a specific Completed Answer to the authenticated user's active profile.
+   * @param uuid UUID of the CompletedAnswer to copy
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static answersCompletedCopyCreate(uuid: string): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/answers/completed/{uuid}/copy/',
+      path: {
+        uuid: uuid,
       },
     });
   }

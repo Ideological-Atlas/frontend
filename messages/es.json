@@ -14,13 +14,23 @@
     "beta_warning": "Página en modo pruebas. Es posible que ocurran errores. Para sugerencias o reportes: <email>support@ideologicalatlas.com</email>",
     "home": "Inicio",
     "theme_select": "Tema",
-    "info": "Información"
+    "info": "Información",
+    "explore_ideologies": "Explorar ideologías",
+    "filters": "Filtros",
+    "country": "País",
+    "region": "Región",
+    "religion": "Religión",
+    "tag": "Etiqueta",
+    "all": "Todos",
+    "clear_filters": "Limpiar filtros",
+    "show_all": "Mostrar todo"
   },
   "Navigation": {
     "home": "Inicio",
     "features": "Características",
     "explore": "Explorar",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "encyclopedia": "Enciclopedia"
   },
   "Hero": {
     "title": "Descubre tu verdadera posición ideológica",
@@ -126,6 +136,26 @@
     "description_already_verified": "Tu cuenta ya fue verificada anteriormente. No necesitas realizar ninguna acción adicional."
   },
   "Atlas": {
+    "you_label": "Tú",
+    "your_answer_label": "Tu respuesta",
+    "their_answer_label": "Su respuesta",
+    "anonymous_user": "Usuario Anónimo",
+    "sign_in_to_compare": "Inicia sesión para guardar",
+    "discovery_lock_title": "Guarda tu progreso",
+    "discovery_lock_desc": "Para descubrir tu ideología y guardarla permanentemente, te recomendamos crear una cuenta. Sin embargo, puedes continuar anónimamente.",
+    "discovery_lock_login": "Iniciar Sesión / Registrarse",
+    "discovery_lock_cancel": "Continuar Anónimo",
+    "guest_warning": {
+      "title": "¿Continuar como invitado?",
+      "description": "Puedes realizar el test sin cuenta, pero tus respuestas se guardarán solo en este dispositivo y podrías perderlas. Al finalizar podrás comparar tu afinidad igualmente.",
+      "login": "Crear Cuenta (Recomendado)",
+      "continue_guest": "Continuar Anónimo"
+    },
+    "unverified_warning": {
+      "title": "Verificación Pendiente",
+      "description": "Puedes completar tu Atlas y ver los resultados en tiempo real, pero tus respuestas NO se guardarán en la nube hasta que verifiques tu cuenta. Por favor, revisa tu correo electrónico.",
+      "dismiss": "Entendido, continuaré sin guardar"
+    },
     "title": "Atlas Ideológico",
     "complexity_level": "Nivel de Abstracción",
     "context_configuration": "Configuración de Contexto",
@@ -166,8 +196,6 @@
     "affinity_opposite": "Opuesto",
     "this_is_you_label": "ESTE ERES TÚ",
     "your_answers_label": "Tus Respuestas",
-    "your_answer_label": "TU RESPUESTA",
-    "their_answer_label": "SU RESPUESTA",
     "affinity_medium": "Similitud Media",
     "affinity_short_label": "Afinidad",
     "affinity_almost_identical": "Altamente compatible",
@@ -176,14 +204,6 @@
     "copy_answer_label": "Copiar",
     "indifferent_status": "Indiferente",
     "not_answered_status": "No respondido",
-    "anonymous_user": "Usuario Anónimo",
-    "sign_in_to_compare": "Inicia sesión para comparar",
-    "guest_warning": {
-      "title": "Aviso de Persistencia",
-      "description": "Estás explorando como invitado. Puedes completar todo el atlas, pero tus respuestas NO se guardarán si actualizas la página o cierras el navegador. Para guardar tu progreso y compararte con otros, debes iniciar sesión.",
-      "continue_guest": "Entendido, continuar como invitado",
-      "login": "Iniciar sesión para guardar"
-    },
     "previous_label": "Anterior",
     "next_section_label": "Siguiente Sección",
     "next_level_label": "Siguiente Nivel",
@@ -191,7 +211,20 @@
     "incomplete_modal_description": "Aún te faltan preguntas por responder en este nivel. Te recomendamos completarlas antes de avanzar para obtener un resultado más preciso.",
     "incomplete_modal_continue": "Avanzar de todos modos",
     "incomplete_modal_cancel": "Revisar secciones",
-    "answered_on": "Respondido el {date}"
+    "answered_on": "Respondido el {date}",
+    "ideology_definition_label": "Definición Ideológica",
+    "back_to_encyclopedia": "Volver a la Enciclopedia",
+    "admin_mode_label": "Modo Edición de Ideología",
+    "discover_ideology_btn": "Descubre tu Ideología",
+    "discovery_title": "Análisis de Afinidad Ideológica",
+    "discovery_subtitle": "Calculando tu compatibilidad con las ideologías definidas en el sistema en tiempo real basado en tus respuestas actuales.",
+    "calculating_affinity": "Calculando...",
+    "affinity_score": "Afinidad",
+    "discovery_modal_title": "¡Ideología Encontrada!",
+    "discovery_modal_subtitle": "Basado en tus respuestas, tu ideología más afín es:",
+    "view_comparison": "Comparar Respuestas",
+    "close_modal": "Cerrar",
+    "affinity_pending": "Pendiente..."
   },
   "Profile": {
     "page_title": "Configuración de Perfil",
@@ -431,22 +464,18 @@
     }
   },
   "Onboarding": {
-    "guest_prompt": {
-      "title": "¿Primera vez aquí?",
-      "subtitle": "Te enseñamos cómo funciona el Atlas.",
-      "yes": "Ver Tutorial",
-      "no": "No"
-    },
-    "buttons": {
-      "next": "Siguiente",
-      "prev": "Anterior",
-      "done": "Finalizar"
-    },
-    "restart_tutorial": "Ver Tutorial",
     "tour": {
       "welcome": {
-        "title": "Bienvenido al explorador de ideas",
-        "desc": "Este es el atlas de tu ideología donde podrás definir en detalle cómo es tu pensamiento político y social."
+        "desc": "Bienvenido al Atlas Ideológico. Esta guía te enseñará cómo definir tu postura política y descubrir tu afinidad con diferentes ideologías, incluso sin crear una cuenta.",
+        "title": "¡Bienvenido al Atlas!"
+      },
+      "discovery": {
+        "desc": "Una vez completes un nivel de complejidad, podrás descubrir con qué ideologías tienes mayor afinidad basándote en tus respuestas actuales.",
+        "title": "Descubre tu Ideología"
+      },
+      "share": {
+        "desc": "Comparte tu perfil ideológico con otros o guárdalo para el futuro. Si no has iniciado sesión, se generará un enlace público temporal.",
+        "title": "Compartir"
       },
       "levels": {
         "title": "Niveles de abstracción",
@@ -500,10 +529,6 @@
         "title": "Completar nivel",
         "desc": "Una vez hayas completado un nivel verás el progreso al 100% y la barra completa."
       },
-      "share": {
-        "title": "Compartir",
-        "desc": "Con este botón podrás compartir tu postura ideológica con otra persona para que pueda explorarla."
-      },
       "finish": {
         "title": "¡Esperemos que disfrutes!",
         "desc": "Estás listo para empezar a definir tu atlas."
@@ -512,6 +537,41 @@
         "title": "Colapsar Descripción",
         "desc": "Si la descripción del nivel ocupa mucho espacio, puedes colapsarla o expandirla usando este botón para centrarte en los ejes."
       }
-    }
+    },
+    "guest_prompt": {
+      "title": "¿Continuar como invitado?",
+      "subtitle": "Puedes explorar el Atlas sin cuenta, pero tus respuestas no se guardarán permanentemente.",
+      "yes": "Crear Cuenta",
+      "no": "Continuar"
+    },
+    "buttons": {
+      "next": "Siguiente",
+      "prev": "Anterior",
+      "done": "Finalizar"
+    },
+    "restart_tutorial": "Ver Tutorial"
+  },
+  "Encyclopedia": {
+    "title": "Enciclopedia Ideológica",
+    "subtitle": "Explora y comprende las diferentes corrientes de pensamiento que conforman el espectro político.",
+    "search_placeholder": "Buscar ideología...",
+    "no_results": "No se encontraron ideologías",
+    "read_more": "Leer más",
+    "tab_supporter": "A favor",
+    "tab_neutral": "Neutral",
+    "tab_detractor": "En contra",
+    "ideology_tag": "Ideología",
+    "close": "Cerrar",
+    "explore_in_atlas": "Explorar atlas",
+    "no_description": "Sin descripción disponible.",
+    "sort_label": "Ordenar por",
+    "sort_name": "Nombre",
+    "sort_affinity": "Afinidad",
+    "affinity_label": "Afinidad",
+    "sort_name_asc": "Nombre (A-Z)",
+    "sort_name_desc": "Nombre (Z-A)",
+    "sort_affinity_desc": "Mayor Afinidad",
+    "sort_affinity_asc": "Menor Afinidad",
+    "affinity_loading": "Calculando..."
   }
 }
