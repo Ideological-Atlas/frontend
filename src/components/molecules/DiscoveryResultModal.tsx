@@ -109,7 +109,6 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
                 {Math.round(affinity)}% {t('affinity_score')}
               </div>
 
-              {/* Tabs de descripción */}
               <div className="bg-secondary/50 mb-6 flex w-full gap-1 rounded-lg p-1">
                 {tabs.map(tab => {
                   const isActive = activeTab === tab.id;

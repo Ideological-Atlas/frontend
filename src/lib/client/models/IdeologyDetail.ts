@@ -2,8 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { Country } from './Country';
 import type { IdeologyAxisDefinition } from './IdeologyAxisDefinition';
 import type { IdeologyConditionerDefinition } from './IdeologyConditionerDefinition';
+import type { Region } from './Region';
+import type { Religion } from './Religion';
+import type { Tag } from './Tag';
 export type IdeologyDetail = {
   readonly uuid: string;
   /**
@@ -36,4 +40,8 @@ export type IdeologyDetail = {
   color?: string | null;
   readonly axis_definitions: Array<IdeologyAxisDefinition>;
   readonly conditioner_definitions: Array<IdeologyConditionerDefinition>;
+  readonly tags: Array<Tag>;
+  readonly associated_countries: Array<Country>;
+  readonly associated_regions: Array<Region>;
+  readonly associated_religions: Array<Religion>;
 };

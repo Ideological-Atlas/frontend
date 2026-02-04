@@ -2,8 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { Affinity } from '../models/Affinity';
-import type { IdeologyAffinity } from '../models/IdeologyAffinity';
 import type { Me } from '../models/Me';
 import type { MeRequest } from '../models/MeRequest';
 import type { PatchedMeRequest } from '../models/PatchedMeRequest';
@@ -83,38 +81,6 @@ export class UsersService {
       url: '/api/me/password/',
       body: requestBody,
       mediaType: 'application/json',
-    });
-  }
-  /**
-   * Get affinity with a Completed Answer
-   * Calculates the ideological affinity (0-100%) between the current user's active answers and a specific CompletedAnswer (identified by UUID). The target might be anonymous.
-   * @param uuid
-   * @returns Affinity
-   * @throws ApiError
-   */
-  public static usersAffinityRetrieve(uuid: string): CancelablePromise<Affinity> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/users/affinity/{uuid}/',
-      path: {
-        uuid: uuid,
-      },
-    });
-  }
-  /**
-   * Get affinity with an Ideology
-   * Calculates the ideological affinity (0-100%) between the current user's active answers and the defined values of a specific Ideology (identified by UUID).
-   * @param uuid
-   * @returns IdeologyAffinity
-   * @throws ApiError
-   */
-  public static usersAffinityIdeologyRetrieve(uuid: string): CancelablePromise<IdeologyAffinity> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/users/affinity/ideology/{uuid}/',
-      path: {
-        uuid: uuid,
-      },
     });
   }
 }

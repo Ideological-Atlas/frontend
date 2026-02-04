@@ -2,6 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
+import type { Country } from './Country';
+import type { Region } from './Region';
+import type { Religion } from './Religion';
+import type { Tag } from './Tag';
 export type IdeologyList = {
   readonly uuid: string;
   /**
@@ -32,4 +36,8 @@ export type IdeologyList = {
    * Ideology Color Image
    */
   color?: string | null;
+  readonly tags: Array<Tag>;
+  readonly associated_countries: Array<Country>;
+  readonly associated_regions: Array<Region>;
+  readonly associated_religions: Array<Religion>;
 };

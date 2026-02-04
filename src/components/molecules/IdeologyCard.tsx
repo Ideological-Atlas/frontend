@@ -58,12 +58,14 @@ export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = f
     },
   ];
 
-  const hasAffinity = affinity !== undefined && affinity !== null;
-  const affinityStyle = hasAffinity ? getAffinityBadgeStyles(affinity) : null;
+  const displayAffinity = affinity ?? 0;
+  const shouldShowBadge = isLoading || affinity !== undefined;
+  const affinityStyle = shouldShowBadge ? getAffinityBadgeStyles(displayAffinity) : null;
 
   return (
     <motion.div
       layout
+      layoutId={ideology.uuid}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -72,7 +74,7 @@ export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = f
       className="bg-card border-border group hover:border-primary/30 relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="relative h-36 w-full overflow-hidden bg-zinc-950">
-        <div className="absolute inset-0 z-0" style={{ backgroundColor: bgColor }} />
+        <div className="absolute inset-0 z-0 opacity-60" style={{ backgroundColor: bgColor }} />
 
         {ideology.flag ? (
           <div
@@ -102,7 +104,7 @@ export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = f
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-soft-light" />
         </div>
 
-        {(isLoading || (affinityStyle && hasAffinity)) && (
+        {shouldShowBadge && (
           <div className="absolute top-3 right-3 z-30">
             {isLoading ? (
               <div className="bg-background/20 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white shadow-lg backdrop-blur-md">
@@ -128,7 +130,7 @@ export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = f
                 )}
               >
                 <span className="material-symbols-outlined text-[14px]">{affinityStyle?.icon}</span>
-                {Math.round(affinity || 0)}%
+                {Math.round(displayAffinity)}%
               </div>
             )}
           </div>
@@ -180,6 +182,45 @@ export function IdeologyCard({ ideology, index, onClick, affinity, isLoading = f
               </motion.p>
             </AnimatePresence>
           </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {ideology.associated_countries.length > 0 && (
+            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide uppercase">
+              <span className="material-symbols-outlined text-[14px]">public</span>
+              {ideology.associated_countries.length > 1
+                ? `${ideology.associated_countries.length}`
+                : ideology.associated_countries[0].code2}
+            </div>
+          )}
+          {ideology.associated_regions.length > 0 && (
+            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide uppercase">
+              <span className="material-symbols-outlined text-[14px]">location_on</span>
+              {ideology.associated_regions.length > 1
+                ? `${ideology.associated_regions.length}`
+                : ideology.associated_regions[0].name}
+            </div>
+          )}
+          {ideology.associated_religions.length > 0 && (
+            <div className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide uppercase">
+              <span className="material-symbols-outlined text-[14px]">temple_buddhist</span>
+              {ideology.associated_religions.length}
+            </div>
+          )}
+          {ideology.tags.slice(0, 2).map(tag => (
+            <div
+              key={tag.uuid}
+              className="bg-secondary/50 text-muted-foreground flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold tracking-wide uppercase"
+            >
+              <span className="material-symbols-outlined text-[14px]">label</span>
+              {tag.name}
+            </div>
+          ))}
+          {ideology.tags.length > 2 && (
+            <div className="bg-secondary/50 text-muted-foreground flex items-center rounded-md px-2 py-1 text-[10px] font-bold">
+              +{ideology.tags.length - 2}
+            </div>
+          )}
         </div>
 
         <Link

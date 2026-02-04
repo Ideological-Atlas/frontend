@@ -1,11 +1,16 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { IdeologiesService } from '@/lib/client/services/IdeologiesService';
-import { UsersService } from '@/lib/client/services/UsersService';
+import { AnswersService } from '@/lib/client/services/AnswersService';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useAtlasStore } from '@/store/useAtlasStore';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
 import type { IdeologyAffinity } from '@/lib/client/models/IdeologyAffinity';
 import confetti from 'canvas-confetti';
 
 export function useDiscoveryController() {
+  const { isAuthenticated, user } = useAuthStore();
+  const { answers, conditionerAnswers } = useAtlasStore();
+
   const [ideologies, setIdeologies] = useState<IdeologyList[]>([]);
   const [affinities, setAffinities] = useState<Record<string, IdeologyAffinity>>({});
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
@@ -13,71 +18,87 @@ export function useDiscoveryController() {
   const [winner, setWinner] = useState<IdeologyList | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Calculamos el nivel de complejidad global más alto encontrado entre todas las afinidades cargadas
-  const globalMaxComplexityLevel = useMemo(() => {
-    let maxLevel = 0; // Por defecto nivel 0 (Moral)
+  const getRelevantScore = useCallback((affinityData?: IdeologyAffinity) => {
+    if (!affinityData) return 0;
 
-    Object.values(affinities).forEach(affinityData => {
-      affinityData.complexities?.forEach(c => {
-        // Si hay afinidad en este nivel (no es null), es un candidato
-        if (c.affinity !== null && c.affinity !== undefined) {
-          const level = c.complexity?.complexity ?? 0;
-          if (level > maxLevel) {
-            maxLevel = level;
-          }
-        }
+    if (affinityData.total_affinity !== null && affinityData.total_affinity !== undefined) {
+      return affinityData.total_affinity;
+    }
+
+    if (affinityData.complexities && affinityData.complexities.length > 0) {
+      const sortedByComplexity = [...affinityData.complexities].sort((a, b) => {
+        const levelA = a.complexity?.complexity ?? -1;
+        const levelB = b.complexity?.complexity ?? -1;
+        return levelB - levelA;
       });
-    });
 
-    return maxLevel;
-  }, [affinities]);
+      const bestMatch = sortedByComplexity.find(c => c.affinity !== null && c.affinity !== undefined);
 
-  // Helper que devuelve la afinidad de una ideología ESPECÍFICAMENTE en el nivel global máximo
-  const getRelevantScore = useCallback(
-    (affinityData?: IdeologyAffinity) => {
-      if (!affinityData || !affinityData.complexities) return 0;
+      if (bestMatch) {
+        return bestMatch.affinity ?? 0;
+      }
+    }
 
-      const targetLevelData = affinityData.complexities.find(
-        c => (c.complexity?.complexity ?? 0) === globalMaxComplexityLevel,
-      );
-
-      return targetLevelData?.affinity ?? 0;
-    },
-    [globalMaxComplexityLevel],
-  );
+    return 0;
+  }, []);
 
   useEffect(() => {
     let mounted = true;
 
     const init = async () => {
       try {
-        const response = await IdeologiesService.ideologiesList(undefined, 100);
+        const ideologiesResponse = await IdeologiesService.ideologiesList(undefined, 100);
         if (!mounted) return;
 
-        setIdeologies(response.results);
+        setIdeologies(ideologiesResponse.results);
         setIsGlobalLoading(false);
 
         const initialLoading: Record<string, boolean> = {};
-        response.results.forEach(ideology => {
+        ideologiesResponse.results.forEach(ideology => {
           initialLoading[ideology.uuid] = true;
         });
         setLoadingMap(initialLoading);
 
-        let completedCount = 0;
-        const total = response.results.length;
+        let completedAnswerUuid: string | undefined = undefined;
 
-        // Necesitamos una referencia local para saber cuándo terminamos
-        // ya que el estado 'affinities' no se actualiza inmediatamente dentro del loop
+        if (!isAuthenticated || (user && !user.is_verified)) {
+          try {
+            const axisList = Object.entries(answers).map(([uuid, data]) => ({
+              uuid,
+              value: data.value,
+              margin_left: data.margin_left ?? 0,
+              margin_right: data.margin_right ?? 0,
+            }));
+
+            const conditionersList = Object.entries(conditionerAnswers).map(([uuid, value]) => ({
+              uuid,
+              value,
+            }));
+
+            if (axisList.length > 0 || conditionersList.length > 0) {
+              const snapshot = await AnswersService.answersCompletedGenerateCreate({
+                axis: axisList,
+                conditioners: conditionersList,
+              });
+              completedAnswerUuid = snapshot.uuid;
+            }
+          } catch (e) {
+            console.error('Failed to generate anonymous snapshot', e);
+          }
+        }
+
+        let completedCount = 0;
+        const total = ideologiesResponse.results.length;
         let currentAffinitiesRef: Record<string, IdeologyAffinity> = {};
 
-        response.results.forEach(ideology => {
-          UsersService.usersAffinityIdeologyRetrieve(ideology.uuid)
+        ideologiesResponse.results.forEach(ideology => {
+          IdeologiesService.ideologiesAffinityRetrieve(ideology.uuid, completedAnswerUuid)
             .then(affinityData => {
               if (!mounted) return;
 
               setAffinities(prev => {
                 const next = { ...prev, [ideology.uuid]: affinityData };
-                currentAffinitiesRef = next; // Actualizamos ref local
+                currentAffinitiesRef = next;
                 return next;
               });
 
@@ -85,7 +106,7 @@ export function useDiscoveryController() {
               completedCount++;
 
               if (completedCount === total) {
-                setTimeout(() => finishDiscovery(response.results, currentAffinitiesRef), 500);
+                setTimeout(() => finishDiscovery(ideologiesResponse.results, currentAffinitiesRef), 500);
               }
             })
             .catch(err => {
@@ -95,7 +116,7 @@ export function useDiscoveryController() {
               completedCount++;
 
               if (completedCount === total) {
-                setTimeout(() => finishDiscovery(response.results, currentAffinitiesRef), 500);
+                setTimeout(() => finishDiscovery(ideologiesResponse.results, currentAffinitiesRef), 500);
               }
             });
         });
@@ -110,36 +131,17 @@ export function useDiscoveryController() {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const finishDiscovery = (allIdeologies: IdeologyList[], finalAffinities: Record<string, IdeologyAffinity>) => {
-    // 1. Calcular el Max Level GLOBAL usando las afinidades finales
-    let maxLevel = 0;
-    Object.values(finalAffinities).forEach(affinityData => {
-      affinityData.complexities?.forEach(c => {
-        if (c.affinity !== null && c.affinity !== undefined) {
-          const level = c.complexity?.complexity ?? 0;
-          if (level > maxLevel) maxLevel = level;
-        }
-      });
-    });
-
-    // 2. Ordenar usando ese nivel
     const sorted = [...allIdeologies].sort((a, b) => {
-      const affA = finalAffinities[a.uuid];
-      const affB = finalAffinities[b.uuid];
-
-      const scoreA = affA?.complexities?.find(c => (c.complexity?.complexity ?? 0) === maxLevel)?.affinity ?? 0;
-      const scoreB = affB?.complexities?.find(c => (c.complexity?.complexity ?? 0) === maxLevel)?.affinity ?? 0;
-
+      const scoreA = getRelevantScore(finalAffinities[a.uuid]);
+      const scoreB = getRelevantScore(finalAffinities[b.uuid]);
       return scoreB - scoreA;
     });
 
     const top = sorted[0];
-    const topAffinityData = finalAffinities[top.uuid];
-    const topScore =
-      topAffinityData?.complexities?.find(c => (c.complexity?.complexity ?? 0) === maxLevel)?.affinity ?? 0;
+    const topScore = getRelevantScore(finalAffinities[top.uuid]);
 
     if (top && topScore > 0) {
       setWinner(top);

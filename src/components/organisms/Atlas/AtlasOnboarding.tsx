@@ -254,6 +254,15 @@ export function AtlasOnboarding() {
         },
       },
       {
+        element: '#atlas-discovery-btn',
+        popover: {
+          title: t('tour.discovery.title'),
+          description: t('tour.discovery.desc'),
+          side: 'right',
+          align: 'center',
+        },
+      },
+      {
         element: '#atlas-share-btn',
         popover: {
           title: t('tour.share.title'),

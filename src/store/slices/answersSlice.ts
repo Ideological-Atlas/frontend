@@ -4,13 +4,28 @@ import { AnswersService } from '@/lib/client/services/AnswersService';
 import type { UserAxisAnswerUpsertRequest } from '@/lib/client/models/UserAxisAnswerUpsertRequest';
 import type { ConditionerAnswerUpsertRequest } from '@/lib/client/models/ConditionerAnswerUpsertRequest';
 import { calculateCascadingDeletions, calculateGlobalCleanup } from '@/lib/domain/atlas-logic';
+import { ApiError } from '@/lib/client/core/ApiError';
+
+const safeDelete = async (promise: Promise<void>) => {
+  try {
+    await promise;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return;
+    }
+    console.error('Error deleting answer:', error);
+  }
+};
 
 export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> = (set, get) => ({
   answers: {},
   conditionerAnswers: {},
+  tempCompletedAnswerUuid: null,
+
+  setTempCompletedAnswerUuid: uuid => set({ tempCompletedAnswerUuid: uuid }),
 
   resetAnswers: () => {
-    set({ answers: {}, conditionerAnswers: {} });
+    set({ answers: {}, conditionerAnswers: {}, tempCompletedAnswerUuid: null });
   },
 
   saveAnswer: async (axisUuid, payload, isAuthenticated, isVerified) => {
@@ -50,16 +65,17 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     set({
       answers: nextAxisAnswers,
       conditionerAnswers: nextCondAnswers,
+      tempCompletedAnswerUuid: null,
     });
 
     if (isAuthenticated && isVerified) {
       try {
-        const promises = [
-          AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest),
-          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
-          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
-        ];
-        await Promise.all(promises);
+        await Promise.all([
+          ...condsToRemoveRemote.map(uuid => safeDelete(AnswersService.answersConditionerDeleteDestroy(uuid))),
+          ...axesToRemoveRemote.map(uuid => safeDelete(AnswersService.answersAxisDeleteDestroy(uuid))),
+        ]);
+
+        await AnswersService.answersAxisCreate(axisUuid, newData as unknown as UserAxisAnswerUpsertRequest);
       } catch (error) {
         console.error(error);
       }
@@ -85,14 +101,15 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     set({
       answers: nextAxisAnswers,
       conditionerAnswers: nextCondAnswers,
+      tempCompletedAnswerUuid: null,
     });
 
     if (isAuthenticated && isVerified) {
       try {
-        await AnswersService.answersAxisDeleteDestroy(axisUuid);
+        await safeDelete(AnswersService.answersAxisDeleteDestroy(axisUuid));
         await Promise.all([
-          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
-          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
+          ...condsToRemoveRemote.map(uuid => safeDelete(AnswersService.answersConditionerDeleteDestroy(uuid))),
+          ...axesToRemoveRemote.map(uuid => safeDelete(AnswersService.answersAxisDeleteDestroy(uuid))),
         ]);
       } catch (error) {
         console.error(error);
@@ -118,18 +135,19 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     set({
       conditionerAnswers: nextCondAnswers,
       answers: nextAxisAnswers,
+      tempCompletedAnswerUuid: null,
     });
 
     if (isAuthenticated && isVerified) {
       try {
-        const promises = [
-          AnswersService.answersConditionerCreate(conditionerUuid, {
-            answer: value,
-          } as ConditionerAnswerUpsertRequest),
-          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
-          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
-        ];
-        await Promise.all(promises);
+        await Promise.all([
+          ...condsToRemoveRemote.map(uuid => safeDelete(AnswersService.answersConditionerDeleteDestroy(uuid))),
+          ...axesToRemoveRemote.map(uuid => safeDelete(AnswersService.answersAxisDeleteDestroy(uuid))),
+        ]);
+
+        await AnswersService.answersConditionerCreate(conditionerUuid, {
+          answer: value,
+        } as ConditionerAnswerUpsertRequest);
       } catch (error) {
         console.error(error);
       }
@@ -153,14 +171,15 @@ export const createAnswersSlice: StateCreator<AtlasStore, [], [], AnswersSlice> 
     set({
       conditionerAnswers: nextCondAnswers,
       answers: nextAxisAnswers,
+      tempCompletedAnswerUuid: null,
     });
 
     if (isAuthenticated && isVerified) {
       try {
-        await AnswersService.answersConditionerDeleteDestroy(conditionerUuid);
+        await safeDelete(AnswersService.answersConditionerDeleteDestroy(conditionerUuid));
         await Promise.all([
-          ...condsToRemoveRemote.map(uuid => AnswersService.answersConditionerDeleteDestroy(uuid)),
-          ...axesToRemoveRemote.map(uuid => AnswersService.answersAxisDeleteDestroy(uuid)),
+          ...condsToRemoveRemote.map(uuid => safeDelete(AnswersService.answersConditionerDeleteDestroy(uuid))),
+          ...axesToRemoveRemote.map(uuid => safeDelete(AnswersService.answersAxisDeleteDestroy(uuid))),
         ]);
       } catch (error) {
         console.error(error);

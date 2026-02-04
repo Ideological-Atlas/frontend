@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AnswersService } from '@/lib/client/services/AnswersService';
-import { UsersService } from '@/lib/client/services/UsersService';
 import { TypeEnum } from '@/lib/client/models/TypeEnum';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { CompletedAnswer } from '@/lib/client/models/CompletedAnswer';
@@ -50,10 +49,37 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   }, [isInitialized, fetchAllData, isAuthenticated, isVerified]);
 
   const refreshAffinity = useCallback(async () => {
-    if (!isAuthenticated || !uuid) return;
+    if (!uuid) return;
 
     try {
-      const affinityData = await UsersService.usersAffinityRetrieve(uuid);
+      let completedAnswerUuid: string | undefined = undefined;
+
+      if (!isAuthenticated || (user && !user.is_verified)) {
+        const { answers, conditionerAnswers } = useAtlasStore.getState();
+        const axisList = Object.entries(answers).map(([key, data]) => ({
+          uuid: key,
+          value: data.value,
+          margin_left: data.margin_left ?? 0,
+          margin_right: data.margin_right ?? 0,
+        }));
+        const conditionersList = Object.entries(conditionerAnswers).map(([key, value]) => ({
+          uuid: key,
+          value,
+        }));
+
+        try {
+          const snapshot = await AnswersService.answersCompletedGenerateCreate({
+            axis: axisList,
+            conditioners: conditionersList,
+          });
+          completedAnswerUuid = snapshot.uuid;
+        } catch (e) {
+          console.error('Error creating snapshot for affinity', e);
+          return;
+        }
+      }
+
+      const affinityData = await AnswersService.answersCompletedAffinityRetrieve(uuid, completedAnswerUuid);
       setAffinity(affinityData.total_affinity);
 
       const axMap: Record<string, { affinity: number | null; my_answer: AnswerData | null }> = {};
@@ -94,7 +120,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     } catch (err) {
       console.error(err);
     }
-  }, [isAuthenticated, uuid]);
+  }, [isAuthenticated, uuid, user]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -102,6 +128,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
         setIsLoadingAnswer(true);
         const data = await AnswersService.answersCompletedRetrieve(uuid);
         setAnswerData(data);
+        await refreshAffinity();
       } catch (error) {
         console.error(error);
       } finally {
@@ -111,11 +138,8 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
     if (uuid) {
       loadData();
-      if (isAuthenticated) {
-        refreshAffinity();
-      }
     }
-  }, [uuid, isAuthenticated, refreshAffinity]);
+  }, [uuid, refreshAffinity]);
 
   useEffect(() => {
     if (complexities.length > 0 && !selectedComplexity) {
@@ -153,17 +177,11 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   }, [answerData]);
 
   const visibilitySource = useMemo(() => {
-    if (isAuthenticated) {
-      return {
-        axis: myAxisAnswers,
-        cond: myConditionerAnswers,
-      };
-    }
     return {
       axis: theirAxisAnswers,
       cond: theirConditionerAnswers,
     };
-  }, [isAuthenticated, myAxisAnswers, myConditionerAnswers, theirAxisAnswers, theirConditionerAnswers]);
+  }, [theirAxisAnswers, theirConditionerAnswers]);
 
   const virtualConditionerAnswers = useMemo(() => {
     const computed: Record<string, string> = {};
@@ -268,6 +286,8 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
       if (contextTotal > 0) {
         sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
+      } else {
+        sMap[`context_${c.uuid}`] = 100;
       }
 
       compSections.forEach(sec => {
@@ -288,16 +308,18 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
             }
           });
         }
-        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 0;
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 100;
       });
-      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
     });
     return { progressMap: cMap, sectionProgressMap: sMap };
   }, [complexities, sections, axes, theirAxisAnswers, conditioners, theirConditionerAnswers, visibilityChecker]);
 
   const myProgressMap = useMemo(() => {
     const map: Record<string, number> = {};
-    if (!isAuthenticated) return map;
+
+    const { answers: myAnswersStore } = useAtlasStore.getState();
+
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       let totalItems = 0;
@@ -308,7 +330,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
           secAxes.forEach(axis => {
             if (visibilityChecker(axis.condition_rules)) {
               totalItems++;
-              const ans = myAxisAnswers[axis.uuid];
+              const ans = myAnswersStore[axis.uuid];
               if (ans && (ans.value !== null || ans.is_indifferent)) {
                 answeredItems++;
               }
@@ -316,10 +338,10 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
           });
         }
       });
-      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 0;
+      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
     });
     return map;
-  }, [complexities, sections, axes, myAxisAnswers, visibilityChecker, isAuthenticated]);
+  }, [complexities, sections, axes, visibilityChecker]);
 
   const isContextSelected = !!selectedSection && selectedSection.startsWith('context_');
 
@@ -349,28 +371,21 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
   const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
 
   const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
-    if (!isAuthenticated) return;
-    await saveAnswerToStore(axisUuid, data, true, isVerified);
-    if (isVerified) {
-      await refreshAffinity();
-    }
+    await saveAnswerToStore(axisUuid, data, isAuthenticated, isVerified);
+    await refreshAffinity();
   };
 
   const handleDeleteAnswer = async (axisUuid: string) => {
-    if (!isAuthenticated) return;
-    await deleteAnswerFromStore(axisUuid, true, isVerified);
-    if (isVerified) {
-      await refreshAffinity();
-    }
+    await deleteAnswerFromStore(axisUuid, isAuthenticated, isVerified);
+    await refreshAffinity();
   };
 
   const handleSaveConditioner = async (uuid: string, value: string) => {
-    if (!isAuthenticated) return;
-    await saveConditionerToStore(uuid, value, true, isVerified);
+    await saveConditionerToStore(uuid, value, isAuthenticated, isVerified);
   };
 
   const effectiveAffinity = useMemo(() => {
-    if (affinity === null || !isAuthenticated) return affinity;
+    if (affinity === null) return affinity;
 
     const sortedComplexities = [...complexities].sort((a, b) => b.complexity - a.complexity);
 
@@ -384,7 +399,7 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     }
 
     return affinity;
-  }, [affinity, isAuthenticated, complexities, progressMap, myProgressMap, complexityAffinityMap]);
+  }, [affinity, complexities, progressMap, myProgressMap, complexityAffinityMap]);
 
   const sortedComplexities = useMemo(() => {
     return [...complexities].sort((a, b) => a.complexity - b.complexity);
