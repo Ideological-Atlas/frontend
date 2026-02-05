@@ -1,15 +1,14 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { motion, type Variants } from 'framer-motion';
 import { LegalSidebar } from '@/components/molecules/legal/LegalSidebar';
 import { LegalSection } from '@/components/molecules/legal/LegalSection';
+import { LegalPageHeader } from '@/components/organisms/legal/LegalPageHeader';
+import { LegalContactCard } from '@/components/molecules/legal/LegalContactCard';
 
 export default function TermsOfUsePage() {
   const t = useTranslations('Terms');
-  const tCommon = useTranslations('Common');
-  const locale = useLocale();
 
   const sidebarItems = [
     { id: 'intro', icon: 'info', label: t('sidebar.intro') },
@@ -29,15 +28,6 @@ export default function TermsOfUsePage() {
     },
   };
 
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
-
   return (
     <div className="bg-background min-h-screen">
       <div className="layout-content-container mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:py-12 lg:px-8">
@@ -45,33 +35,12 @@ export default function TermsOfUsePage() {
           <LegalSidebar items={sidebarItems} />
 
           <main className="lg:col-span-9">
-            <motion.div
-              variants={headerVariants}
-              initial="hidden"
-              animate="visible"
-              className="border-border mb-10 flex flex-col gap-6 border-b pb-8"
-            >
-              <nav className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
-                <Link href={`/${locale}`} className="hover:text-primary transition-colors">
-                  {tCommon('home')}
-                </Link>
-                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                <span className="text-foreground font-medium">{t('title')}</span>
-              </nav>
-
-              <div className="flex flex-col gap-4">
-                <h1 className="text-foreground text-4xl leading-tight font-black tracking-tight md:text-5xl">
-                  {t('title')}
-                </h1>
-                <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
-                <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm font-medium">
-                  <span className="material-symbols-outlined text-[18px]">calendar_month</span>
-                  <span>{t('last_updated')}: 2026-01-23</span>
-                  <span className="mx-2 opacity-50">•</span>
-                  <span>{t('version')}</span>
-                </div>
-              </div>
-            </motion.div>
+            <LegalPageHeader
+              title={t('title')}
+              subtitle={t('subtitle')}
+              lastUpdated={`${t('last_updated')}: 2026-02-05`}
+              version={t('version')}
+            />
 
             <motion.div
               variants={containerVariants}
@@ -164,19 +133,7 @@ export default function TermsOfUsePage() {
                 </div>
               </LegalSection>
 
-              <div className="bg-secondary/20 border-border flex flex-col items-center justify-between gap-4 rounded-xl border p-6 md:flex-row">
-                <div className="text-center md:text-left">
-                  <p className="text-foreground mb-1 font-bold">{t('contact_community.title')}</p>
-                  <p className="text-muted-foreground text-sm">{t('contact_community.desc')}</p>
-                </div>
-                <a
-                  href="mailto:legal@ideologicalatlas.org"
-                  className="bg-card text-primary hover:text-primary-hover border-border flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold shadow-sm transition-colors hover:shadow-md"
-                >
-                  <span className="material-symbols-outlined text-[18px]">group</span>
-                  {t('contact_community.btn')}
-                </a>
-              </div>
+              <LegalContactCard />
             </motion.div>
           </main>
         </div>

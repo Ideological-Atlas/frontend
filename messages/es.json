@@ -392,5 +392,153 @@
         "desc": "Lleva el Atlas contigo en iOS y Android."
       }
     }
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Sobre el Proyecto",
+      "subtitle": "Explorando las dimensiones del pensamiento político moderno.",
+      "github_btn": "Código Fuente"
+    },
+    "story": {
+      "title": "Nuestra Historia",
+      "content_p1": "El Atlas Ideológico nació de la necesidad de superar la simplificación extrema del eje izquierda-derecha.",
+      "content_p2": "Buscamos proporcionar una herramienta científica y abierta para que cada individuo comprenda su posición en un mundo cada vez más complejo.",
+      "quote": "La política no es una línea, es un mapa infinito."
+    },
+    "algorithm": {
+      "title": "El Algoritmo",
+      "subtitle": "Transparencia total en el cálculo de afinidades.",
+      "indifference_title": "Gestión de la Indiferencia",
+      "indifference_desc": "El sistema distingue entre una postura neutral y la falta de opinión sobre un tema.",
+      "quadratic_title": "Error Cuadrático",
+      "quadratic_desc": "Utilizamos funciones cuadráticas para penalizar de forma justa las desviaciones ideológicas.",
+      "phases_title": "Cálculo por Fases",
+      "phases_gap": "Análisis granular de huecos y solapamientos entre respuestas.",
+      "aggregation_title": "Agregación de Datos",
+      "aggregation_desc": "Cómo los ejes se combinan en secciones y niveles de complejidad."
+    },
+    "contribute": {
+      "title": "Contribuye al Atlas",
+      "subtitle": "Este es un proyecto comunitario y abierto.",
+      "role_dev": "Desarrollo",
+      "role_dev_desc": "React, Next.js, Django y optimización de sistemas.",
+      "role_research": "Investigación",
+      "role_research_desc": "Validación de ejes ideológicos y definiciones.",
+      "role_design": "Diseño",
+      "role_design_desc": "Mejora de la experiencia de usuario y visualización.",
+      "role_product": "Producto",
+      "role_product_desc": "Estrategia y hoja de ruta del proyecto.",
+      "role_data": "Datos",
+      "role_data_desc": "Análisis estadístico y modelos de afinidad.",
+      "role_translate": "Traducción",
+      "role_translate_desc": "Haciendo el Atlas accesible a todo el mundo."
+    }
+  },
+  "Legal": {
+    "privacy_policy_title": "Política de Privacidad",
+    "privacy_policy_subtitle": "Tu privacidad es el pilar fundamental de nuestra plataforma.",
+    "last_updated": "Última actualización",
+    "table_of_contents": "Contenido",
+    "need_help_title": "¿Tienes dudas?",
+    "need_help_desc": "Si tienes preguntas sobre tus datos, estamos aquí para ayudarte.",
+    "open_ticket": "Contactar soporte",
+    "intro_title": "Introducción",
+    "intro_p1": "En Ideological Atlas, nos tomamos muy en serio la protección de tus datos personales.",
+    "intro_p2": "Esta política describe qué datos recogemos y cómo los protegemos, garantizando siempre tu anonimato si así lo decides.",
+    "collection_title": "Recogida de Datos",
+    "col_account_title": "Información de Cuenta",
+    "col_account_desc": "Email y nombre de usuario para usuarios registrados.",
+    "col_interaction_title": "Respuestas del Atlas",
+    "col_interaction_desc": "Tus posiciones en los ejes ideológicos para calcular afinidades.",
+    "col_tech_title": "Datos Técnicos",
+    "col_tech_desc": "Información básica del dispositivo para optimizar la experiencia.",
+    "col_contrib_title": "Contribuciones",
+    "col_contrib_desc": "Sugerencias o informes de errores que nos envíes.",
+    "usage_title": "Uso de la Información",
+    "usage_intro": "Utilizamos tus datos exclusivamente para:",
+    "use_algo_title": "Cálculo de Afinidad",
+    "use_algo_desc": "Comparar tu perfil con ideologías u otros usuarios.",
+    "use_perso_title": "Personalización",
+    "use_perso_desc": "Guardar tus preferencias de tema e idioma.",
+    "use_sec_title": "Seguridad",
+    "use_sec_desc": "Proteger la integridad del sitio y prevenir abusos.",
+    "cookies_title": "Cookies",
+    "cookies_desc": "Solo usamos cookies técnicas esenciales para el funcionamiento de la sesión y tus preferencias.",
+    "cookies_note_label": "Importante",
+    "cookies_note_text": "No usamos cookies de rastreo de terceros ni fines publicitarios.",
+    "rights_title": "Tus Derechos",
+    "rights_intro": "Tienes control total sobre tu información conforme al RGPD.",
+    "right_access_title": "Acceso",
+    "right_access_desc": "Puedes ver todos tus datos en tu perfil.",
+    "right_rect_title": "Rectificación",
+    "right_rect_desc": "Puedes cambiar tus respuestas en cualquier momento.",
+    "right_del_title": "Eliminación",
+    "right_del_desc": "Puedes borrar tu cuenta y datos permanentemente.",
+    "right_port_title": "Portabilidad",
+    "right_port_desc": "Exporta tus datos en formato estructurado.",
+    "contact_title": "Contacto Legal",
+    "contact_desc": "Para cualquier asunto legal o de privacidad, escríbenos directamente.",
+    "contact_btn": "Enviar email"
+  },
+  "Terms": {
+    "title": "Términos de Uso",
+    "subtitle": "Normas de convivencia y uso de la plataforma.",
+    "version": "Versión 1.0",
+    "sidebar": {
+      "intro": "Bienvenida",
+      "acceptance": "Aceptación",
+      "service": "El Servicio",
+      "responsible": "Uso Responsable",
+      "accounts": "Cuentas",
+      "modifications": "Cambios",
+      "liability": "Responsabilidad"
+    },
+    "intro": {
+      "p1": "Bienvenido a Ideological Atlas. Al usar nuestra web, aceptas estas normas.",
+      "p2": "Este es un proyecto educativo y de investigación social."
+    },
+    "acceptance": {
+      "title": "Aceptación de los términos",
+      "p1": "El acceso a la web implica la aceptación total de estos términos.",
+      "p2": "Si no estás de acuerdo, por favor, no utilices el servicio."
+    },
+    "service": {
+      "title": "Descripción del servicio",
+      "p1": "Ofrecemos una herramienta de análisis ideológico basada en modelos matemáticos abiertos."
+    },
+    "responsible": {
+      "title": "Uso Responsable",
+      "desc": "Tu comportamiento afecta a la comunidad.",
+      "prohibitions_title": "Prohibiciones",
+      "prohibitions_desc": "Está estrictamente prohibido:",
+      "prohibitions_list": [
+        "Uso de bots para alterar estadísticas.",
+        "Ataques de denegación de servicio.",
+        "Extracción masiva de datos (scraping) sin permiso.",
+        "Suplantación de identidad."
+      ],
+      "license_title": "Licencia de Código",
+      "license_desc": "Nuestro código es abierto bajo licencia MIT.",
+      "license_quote": "Libre para usar, estudiar y mejorar."
+    },
+    "accounts": {
+      "title": "Gestión de Cuentas",
+      "p1": "Eres responsable de mantener la confidencialidad de tu contraseña.",
+      "p2": "Nos reservamos el derecho de cerrar cuentas que violen estas normas."
+    },
+    "modifications": {
+      "title": "Modificaciones",
+      "p1": "Podemos actualizar estos términos. Te avisaremos de cambios importantes."
+    },
+    "liability": {
+      "title": "Limitación de Responsabilidad",
+      "p1": "No nos hacemos responsables de las interpretaciones personales de los resultados del Atlas."
+    },
+    "contact_community": {
+      "title": "¿Dudas legales?",
+      "desc": "Nuestro equipo legal revisará cualquier consulta.",
+      "btn": "Consultar"
+    },
+    "last_updated": "Última actualización"
   }
 }

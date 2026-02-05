@@ -274,107 +274,111 @@
     "email_not_verified_warning": "Email not verified."
   },
   "Legal": {
-    "table_of_contents": "Table of Contents",
-    "intro_title": "Introduction",
-    "collection_title": "Data Collection",
-    "usage_title": "Usage",
-    "cookies_title": "Cookies",
-    "rights_title": "Rights",
-    "contact_title": "Contact",
-    "need_help_title": "Need help?",
-    "need_help_desc": "Contact support.",
-    "open_ticket": "Contact Support",
     "privacy_policy_title": "Privacy Policy",
-    "privacy_policy_subtitle": "Your privacy matters.",
+    "privacy_policy_subtitle": "Your privacy is the fundamental pillar of our platform.",
     "last_updated": "Last updated",
-    "intro_p1": "Welcome.",
-    "intro_p2": "We map ideologies transparently.",
-    "col_account_title": "Account Info",
-    "col_account_desc": "Basic registration data.",
-    "col_interaction_title": "Interaction Data",
-    "col_interaction_desc": "Answers and markers.",
-    "col_tech_title": "Tech Data",
-    "col_tech_desc": "Device info.",
+    "table_of_contents": "Contents",
+    "need_help_title": "Any questions?",
+    "need_help_desc": "If you have questions about your data, we are here to help.",
+    "open_ticket": "Contact support",
+    "intro_title": "Introduction",
+    "intro_p1": "At Ideological Atlas, we take your personal data protection very seriously.",
+    "intro_p2": "This policy describes what data we collect and how we protect it, always guaranteeing your anonymity if you choose so.",
+    "collection_title": "Data Collection",
+    "col_account_title": "Account Information",
+    "col_account_desc": "Email and username for registered users.",
+    "col_interaction_title": "Atlas Answers",
+    "col_interaction_desc": "Your positions on ideological axes to calculate affinities.",
+    "col_tech_title": "Technical Data",
+    "col_tech_desc": "Basic device information to optimize the experience.",
     "col_contrib_title": "Contributions",
-    "col_contrib_desc": "Public posts.",
-    "usage_intro": "We do not sell data.",
-    "use_algo_title": "Algorithm",
-    "use_algo_desc": "Anonymous patterns.",
+    "col_contrib_desc": "Suggestions or bug reports you send us.",
+    "usage_title": "Information Usage",
+    "usage_intro": "We use your data exclusively for:",
+    "use_algo_title": "Affinity Calculation",
+    "use_algo_desc": "Comparing your profile with ideologies or other users.",
     "use_perso_title": "Personalization",
-    "use_perso_desc": "Adapted content.",
+    "use_perso_desc": "Saving your theme and language preferences.",
     "use_sec_title": "Security",
-    "use_sec_desc": "Protection.",
-    "cookies_desc": "Strictly necessary cookies.",
-    "cookies_note_label": "Note",
-    "cookies_note_text": "Tokens for session.",
-    "rights_intro": "Your rights:",
+    "use_sec_desc": "Protecting site integrity and preventing abuse.",
+    "cookies_title": "Cookies",
+    "cookies_desc": "We only use essential technical cookies for session operation and your preferences.",
+    "cookies_note_label": "Important",
+    "cookies_note_text": "We do not use third-party tracking cookies or for advertising purposes.",
+    "rights_title": "Your Rights",
+    "rights_intro": "You have full control over your information according to GDPR.",
     "right_access_title": "Access",
-    "right_access_desc": "Request copy.",
+    "right_access_desc": "You can see all your data in your profile.",
     "right_rect_title": "Rectification",
-    "right_rect_desc": "Correct info.",
+    "right_rect_desc": "You can change your answers at any time.",
     "right_del_title": "Deletion",
-    "right_del_desc": "Delete account.",
+    "right_del_desc": "You can delete your account and data permanently.",
     "right_port_title": "Portability",
-    "right_port_desc": "Receive data.",
-    "contact_desc": "Contact us.",
-    "contact_btn": "Send Email"
+    "right_port_desc": "Export your data in a structured format.",
+    "contact_title": "Legal Contact",
+    "contact_desc": "For any legal or privacy matters, write to us directly.",
+    "contact_btn": "Send email"
   },
   "Terms": {
-    "table_of_contents": "Contents",
     "title": "Terms of Use",
-    "subtitle": "Rules.",
-    "last_updated": "Last updated",
-    "version": "v0.1",
+    "subtitle": "Community rules and platform usage.",
+    "version": "Version 1.0",
     "sidebar": {
-      "intro": "Intro",
+      "intro": "Welcome",
       "acceptance": "Acceptance",
-      "service": "Service",
+      "service": "The Service",
       "responsible": "Responsible Use",
       "accounts": "Accounts",
-      "modifications": "Mods",
+      "modifications": "Changes",
       "liability": "Liability"
     },
     "intro": {
-      "p1": "Welcome.",
-      "p2": "Terms apply."
+      "p1": "Welcome to Ideological Atlas. By using our site, you agree to these rules.",
+      "p2": "This is an educational and social research project."
     },
     "acceptance": {
-      "title": "Acceptance",
-      "p1": "You accept.",
-      "p2": "If not, do not use."
+      "title": "Acceptance of terms",
+      "p1": "Accessing the site implies full acceptance of these terms.",
+      "p2": "If you do not agree, please do not use the service."
     },
     "service": {
-      "title": "Service",
-      "p1": "As is."
+      "title": "Service description",
+      "p1": "We offer an ideological analysis tool based on open mathematical models."
     },
     "responsible": {
       "title": "Responsible Use",
-      "desc": "Expectations.",
+      "desc": "Your behavior affects the community.",
       "prohibitions_title": "Prohibitions",
-      "prohibitions_desc": "Do not:",
-      "prohibitions_list": ["Hate speech", "Manipulation", "Scraping"],
-      "license_title": "License",
-      "license_desc": "MIT / CC.",
-      "license_quote": "Attribution required."
+      "prohibitions_desc": "It is strictly forbidden to:",
+      "prohibitions_list": [
+        "Use bots to alter statistics.",
+        "Denial of service attacks.",
+        "Mass data extraction (scraping) without permission.",
+        "Identity theft."
+      ],
+      "license_title": "Code License",
+      "license_desc": "Our code is open under MIT license.",
+      "license_quote": "Free to use, study and improve."
     },
     "accounts": {
-      "title": "Accounts",
-      "p1": "Registration.",
-      "p2": "Security."
+      "title": "Account Management",
+      "p1": "You are responsible for maintaining your password confidentiality.",
+      "p2": "We reserve the right to close accounts that violate these rules."
     },
     "modifications": {
       "title": "Modifications",
-      "p1": "We can change terms."
+      "p1": "We may update these terms. We will notify you of important changes."
     },
     "liability": {
-      "title": "Liability",
-      "p1": "Not responsible."
+      "title": "Limitation of Liability",
+      "p1": "We are not responsible for personal interpretations of Atlas results."
     },
     "contact_community": {
-      "title": "Questions?",
-      "desc": "Ask community.",
-      "btn": "Contact"
-    }
+      "title": "Legal questions?",
+      "desc": "Our legal team will review any inquiry.",
+      "btn": "Inquire"
+    },
+    "last_updated": "Last updated"
   },
   "FeaturesPage": {
     "hero_title": "The Future of Political Analysis",
@@ -425,45 +429,43 @@
   },
   "AboutPage": {
     "hero": {
-      "title": "Beyond Left/Right",
-      "subtitle": "New standard.",
-      "mission_btn": "Mission",
-      "github_btn": "Code"
+      "title": "About the Project",
+      "subtitle": "Exploring the dimensions of modern political thought.",
+      "github_btn": "Source Code"
     },
     "story": {
-      "title": "Story",
-      "content_p1": "Frustration with simplicity.",
-      "content_p2": "Small team.",
-      "quote": "Reality is complex."
+      "title": "Our Story",
+      "content_p1": "Ideological Atlas was born from the need to overcome the extreme simplification of the left-right axis.",
+      "content_p2": "We seek to provide a scientific and open tool for every individual to understand their position in an increasingly complex world.",
+      "quote": "Politics is not a line, it's an infinite map."
     },
     "algorithm": {
-      "title": "Affinity Engine",
-      "subtitle": "Quadratic decay.",
-      "indifference_title": "Indifference",
-      "indifference_desc": "Respects apathy.",
-      "quadratic_title": "Quadratic",
-      "quadratic_desc": "Nuance vs conflict.",
-      "phases_title": "Phases",
-      "phases_overlap": "Overlap",
-      "phases_gap": "Gap",
-      "aggregation_title": "Aggregation",
-      "aggregation_desc": "Hierarchical."
+      "title": "The Algorithm",
+      "subtitle": "Total transparency in affinity calculations.",
+      "indifference_title": "Managing Indifference",
+      "indifference_desc": "The system distinguishes between a neutral stance and a lack of opinion on a topic.",
+      "quadratic_title": "Quadratic Error",
+      "quadratic_desc": "We use quadratic functions to fairly penalize ideological deviations.",
+      "phases_title": "Phase Calculation",
+      "phases_gap": "Granular analysis of gaps and overlaps between answers.",
+      "aggregation_title": "Data Aggregation",
+      "aggregation_desc": "How axes combine into sections and complexity levels."
     },
     "contribute": {
-      "title": "Join Us",
-      "subtitle": "Open source.",
-      "role_dev": "Devs",
-      "role_dev_desc": "Code.",
+      "title": "Contribute to the Atlas",
+      "subtitle": "This is a community-driven, open project.",
+      "role_dev": "Development",
+      "role_dev_desc": "React, Next.js, Django, and system optimization.",
       "role_research": "Research",
-      "role_research_desc": "Biblio.",
-      "role_translate": "Translate",
-      "role_translate_desc": "Cultures.",
+      "role_research_desc": "Validation of ideological axes and definitions.",
       "role_design": "Design",
-      "role_design_desc": "UX/UI.",
+      "role_design_desc": "Improving user experience and visualization.",
       "role_product": "Product",
-      "role_product_desc": "Direction.",
+      "role_product_desc": "Project strategy and roadmap.",
       "role_data": "Data",
-      "role_data_desc": "Value."
+      "role_data_desc": "Statistical analysis and affinity models.",
+      "role_translate": "Translation",
+      "role_translate_desc": "Making the Atlas accessible to everyone."
     }
   },
   "Onboarding": {
