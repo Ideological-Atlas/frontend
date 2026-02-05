@@ -27,7 +27,6 @@ export function AxisControls({
 }: AxisControlsProps) {
   const t = useTranslations('Atlas');
 
-  // CORRECCIÓN: Permitimos mostrar controles aunque estemos en modo comparación
   if (!hasAnswer) return null;
 
   return (

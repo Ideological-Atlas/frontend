@@ -100,7 +100,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             otherAnswers={!isSelfView ? state.theirConditionerAnswers : undefined}
             targetUsername={targetUser?.username}
             onSaveAnswer={actions.saveConditioner}
-            onResetAnswer={actions.deleteConditioner} // <--- FALTABA ESTO
+            onResetAnswer={actions.deleteConditioner}
             isLoading={false}
             dependencyNameMap={state.dependencyNameMap}
             readOnly={false}
@@ -114,7 +114,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
             axisAffinityMap={effectiveAxisAffinity}
             targetUsername={targetUser?.username}
             onSaveAnswer={actions.saveAnswer}
-            onDeleteAnswer={actions.deleteAnswer} // <--- FALTABA ESTO
+            onDeleteAnswer={actions.deleteAnswer}
             isLoading={false}
             isLevelLoading={false}
             readOnly={false}
