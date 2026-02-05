@@ -24,11 +24,11 @@ export function AxisControls({
   onDropdownChange,
   onReset,
   onDropdownOpenChange,
-  isComparisonMode,
 }: AxisControlsProps) {
   const t = useTranslations('Atlas');
 
-  if (!hasAnswer || isComparisonMode) return null;
+  // CORRECCIÓN: Permitimos mostrar controles aunque estemos en modo comparación
+  if (!hasAnswer) return null;
 
   return (
     <div className="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start">

@@ -5,11 +5,12 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
 import type { IdeologyAffinity } from '@/lib/client/models/IdeologyAffinity';
-import confetti from 'canvas-confetti';
+import { useConfetti } from '@/hooks/useConfetti';
 
 export function useDiscoveryController() {
   const { isAuthenticated, user } = useAuthStore();
   const { answers, conditionerAnswers } = useAtlasStore();
+  const { triggerConfetti } = useConfetti();
 
   const [ideologies, setIdeologies] = useState<IdeologyList[]>([]);
   const [affinities, setAffinities] = useState<Record<string, IdeologyAffinity>>({});
@@ -146,38 +147,8 @@ export function useDiscoveryController() {
     if (top && topScore > 0) {
       setWinner(top);
       setIsModalOpen(true);
-      triggerConfetti(top.color || undefined);
+      triggerConfetti(top.color ? [top.color] : undefined);
     }
-  };
-
-  const triggerConfetti = (customColor?: string) => {
-    const duration = 3000;
-    const end = Date.now() + duration;
-
-    const baseColors = ['#16a34a', '#3476d8', '#f1f5f9'];
-    const colors = customColor ? [customColor, ...baseColors] : baseColors;
-
-    const frame = () => {
-      confetti({
-        particleCount: 5,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: colors,
-      });
-      confetti({
-        particleCount: 5,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: colors,
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    };
-    frame();
   };
 
   const sortedIdeologies = useMemo(() => {

@@ -1,10 +1,16 @@
 import { AtlasView } from '@/components/organisms/Atlas/AtlasView';
+import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Atlas Ideológico | Ideological Atlas',
-  description: 'Define tu posición en el espectro.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Atlas' });
+
+  return {
+    title: `${t('header_title')} | Ideological Atlas`,
+    description: t('header_description'),
+  };
+}
 
 export default function AtlasPage() {
   return (
