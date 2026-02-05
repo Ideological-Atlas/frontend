@@ -2,7 +2,7 @@
 
 import { clsx } from 'clsx';
 import { useTranslations } from 'next-intl';
-import { Slider } from '@/components/atoms/Slider';
+import { Slider } from '@/components/molecules/Slider';
 import { DependencyBadge } from '@/components/atoms/DependencyBadge';
 import { AxisHeader } from './axis/AxisHeader';
 import { AxisControls } from './axis/AxisControls';

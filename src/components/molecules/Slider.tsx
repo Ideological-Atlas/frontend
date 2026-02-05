@@ -3,21 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { SliderThumb } from '@/components/atoms/slider/SliderThumb';
+import { SliderTrackVisuals } from '@/components/atoms/slider/SliderTrackVisuals';
 
 interface SliderProps {
   leftLabel?: string;
   rightLabel?: string;
-
   value: number;
   marginLeft: number;
   marginRight: number;
   bottomLabel?: string;
   isIndifferent?: boolean;
   indifferentLabel?: string;
-
   isNotAnswered?: boolean;
   notAnsweredLabel?: string;
-
   otherValue?: number | null;
   otherMarginLeft?: number | null;
   otherMarginRight?: number | null;
@@ -26,7 +25,6 @@ interface SliderProps {
   otherIndifferentLabel?: string;
   otherNotAnsweredLabel?: string;
   topLabel?: string;
-
   onChange?: (updates: { value?: number; marginLeft?: number; marginRight?: number }) => void;
   onCommit?: () => void;
   onThumbWheel?: (delta: number) => void;
@@ -35,208 +33,8 @@ interface SliderProps {
   variant?: 'default' | 'other';
   customHexColor?: string;
   otherCustomColor?: string;
-
   primaryOverlay?: React.ReactNode;
 }
-
-const Thumb = ({
-  left,
-  active,
-  type,
-  color,
-  isDragging,
-}: {
-  left: number;
-  active: boolean;
-  type: 'bracket' | 'center';
-  color: string;
-  isDragging: boolean | null;
-}) => {
-  if (type === 'center') {
-    return (
-      <div
-        className={clsx(
-          'atlas-slider-thumb-center pointer-events-none absolute top-1/2 z-30 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[2px] border-white shadow-md transition-transform',
-          active ? 'scale-110' : '',
-          isDragging && !active && 'opacity-50',
-        )}
-        style={{ left: `${left}%`, backgroundColor: color }}
-      >
-        <div className="h-2 w-2 rounded-full bg-white/50 blur-[0.5px]" />
-      </div>
-    );
-  }
-  return (
-    <div
-      className={clsx(
-        'bg-card pointer-events-none absolute top-1/2 z-30 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-sm transition-transform',
-        active ? 'scale-110' : '',
-        isDragging && !active && 'opacity-50',
-      )}
-      style={{ left: `${left}%`, borderColor: color }}
-    />
-  );
-};
-
-const AXIS_MARKERS = [12.5, 25, 37.5, 50, 62.5, 75, 87.5];
-
-interface TrackProps {
-  cPercent: number;
-  lPercent: number;
-  rPercent: number;
-  color: string;
-  label?: string;
-  isInteractive?: boolean;
-  isIndifferent?: boolean;
-  indifferentLabel?: string;
-  isNotAnswered?: boolean;
-  notAnsweredLabel?: string;
-  onPointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerMove?: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerUp?: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerLeave?: (e: React.PointerEvent<HTMLDivElement>) => void;
-  isDragging?: 'center' | 'left' | 'right' | null;
-}
-
-const Track = ({
-  cPercent,
-  lPercent,
-  rPercent,
-  color,
-  label,
-  isInteractive,
-  isIndifferent,
-  indifferentLabel,
-  isNotAnswered,
-  notAnsweredLabel,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-  onPointerLeave,
-  isDragging,
-}: TrackProps) => (
-  <div className="relative h-8 w-full">
-    {label && (
-      <div
-        className={clsx(
-          'absolute -top-5 left-0 text-xs font-bold tracking-wider uppercase',
-          isNotAnswered
-            ? 'text-muted-foreground opacity-70'
-            : color.startsWith('var(--other') || color.includes('other-user')
-              ? 'text-other-user'
-              : 'text-primary',
-        )}
-        style={!color.startsWith('var(--') ? { color } : undefined}
-      >
-        {label}
-      </div>
-    )}
-
-    <div
-      className={clsx(
-        'pointer-events-none absolute top-1/2 right-0 left-0 h-1.5 w-full -translate-y-1/2 rounded-full',
-        isNotAnswered ? 'bg-muted border-border border border-dashed' : 'bg-secondary/40',
-      )}
-    />
-
-    {!isNotAnswered && !isIndifferent && (
-      <div className="pointer-events-none absolute inset-0 z-0">
-        {AXIS_MARKERS.map(pos => (
-          <div
-            key={pos}
-            className={clsx(
-              'absolute top-1/2 w-px -translate-x-1/2 -translate-y-1/2 rounded-full',
-              pos === 50 ? 'bg-foreground/30 h-3' : 'bg-foreground/20 h-1.5',
-            )}
-            style={{ left: `${pos}%` }}
-          />
-        ))}
-      </div>
-    )}
-
-    {(isIndifferent || isNotAnswered) && (
-      <div className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-        <div
-          className={clsx(
-            'flex items-center justify-center rounded-md px-3 py-1.5 shadow-sm backdrop-blur-sm',
-            isNotAnswered
-              ? 'bg-card/50 text-muted-foreground'
-              : 'bg-card/80 border-border text-muted-foreground border',
-          )}
-        >
-          <span className="text-[10px] leading-none font-bold tracking-widest uppercase">
-            {isNotAnswered ? notAnsweredLabel : indifferentLabel}
-          </span>
-        </div>
-      </div>
-    )}
-
-    {!isIndifferent && !isNotAnswered && (
-      <>
-        <div
-          className="pointer-events-none absolute top-1/2 z-10 h-2 -translate-y-1/2 rounded-full transition-all duration-75 ease-out"
-          style={{
-            left: `${lPercent}%`,
-            width: `${rPercent - lPercent}%`,
-            backgroundColor: color,
-            boxShadow: `0 0 12px 1px color-mix(in srgb, ${color}, transparent 40%)`,
-          }}
-        />
-
-        {isInteractive ? (
-          <>
-            <Thumb
-              left={lPercent}
-              active={isDragging === 'left'}
-              type="bracket"
-              color={color}
-              isDragging={!!isDragging}
-            />
-            <Thumb
-              left={rPercent}
-              active={isDragging === 'right'}
-              type="bracket"
-              color={color}
-              isDragging={!!isDragging}
-            />
-            <Thumb
-              left={cPercent}
-              active={isDragging === 'center'}
-              type="center"
-              color={color}
-              isDragging={!!isDragging}
-            />
-
-            <div
-              className={clsx('absolute inset-0 z-40 touch-none', isDragging ? 'cursor-grabbing' : 'cursor-pointer')}
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onPointerLeave={onPointerLeave}
-            />
-          </>
-        ) : (
-          <>
-            <div
-              className="bg-card absolute top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-sm"
-              style={{ left: `${lPercent}%`, borderColor: color }}
-            />
-            <div
-              className="bg-card absolute top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-sm"
-              style={{ left: `${rPercent}%`, borderColor: color }}
-            />
-            <div
-              className="absolute top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[2px] border-white shadow-md"
-              style={{ left: `${cPercent}%`, backgroundColor: color }}
-            >
-              <div className="h-2 w-2 rounded-full bg-white/50 blur-[0.5px]" />
-            </div>
-          </>
-        )}
-      </>
-    )}
-  </div>
-);
 
 export const Slider = ({
   className,
@@ -282,7 +80,6 @@ export const Slider = ({
 
   const hasOther = otherValue !== undefined || otherIsNotAnswered || otherIsIndifferent;
   const otherCenterPercent = hasOther && otherValue !== null && otherValue !== undefined ? toPercent(otherValue) : 50;
-
   const otherColor = otherCustomColor || 'var(--other-user-strong)';
 
   let otherLeftPercent = 0;
@@ -298,15 +95,12 @@ export const Slider = ({
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (readOnly || !onChange || isIndifferent || isNotAnswered || primaryOverlay) return;
-
     e.preventDefault();
-
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
     const clickX = e.clientX - rect.left;
     const width = rect.width;
-
     const centerX = (centerPercent / 100) * width;
     const leftX = (leftPercent / 100) * width;
     const rightX = (rightPercent / 100) * width;
@@ -314,9 +108,7 @@ export const Slider = ({
     const distCenter = Math.abs(clickX - centerX);
     const distLeft = Math.abs(clickX - leftX);
     const distRight = Math.abs(clickX - rightX);
-
     const threshold = 40;
-
     const minDist = Math.min(distCenter, distLeft, distRight);
 
     if (minDist > threshold) return;
@@ -330,7 +122,6 @@ export const Slider = ({
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging || !onChange || readOnly) return;
-
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
@@ -345,7 +136,6 @@ export const Slider = ({
       const maxAllowedRight = 100 - newVal;
       const newMarginLeft = Math.min(marginLeft, maxAllowedLeft);
       const newMarginRight = Math.min(marginRight, maxAllowedRight);
-
       onChange({ value: newVal, marginLeft: newMarginLeft, marginRight: newMarginRight });
     } else if (isDragging === 'left') {
       const cappedVal = Math.min(rawVal, value);
@@ -379,7 +169,6 @@ export const Slider = ({
       const mouseX = e.clientX - rect.left;
       const thumbX = (centerPercent / 100) * rect.width;
       const hitRadius = 40;
-
       if (Math.abs(mouseX - thumbX) <= hitRadius) {
         e.preventDefault();
         const step = 1;
@@ -419,18 +208,43 @@ export const Slider = ({
         <div className="flex flex-col gap-10">
           {hasOther && (
             <div className={clsx((otherIsIndifferent || otherIsNotAnswered) && 'opacity-75')}>
-              <Track
-                cPercent={otherCenterPercent}
-                lPercent={otherLeftPercent}
-                rPercent={otherRightPercent}
-                color={otherColor}
-                label={topLabel}
-                isInteractive={false}
-                isIndifferent={otherIsIndifferent}
-                indifferentLabel={otherIndifferentLabel}
-                isNotAnswered={otherIsNotAnswered}
-                notAnsweredLabel={otherNotAnsweredLabel}
-              />
+              <div className="relative h-8 w-full">
+                <SliderTrackVisuals
+                  lPercent={otherLeftPercent}
+                  rPercent={otherRightPercent}
+                  color={otherColor}
+                  label={topLabel}
+                  isNotAnswered={otherIsNotAnswered}
+                  isIndifferent={otherIsIndifferent}
+                  notAnsweredLabel={otherNotAnsweredLabel}
+                  indifferentLabel={otherIndifferentLabel}
+                />
+                {!otherIsIndifferent && !otherIsNotAnswered && (
+                  <>
+                    <SliderThumb
+                      left={otherLeftPercent}
+                      active={false}
+                      type="bracket"
+                      color={otherColor}
+                      isDragging={false}
+                    />
+                    <SliderThumb
+                      left={otherRightPercent}
+                      active={false}
+                      type="bracket"
+                      color={otherColor}
+                      isDragging={false}
+                    />
+                    <SliderThumb
+                      left={otherCenterPercent}
+                      active={false}
+                      type="center"
+                      color={otherColor}
+                      isDragging={false}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           )}
 
@@ -438,23 +252,57 @@ export const Slider = ({
             {primaryOverlay ? (
               <div className="flex w-full items-center justify-center py-1">{primaryOverlay}</div>
             ) : (
-              <Track
-                cPercent={centerPercent}
-                lPercent={leftPercent}
-                rPercent={rightPercent}
-                color={activeColor}
-                label={hasOther ? bottomLabel : undefined}
-                isInteractive={!readOnly && !isIndifferent && !isNotAnswered}
-                isIndifferent={isIndifferent}
-                indifferentLabel={indifferentLabel}
-                isNotAnswered={isNotAnswered}
-                notAnsweredLabel={notAnsweredLabel}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerLeave={handlePointerLeave}
-                isDragging={isDragging ? isDragging : undefined}
-              />
+              <div className="relative h-8 w-full">
+                <SliderTrackVisuals
+                  lPercent={leftPercent}
+                  rPercent={rightPercent}
+                  color={activeColor}
+                  label={hasOther ? bottomLabel : undefined}
+                  isNotAnswered={isNotAnswered}
+                  isIndifferent={isIndifferent}
+                  notAnsweredLabel={notAnsweredLabel}
+                  indifferentLabel={indifferentLabel}
+                />
+
+                {!isIndifferent && !isNotAnswered && (
+                  <>
+                    <SliderThumb
+                      left={leftPercent}
+                      active={isDragging === 'left'}
+                      type="bracket"
+                      color={activeColor}
+                      isDragging={!!isDragging}
+                    />
+                    <SliderThumb
+                      left={rightPercent}
+                      active={isDragging === 'right'}
+                      type="bracket"
+                      color={activeColor}
+                      isDragging={!!isDragging}
+                    />
+                    <SliderThumb
+                      left={centerPercent}
+                      active={isDragging === 'center'}
+                      type="center"
+                      color={activeColor}
+                      isDragging={!!isDragging}
+                    />
+
+                    {!readOnly && (
+                      <div
+                        className={clsx(
+                          'absolute inset-0 z-40 touch-none',
+                          isDragging ? 'cursor-grabbing' : 'cursor-pointer',
+                        )}
+                        onPointerDown={handlePointerDown}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerLeave={handlePointerLeave}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
             )}
           </div>
         </div>
