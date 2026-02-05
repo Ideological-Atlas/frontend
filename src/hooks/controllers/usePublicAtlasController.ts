@@ -206,7 +206,6 @@ export function usePublicAtlasController(targetUuid: string, contextLabel: strin
       const theirAxis = publicData.answers?.axis_answers || {};
       const theirCond = publicData.answers?.conditioners_answers || {};
 
-       
       if (Object.keys(theirAxis).length === 0 && Array.isArray(publicData.answers?.axis)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         publicData.answers.axis.forEach((item: any) => {
