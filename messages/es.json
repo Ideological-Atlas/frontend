@@ -345,5 +345,52 @@
     "location_label": "Ubicación",
     "religion_label": "Creencia",
     "read_full_article": "Leer artículo completo"
+  },
+  "FeaturesPage": {
+    "hero_title": "El Futuro del Análisis Político",
+    "hero_subtitle": "Una plataforma en evolución constante para mapear la complejidad ideológica humana.",
+    "current_title": "Funcionalidades Actuales",
+    "roadmap_title": "Hoja de Ruta",
+    "roadmap_subtitle": "Lo que estamos construyendo para el futuro.",
+    "coming_soon": "Próximamente",
+    "help_wanted_title": "Necesitamos tu ayuda",
+    "help_wanted_desc": "Este es un proyecto open-source ambicioso. Si eres desarrollador, diseñador o investigador, tu ayuda es bienvenida.",
+    "contact_us": "Contáctanos",
+    "cards": {
+      "multidimensional": {
+        "title": "Análisis Multidimensional",
+        "desc": "Más allá de izquierda y derecha. Analiza ideologías a través de múltiples ejes y niveles de complejidad."
+      },
+      "contextual": {
+        "title": "Contexto Dinámico",
+        "desc": "Las preguntas se adaptan a tus respuestas anteriores para profundizar donde más importa."
+      },
+      "privacy": {
+        "title": "Privacidad Primero",
+        "desc": "Tus datos son tuyos. Análisis anónimo o perfil privado, tú decides."
+      }
+    },
+    "upcoming": {
+      "dashboard": {
+        "title": "Dashboard Analítico",
+        "desc": "Visualizaciones avanzadas de tus tendencias a lo largo del tiempo."
+      },
+      "countries": {
+        "title": "Adaptación Regional",
+        "desc": "Contextos políticos específicos por país y región."
+      },
+      "community": {
+        "title": "Comunidad",
+        "desc": "Debate y compara posturas con otros usuarios de forma respetuosa."
+      },
+      "ai": {
+        "title": "Insights con IA",
+        "desc": "Análisis profundo de patrones ideológicos asistido por IA."
+      },
+      "mobile": {
+        "title": "App Móvil",
+        "desc": "Lleva el Atlas contigo en iOS y Android."
+      }
+    }
   }
 }

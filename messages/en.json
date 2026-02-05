@@ -377,55 +377,51 @@
     }
   },
   "FeaturesPage": {
-    "hero_title": "Ideological OS",
-    "hero_subtitle": "Map your politics.",
+    "hero_title": "The Future of Political Analysis",
+    "hero_subtitle": "An ever-evolving platform to map human ideological complexity.",
     "current_title": "Current Features",
     "roadmap_title": "Roadmap",
-    "roadmap_subtitle": "Future vision.",
+    "roadmap_subtitle": "What we are building for the future.",
+    "coming_soon": "Coming Soon",
+    "help_wanted_title": "We need your help",
+    "help_wanted_desc": "This is an ambitious open-source project. If you are a developer, designer, or researcher, your help is welcome.",
+    "contact_us": "Contact Us",
     "cards": {
       "multidimensional": {
-        "title": "Multidimensional",
-        "desc": "Multiple axes."
+        "title": "Multidimensional Analysis",
+        "desc": "Beyond left and right. Analyze ideologies through multiple axes and complexity levels."
       },
       "contextual": {
-        "title": "Contextual",
-        "desc": "Dynamic questions."
+        "title": "Dynamic Context",
+        "desc": "Questions adapt to your previous answers to drill down where it matters most."
       },
       "privacy": {
-        "title": "Privacy",
-        "desc": "Open source."
+        "title": "Privacy First",
+        "desc": "Your data is yours. Anonymous analysis or private profile, you decide."
       }
     },
     "upcoming": {
-      "explorer": {
-        "title": "Explorer",
-        "desc": "Library."
-      },
       "dashboard": {
-        "title": "Dashboard",
-        "desc": "Stats."
+        "title": "Analytical Dashboard",
+        "desc": "Advanced visualizations of your trends over time."
       },
       "countries": {
-        "title": "Countries",
-        "desc": "Trends."
+        "title": "Regional Adaptation",
+        "desc": "Specific political contexts by country and region."
       },
       "community": {
         "title": "Community",
-        "desc": "Groups."
+        "desc": "Debate and compare stances with other users respectfully."
       },
       "ai": {
-        "title": "AI",
-        "desc": "Analysis."
+        "title": "AI Insights",
+        "desc": "Deep analysis of ideological patterns assisted by AI."
       },
       "mobile": {
-        "title": "Mobile",
-        "desc": "Apps."
+        "title": "Mobile App",
+        "desc": "Take the Atlas with you on iOS and Android."
       }
-    },
-    "coming_soon": "Coming Soon",
-    "help_wanted_title": "Help Wanted",
-    "help_wanted_desc": "Join us.",
-    "contact_us": "Contact Us"
+    }
   },
   "AboutPage": {
     "hero": {
