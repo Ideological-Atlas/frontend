@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/atoms/Button';
+import { Portal } from '@/components/atoms/Portal';
 import type { IdeologyAxis } from '@/lib/client/models/IdeologyAxis';
 import type { AnswerData } from '@/store/useAtlasStore';
 import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
@@ -76,13 +77,13 @@ export function AxisHeader({
 
               <AnimatePresence>
                 {showDescription && (
-                  <>
+                  <Portal>
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm md:hidden"
+                      className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm md:hidden"
                       onClick={e => {
                         e.stopPropagation();
                         setShowDescription(false);
@@ -93,10 +94,10 @@ export function AxisHeader({
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 5, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: 'easeOut' }}
-                      className="bg-popover text-popover-foreground border-border fixed top-1/2 left-1/2 z-[101] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default rounded-xl border p-5 shadow-2xl md:absolute md:top-full md:left-0 md:z-50 md:mt-2 md:w-[400px] md:translate-x-0 md:translate-y-0 md:p-4 md:shadow-xl"
+                      className="bg-popover text-popover-foreground border-border fixed top-1/2 left-1/2 z-[9999] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default rounded-xl border p-5 shadow-2xl md:absolute md:top-auto md:left-auto md:w-[400px] md:translate-x-0 md:translate-y-0 md:p-4"
+                      style={{}}
                       onClick={e => e.stopPropagation()}
                     >
-                      <div className="bg-popover border-t-border border-l-border absolute -top-1.5 left-2 hidden h-3 w-3 rotate-45 border-t border-l md:block" />
                       <div className="mb-3 flex shrink-0 items-center justify-between md:hidden">
                         <span className="text-sm font-bold tracking-wider uppercase">{tCommon('info')}</span>
                         <button
@@ -113,7 +114,7 @@ export function AxisHeader({
                         {axis.description}
                       </p>
                     </motion.div>
-                  </>
+                  </Portal>
                 )}
               </AnimatePresence>
             </div>

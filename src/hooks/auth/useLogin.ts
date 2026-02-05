@@ -8,6 +8,7 @@ import { loginAction } from '@/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAtlasStore } from '@/store/useAtlasStore';
 import { syncLocalAnswersToProfile } from '@/lib/client/auth/sync-actions';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export function useLogin() {
   const locale = useLocale();
@@ -37,7 +38,7 @@ export function useLogin() {
       reset();
       await fetchAllData(true, result.user.is_verified);
 
-      router.push(`/${locale}`);
+      router.push(`/${locale}${DEFAULT_LOGIN_REDIRECT}`);
       router.refresh();
     } else {
       setGlobalError('invalid_credentials');

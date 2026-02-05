@@ -8,6 +8,7 @@ import { Button } from '@/components/atoms/Button';
 import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
 import { StatusMessage } from '@/components/molecules/StatusMessage';
 import { StatusCallout } from '@/components/molecules/StatusCallout';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export function PostRegisterStatus() {
   const t = useTranslations('Auth');
@@ -28,12 +29,12 @@ export function PostRegisterStatus() {
       </motion.div>
 
       <motion.div variants={itemVariants} className="flex flex-col gap-3">
-        <Link href={`/${locale}`} className="w-full">
+        <Link href={`/${locale}${DEFAULT_LOGIN_REDIRECT}`} className="w-full">
           <Button variant="primary" className="h-12 w-full text-base">
             {t('explore_button')}
           </Button>
         </Link>
-        <Link href={`/${locale}`} className="w-full">
+        <Link href={`/${locale}/encyclopedia`} className="w-full">
           <Button variant="secondary" className="hover:border-border h-12 w-full border border-transparent text-base">
             {t('dashboard_button')}
           </Button>

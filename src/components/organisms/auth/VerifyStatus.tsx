@@ -10,6 +10,7 @@ import { Button } from '@/components/atoms/Button';
 import { AuthCard, itemVariants } from '@/components/molecules/AuthCard';
 import { StatusMessage } from '@/components/molecules/StatusMessage';
 import { useVerifyUser, type VerifyState } from '@/hooks/auth/useVerifyUser';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export function VerifyStatus() {
   const t = useTranslations('Verify');
@@ -61,7 +62,7 @@ export function VerifyStatus() {
 
       {status !== 'loading' && (
         <motion.div variants={itemVariants} className="w-full">
-          <Link href={`/${locale}${isAuthenticated ? '/' : '/login'}`} className="w-full">
+          <Link href={`/${locale}${isAuthenticated ? DEFAULT_LOGIN_REDIRECT : '/login'}`} className="w-full">
             <Button className="w-full" variant="primary">
               {isAuthenticated ? t('go_to_dashboard') : t('go_to_login')}
               <span className="material-symbols-outlined ml-2 text-[18px]">arrow_forward</span>

@@ -115,7 +115,10 @@
     "invalid_token_title": "Enlace no válido",
     "invalid_token_description": "Este enlace de recuperación ha caducado o no es válido. Por favor, solicita uno nuevo.",
     "reset_password_error": "Hubo un error al restablecer la contraseña.",
-    "invalid_username_format": "Solo letras, números y @/./+/-/_ (sin espacios)"
+    "invalid_username_format": "Solo letras, números y @/./+/-/_ (sin espacios)",
+    "password_too_short": "La contraseña debe tener al menos 8 caracteres",
+    "password_numeric": "La contraseña debe contener al menos un número",
+    "invalid_email": "El correo electrónico no es válido"
   },
   "Footer": {
     "privacy": "Privacidad",
@@ -391,7 +394,8 @@
         "title": "App Móvil",
         "desc": "Lleva el Atlas contigo en iOS y Android."
       }
-    }
+    },
+    "version_badge": "Atlas Ideológico v0.1.0"
   },
   "AboutPage": {
     "hero": {
@@ -483,7 +487,7 @@
   "Terms": {
     "title": "Términos de Uso",
     "subtitle": "Normas de convivencia y uso de la plataforma.",
-    "version": "Versión 1.0",
+    "version": "Versión 0.1.0",
     "sidebar": {
       "intro": "Bienvenida",
       "acceptance": "Aceptación",

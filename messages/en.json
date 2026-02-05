@@ -115,7 +115,10 @@
     "invalid_token_title": "Invalid Link",
     "invalid_token_description": "This link has expired or is invalid.",
     "reset_password_error": "Error resetting password.",
-    "invalid_username_format": "Only letters, numbers, and @/./+/-/_ allowed"
+    "invalid_username_format": "Only letters, numbers, and @/./+/-/_ allowed",
+    "password_too_short": "Password must be at least 8 characters long",
+    "password_numeric": "Password must contain at least one number",
+    "invalid_email": "Invalid email address"
   },
   "Footer": {
     "privacy": "Privacy",
@@ -322,7 +325,7 @@
   "Terms": {
     "title": "Terms of Use",
     "subtitle": "Community rules and platform usage.",
-    "version": "Version 1.0",
+    "version": "Version 0.1.0",
     "sidebar": {
       "intro": "Welcome",
       "acceptance": "Acceptance",
@@ -425,7 +428,8 @@
         "title": "Mobile App",
         "desc": "Take the Atlas with you on iOS and Android."
       }
-    }
+    },
+    "version_badge": "Ideological Atlas v0.1.0"
   },
   "AboutPage": {
     "hero": {

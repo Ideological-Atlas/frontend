@@ -17,7 +17,7 @@ export function FeaturesHero() {
           transition={{ duration: 0.6 }}
           className="bg-primary/10 text-primary inline-block rounded-full px-4 py-1.5 text-sm font-bold backdrop-blur-md"
         >
-          Ideological Atlas v0.1
+          {t('version_badge')}
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
