@@ -1,20 +1,18 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { motion } from 'framer-motion';
 import { useProfile } from '@/hooks/useProfile';
-import { Input } from '@/components/atoms/Input';
-import { Label } from '@/components/atoms/Label';
 import { Button } from '@/components/atoms/Button';
 import { Dropdown } from '@/components/atoms/Dropdown';
+import { Label } from '@/components/atoms/Label';
 import { AppearanceEnum } from '@/lib/client/models/AppearanceEnum';
 import Link from 'next/link';
-import { clsx } from 'clsx';
+import { ProfilePublicSection } from './profile/ProfilePublicSection';
+import { ProfileSecuritySection } from './profile/ProfileSecuritySection';
 
 export function ProfileForm() {
   const t = useTranslations('Profile');
   const tCommon = useTranslations('Common');
-  const tAuth = useTranslations('Auth');
   const locale = useLocale();
   const { form, onSubmit, isLoading, isSuccess, user } = useProfile();
   const {
@@ -44,45 +42,14 @@ export function ProfileForm() {
     }
   };
 
-  const getErrorMessage = (msg?: string) => {
-    if (!msg) return null;
-    if (msg.includes(' ')) return msg;
-    return tAuth(msg);
-  };
-
   const displayBio = user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : '';
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 pb-20">
       <div className="bg-card border-border relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-2xl border p-6 shadow-sm md:flex-row md:p-8">
         <div className="from-primary via-accent to-primary absolute top-0 left-0 h-1 w-full bg-gradient-to-r opacity-50" />
-
         <div className="z-10 flex w-full items-center gap-6 md:w-auto">
           <div className="relative flex shrink-0 items-center justify-center">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{
-                repeat: Infinity,
-                duration: 3,
-                ease: 'linear',
-              }}
-              className="absolute -inset-[3px] rounded-full"
-              style={{
-                background: `conic-gradient(from 0deg, var(--primary), var(--strong-accent), var(--primary))`,
-              }}
-            />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{
-                repeat: Infinity,
-                duration: 3,
-                ease: 'linear',
-              }}
-              className="absolute -inset-[3px] rounded-full opacity-50 blur-sm"
-              style={{
-                background: `conic-gradient(from 0deg, var(--primary), var(--strong-accent), var(--primary))`,
-              }}
-            />
             <div className="bg-card relative z-10 flex h-20 w-20 items-center justify-center rounded-full p-[4px]">
               <div className="from-primary/20 to-secondary text-primary flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-3xl font-black shadow-inner">
                 {user.username.slice(0, 2).toUpperCase()}
@@ -94,7 +61,6 @@ export function ProfileForm() {
             <p className="text-muted-foreground mt-1 max-w-xl text-sm leading-relaxed break-words">{displayBio}</p>
           </div>
         </div>
-
         <Link href={`/${locale}/answers/${user.uuid}`} className="shrink-0">
           <Button variant="primary" className="shadow-primary/20 shadow-lg">
             {t('view_public_profile')}
@@ -128,62 +94,7 @@ export function ProfileForm() {
 
         <main className="lg:col-span-9">
           <form onSubmit={onSubmit} className="space-y-8">
-            <section
-              id="public-profile"
-              className="bg-card border-border scroll-mt-28 rounded-2xl border p-6 shadow-sm md:p-8"
-            >
-              <div className="border-border mb-6 border-b pb-4">
-                <h2 className="text-foreground text-xl font-bold">{t('public_profile')}</h2>
-                <p className="text-muted-foreground mt-1 text-sm">{t('public_profile_desc')}</p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="col-span-1 space-y-2 md:col-span-2">
-                  <Label htmlFor="username">{tAuth('username_label')}</Label>
-                  <div className="group relative">
-                    <span
-                      className={clsx(
-                        'absolute top-1/2 left-3 -translate-y-1/2 transition-colors',
-                        errors.username ? 'text-destructive' : 'text-muted-foreground group-focus-within:text-primary',
-                      )}
-                    >
-                      @
-                    </span>
-                    <Input
-                      id="username"
-                      {...register('username')}
-                      className={clsx('pl-8', !errors.username && 'bg-background')}
-                      error={!!errors.username}
-                    />
-                  </div>
-                  {errors.username?.message && (
-                    <p className="text-destructive mt-1 text-xs font-medium">
-                      {getErrorMessage(errors.username.message)}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="first_name">{t('first_name_label')}</Label>
-                  <Input id="first_name" {...register('first_name')} className="bg-background" />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="last_name">{t('last_name_label')}</Label>
-                  <Input id="last_name" {...register('last_name')} className="bg-background" />
-                </div>
-
-                <div className="col-span-1 space-y-2 md:col-span-2">
-                  <Label htmlFor="bio">{t('bio_label')}</Label>
-                  <textarea
-                    id="bio"
-                    className="border-border bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-primary focus-visible:border-primary flex min-h-[120px] w-full resize-y rounded-lg border px-4 py-3 text-sm transition-all focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder=""
-                    {...register('bio')}
-                  />
-                </div>
-              </div>
-            </section>
+            <ProfilePublicSection register={register} errors={errors} />
 
             <section
               id="preferences"
@@ -193,7 +104,6 @@ export function ProfileForm() {
                 <h2 className="text-foreground text-xl font-bold">{t('preferences_title')}</h2>
                 <p className="text-muted-foreground mt-1 text-sm">{t('preferences_desc')}</p>
               </div>
-
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>{t('language_label')}</Label>
@@ -216,80 +126,7 @@ export function ProfileForm() {
               </div>
             </section>
 
-            <section
-              id="security"
-              className="bg-card border-border scroll-mt-28 rounded-2xl border p-6 shadow-sm md:p-8"
-            >
-              <div className="border-border mb-6 border-b pb-4">
-                <h2 className="text-foreground text-xl font-bold">{t('security_title')}</h2>
-                <p className="text-muted-foreground mt-1 text-sm">{t('security_desc')}</p>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email">{tAuth('email_label')}</Label>
-
-                  {!user.is_verified && (
-                    <div className="mb-2 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs font-medium text-amber-600 dark:text-amber-500">
-                      <span className="material-symbols-outlined text-[18px]">mark_email_unread</span>
-                      {t('email_not_verified_warning')}
-                    </div>
-                  )}
-
-                  <div className="relative">
-                    <Input id="email" {...register('email')} disabled className="bg-secondary/50 pr-10 opacity-70" />
-                    {user.is_verified && (
-                      <span className="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-[20px] text-green-500">
-                        verified
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-secondary/30 border-border/50 rounded-xl border p-6">
-                  <h3 className="text-foreground mb-4 flex items-center gap-2 text-sm font-bold">
-                    <div className="bg-primary/10 text-primary rounded-md p-1.5">
-                      <span className="material-symbols-outlined block text-[18px]">lock</span>
-                    </div>
-                    {t('change_password_title')}
-                  </h3>
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="new_password">{t('new_password_label')}</Label>
-                      <Input
-                        id="new_password"
-                        type="password"
-                        {...register('new_password')}
-                        error={!!errors.new_password}
-                        placeholder="••••••••"
-                        className={clsx(!errors.new_password && 'bg-background')}
-                      />
-                      {errors.new_password?.message && (
-                        <p className="text-destructive mt-1 text-xs font-medium">
-                          {tAuth(errors.new_password.message)}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm_password">{tAuth('confirm_password_label')}</Label>
-                      <Input
-                        id="confirm_password"
-                        type="password"
-                        {...register('confirm_password')}
-                        error={!!errors.confirm_password}
-                        placeholder="••••••••"
-                        className={clsx(!errors.confirm_password && 'bg-background')}
-                      />
-                      {errors.confirm_password?.message && (
-                        <p className="text-destructive mt-1 text-xs font-medium">
-                          {tAuth(errors.confirm_password.message)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <ProfileSecuritySection register={register} errors={errors} user={user} />
 
             <section
               id="privacy"
@@ -299,7 +136,6 @@ export function ProfileForm() {
                 <h2 className="text-foreground text-xl font-bold">{t('privacy_title')}</h2>
                 <p className="text-muted-foreground mt-1 text-sm">{t('privacy_desc')}</p>
               </div>
-
               <div className="bg-secondary/10 border-border/50 flex items-center justify-between rounded-xl border p-5">
                 <div className="space-y-1">
                   <Label className="text-base font-semibold">{t('visibility_label')}</Label>

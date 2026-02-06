@@ -1,16 +1,17 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Skeleton } from '@/components/atoms/Skeleton';
 import { ComplexitySelector } from './ComplexitySelector';
 import { SectionTabs } from './SectionTabs';
 import { AxisList } from './AxisList';
 import { ConditionerList } from './ConditionerList';
 import { PageHeader } from '@/components/molecules/PageHeader';
 import { ProfileHeader } from '@/components/molecules/ProfileHeader';
+import { SectionNavigation } from '@/components/molecules/SectionNavigation';
+import { AtlasSkeleton } from '@/components/molecules/AtlasSkeleton';
+import { AtlasTemplate } from '@/components/templates/AtlasTemplate';
 import { usePublicAtlasController } from '@/hooks/controllers/usePublicAtlasController';
 import { useAuthStore } from '@/store/useAuthStore';
-import { SectionNavigation } from '@/components/molecules/SectionNavigation';
 
 interface PublicAtlasViewProps {
   uuid: string;
@@ -22,22 +23,7 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const { isAuthenticated, user: authUser } = useAuthStore();
 
   if (loading.isGlobalLoading) {
-    return (
-      <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-5 py-8 md:px-10 lg:flex-row">
-        <aside className="w-full lg:w-[280px] lg:shrink-0">
-          <Skeleton className="mb-6 h-8 w-32" />
-          <div className="flex flex-col gap-3">
-            <Skeleton className="h-12 w-full rounded-xl" />
-            <Skeleton className="h-12 w-full rounded-xl" />
-            <Skeleton className="h-12 w-full rounded-xl" />
-          </div>
-        </aside>
-        <main className="flex-1 space-y-8">
-          <Skeleton className="h-48 w-full rounded-2xl" />
-          <Skeleton className="h-96 w-full rounded-2xl" />
-        </main>
-      </div>
-    );
+    return <AtlasSkeleton />;
   }
 
   const targetUser = state.answerData?.completed_by;
@@ -59,93 +45,95 @@ export function PublicAtlasView({ uuid }: PublicAtlasViewProps) {
   const completedSteps = state.displaySections.map(section => (state.sectionProgressMap[section.uuid] || 0) === 100);
 
   return (
-    <div className="layout-content-container mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-5 py-8 md:px-10 lg:flex-row">
-      <aside className="w-full lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start">
-        <div className="mb-6 flex flex-col gap-1 px-1">
-          <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
-          <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
-        </div>
+    <AtlasTemplate
+      sidebar={
+        <>
+          <div className="mb-6 flex flex-col gap-1 px-1">
+            <h2 className="text-foreground text-lg font-bold tracking-tight">{t('complexity_level')}</h2>
+            <p className="text-muted-foreground text-xs">{t('complexity_subtitle')}</p>
+          </div>
 
-        <ComplexitySelector
-          complexities={state.complexities}
-          selectedId={state.selectedComplexity}
-          onSelect={actions.selectComplexity}
-          isLoading={false}
-          progressMap={state.progressMap}
-          myProgressMap={isSelfView ? undefined : state.myProgressMap}
-          targetUsername={targetUser?.username}
-          viewerUsername={authUser?.username}
-          affinityMap={isSelfView ? undefined : state.complexityAffinityMap}
-          variant={effectiveVariant}
-        />
-      </aside>
-
-      <main className="flex min-w-0 flex-1 flex-col gap-8">
-        <ProfileHeader
-          user={targetUser || null}
-          affinity={effectiveAffinity}
-          isPublic={targetUser?.is_public ?? false}
-          createdDate={state.answerData?.created}
-        />
-
-        <PageHeader
-          title={state.selectedComplexityObj?.name || t('header_title')}
-          description={state.selectedComplexityObj?.description || t('header_description')}
-          affinity={currentLevelAffinity}
-          variant={effectiveVariant}
-        />
-
-        <div className="flex flex-col gap-6">
-          <SectionTabs
-            sections={state.displaySections}
-            selectedId={state.selectedSection}
-            onSelect={actions.selectSection}
-            isLoading={loading.isSectionLoading}
-            affinityMap={effectiveSectionAffinity}
+          <ComplexitySelector
+            complexities={state.complexities}
+            selectedId={state.selectedComplexity}
+            onSelect={actions.selectComplexity}
+            isLoading={false}
+            progressMap={state.progressMap}
+            myProgressMap={isSelfView ? undefined : state.myProgressMap}
+            targetUsername={targetUser?.username}
+            viewerUsername={authUser?.username}
+            affinityMap={isSelfView ? undefined : state.complexityAffinityMap}
             variant={effectiveVariant}
-            sectionProgressMap={state.sectionProgressMap}
           />
+        </>
+      }
+    >
+      <ProfileHeader
+        user={targetUser || null}
+        affinity={effectiveAffinity}
+        isPublic={targetUser?.is_public ?? false}
+        createdDate={state.answerData?.created}
+      />
 
-          {state.isContextSelected ? (
-            <ConditionerList
-              conditioners={state.currentConditioners}
-              answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
-              otherAnswers={!isSelfView ? state.theirConditionerAnswers : undefined}
-              targetUsername={targetUser?.username}
-              onSaveAnswer={actions.saveConditioner}
-              isLoading={false}
-              dependencyNameMap={state.dependencyNameMap}
-              readOnly={false}
-              variant={effectiveVariant}
-            />
-          ) : (
-            <AxisList
-              axes={state.currentAxes}
-              answers={state.theirAxisAnswers}
-              myAnswers={!isSelfView ? state.myAxisAnswers : undefined}
-              axisAffinityMap={effectiveAxisAffinity}
-              targetUsername={targetUser?.username}
-              onSaveAnswer={actions.saveAnswer}
-              isLoading={false}
-              isLevelLoading={false}
-              readOnly={false}
-              variant={effectiveVariant}
-            />
-          )}
+      <PageHeader
+        title={state.selectedComplexityObj?.name || t('header_title')}
+        description={state.selectedComplexityObj?.description || t('header_description')}
+        affinity={currentLevelAffinity}
+        variant={effectiveVariant}
+      />
 
-          <SectionNavigation
-            onNext={actions.next}
-            onPrevious={actions.previous}
-            onStepClick={actions.jumpToSection}
-            showNext={state.navigation.showNext}
-            showPrevious={state.navigation.showPrevious}
-            isNextLevel={state.navigation.isNextLevel}
-            currentIndex={state.navigation.currentIndex}
-            totalSteps={state.navigation.totalSteps}
-            completedSteps={completedSteps}
+      <div className="flex flex-col gap-6">
+        <SectionTabs
+          sections={state.displaySections}
+          selectedId={state.selectedSection}
+          onSelect={actions.selectSection}
+          isLoading={loading.isSectionLoading}
+          affinityMap={effectiveSectionAffinity}
+          variant={effectiveVariant}
+          sectionProgressMap={state.sectionProgressMap}
+        />
+
+        {state.isContextSelected ? (
+          <ConditionerList
+            conditioners={state.currentConditioners}
+            answers={isAuthenticated ? state.myConditionerAnswers : state.theirConditionerAnswers}
+            otherAnswers={!isSelfView ? state.theirConditionerAnswers : undefined}
+            targetUsername={targetUser?.username}
+            onSaveAnswer={actions.saveConditioner}
+            onResetAnswer={actions.deleteConditioner}
+            isLoading={false}
+            dependencyNameMap={state.dependencyNameMap}
+            readOnly={false}
+            variant={effectiveVariant}
           />
-        </div>
-      </main>
-    </div>
+        ) : (
+          <AxisList
+            axes={state.currentAxes}
+            answers={state.theirAxisAnswers}
+            myAnswers={!isSelfView ? state.myAxisAnswers : undefined}
+            axisAffinityMap={effectiveAxisAffinity}
+            targetUsername={targetUser?.username}
+            onSaveAnswer={actions.saveAnswer}
+            onDeleteAnswer={actions.deleteAnswer}
+            isLoading={false}
+            isLevelLoading={false}
+            readOnly={false}
+            variant={effectiveVariant}
+          />
+        )}
+
+        <SectionNavigation
+          onNext={actions.next}
+          onPrevious={actions.previous}
+          onStepClick={actions.jumpToSection}
+          showNext={state.navigation.showNext}
+          showPrevious={state.navigation.showPrevious}
+          isNextLevel={state.navigation.isNextLevel}
+          currentIndex={state.navigation.currentIndex}
+          totalSteps={state.navigation.totalSteps}
+          completedSteps={completedSteps}
+        />
+      </div>
+    </AtlasTemplate>
   );
 }

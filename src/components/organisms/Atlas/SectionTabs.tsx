@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { Skeleton } from '@/components/atoms/Skeleton';
+import { Portal } from '@/components/atoms/Portal';
 import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import { getAffinityBadgeStyles } from '@/lib/affinity-utils';
 import { useTranslations } from 'next-intl';
@@ -84,13 +85,13 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
 
           <AnimatePresence>
             {showTooltip && (
-              <>
+              <Portal>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm md:hidden"
+                  className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm md:hidden"
                   onClick={e => {
                     e.stopPropagation();
                     setShowTooltip(false);
@@ -103,14 +104,12 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
                   exit={{ opacity: 0, y: 5, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className={clsx(
-                    'fixed top-1/2 left-1/2 z-[101] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default md:absolute md:top-full md:left-1/2 md:z-50 md:mt-2 md:w-80 md:translate-x-[-50%] md:translate-y-0',
-                    'max-h-[50vh] overflow-y-auto rounded-xl shadow-2xl md:max-h-none md:overflow-visible',
+                    'fixed top-1/2 left-1/2 z-[9999] w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 cursor-default',
+                    'bg-popover text-popover-foreground border-border max-h-[50vh] overflow-y-auto rounded-xl border p-5 shadow-2xl md:p-4',
                   )}
                   onClick={e => e.stopPropagation()}
                 >
-                  <div className="bg-popover text-popover-foreground border-border relative flex flex-col rounded-xl border p-5 text-left shadow-2xl md:p-4 md:shadow-xl">
-                    <div className="bg-popover border-t-border border-l-border absolute -top-1.5 left-1/2 hidden h-3 w-3 -translate-x-1/2 rotate-45 border-t border-l md:block" />
-
+                  <div className="flex flex-col">
                     <div className="mb-3 flex shrink-0 items-center justify-between md:hidden">
                       <span className="text-sm font-bold tracking-wider uppercase">{tCommon('info')}</span>
                       <button
@@ -131,7 +130,7 @@ function SectionTab({ section, isSelected, onSelect, affinity, variant, index, p
                     </div>
                   </div>
                 </motion.div>
-              </>
+              </Portal>
             )}
           </AnimatePresence>
         </div>
