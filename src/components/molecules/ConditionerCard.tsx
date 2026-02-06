@@ -154,7 +154,7 @@ export function ConditionerCard({
     return val;
   };
 
-  const targetLabel = targetUsername ? `@${targetUsername}` : t('anonymous_user') || 'Anónimo';
+  const targetLabel = targetUsername ? `@${targetUsername}` : t('anonymous_user');
 
   return (
     <div

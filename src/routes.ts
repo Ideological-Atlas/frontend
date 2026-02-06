@@ -14,5 +14,5 @@ export const ROUTES_CONFIG: Record<string, (typeof ROLES)[keyof typeof ROLES]> =
   '/profile': ROLES.PROTECTED,
 };
 
-export const DEFAULT_LOGIN_REDIRECT = '/';
+export const DEFAULT_LOGIN_REDIRECT = '/atlas';
 export const DEFAULT_AUTH_REDIRECT = '/login';

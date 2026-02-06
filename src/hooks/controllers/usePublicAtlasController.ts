@@ -1,236 +1,263 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useAtlasStore, type AnswerData, type AnswerUpdatePayload } from '@/store/useAtlasStore';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useAnswersStore } from '@/store/useAnswersStore';
+import { useAtlasStore, type AnswerUpdatePayload } from '@/store/useAtlasStore';
 import { AnswersService } from '@/lib/client/services/AnswersService';
-import { TypeEnum } from '@/lib/client/models/TypeEnum';
-import type { IdeologySection } from '@/lib/client/models/IdeologySection';
 import type { CompletedAnswer } from '@/lib/client/models/CompletedAnswer';
-import type { AxisBreakdown } from '@/lib/client/models/AxisBreakdown';
-import type { ComplexityAffinity } from '@/lib/client/models/ComplexityAffinity';
+import type { AnswerData } from '@/types/atlas';
 import { checkVisibility } from '@/lib/domain/atlas-logic';
+import type { IdeologySection } from '@/lib/client/models/IdeologySection';
+import { TypeEnum } from '@/lib/client/models/TypeEnum';
+import type { AxisBreakdown } from '@/lib/client/models/AxisBreakdown';
 
 const normalizeUuid = (uuid: string) => (uuid ? uuid.replace(/-/g, '') : '');
 
-export function usePublicAtlasController(uuid: string, contextSectionLabel: string) {
+export function usePublicAtlasController(targetUuid: string, contextLabel: string) {
+  const { isAuthenticated, accessToken, user } = useAuthStore();
+  const isVerified = user?.is_verified ?? false;
+  const { setAnonymousUuid, anonymousAnswerUuid } = useAnswersStore();
+
   const {
     complexities,
-    conditioners,
     sections,
+    conditioners,
     axes,
     isInitialized,
-    answers: myAxisAnswers,
-    conditionerAnswers: myConditionerAnswers,
     fetchAllData,
-    saveAnswer: saveAnswerToStore,
-    deleteAnswer: deleteAnswerFromStore,
-    saveConditionerAnswer: saveConditionerToStore,
+    answers: myLocalAnswers,
+    conditionerAnswers: myLocalConditionerAnswers,
+    saveAnswer: saveLocalAnswer,
+    saveConditionerAnswer: saveLocalConditionerAnswer,
+    deleteAnswer: deleteLocalAnswer,
+    deleteConditionerAnswer: deleteLocalConditionerAnswer,
   } = useAtlasStore();
 
-  const { isAuthenticated, user } = useAuthStore();
-  const isVerified = user?.is_verified ?? false;
+  const [state, setState] = useState({
+    answerData: null as CompletedAnswer | null,
+    affinity: null as number | null,
+    theirAxisAnswers: {} as Record<string, AnswerData>,
+    theirConditionerAnswers: {} as Record<string, string>,
+    myAxisAnswers: myLocalAnswers,
+    myConditionerAnswers: myLocalConditionerAnswers,
+    complexityAffinityMap: {} as Record<string, number | null>,
+    sectionAffinityMap: {} as Record<string, number | null>,
+    axisAffinityMap: {} as Record<string, AxisBreakdown>,
+    selectedComplexity: null as string | null,
+    selectedSection: null as string | null,
+    isContextSelected: false,
+  });
 
-  const [answerData, setAnswerData] = useState<CompletedAnswer | null>(null);
-  const [affinity, setAffinity] = useState<number | null>(null);
-
-  const [axisAffinityMap, setAxisAffinityMap] = useState<
-    Record<string, { affinity: number | null; my_answer: AnswerData | null }>
-  >({});
-  const [complexityAffinityMap, setComplexityAffinityMap] = useState<Record<string, number | null>>({});
-  const [sectionAffinityMap, setSectionAffinityMap] = useState<Record<string, number | null>>({});
-
-  const [isLoadingAnswer, setIsLoadingAnswer] = useState(true);
-  const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [loading, setLoading] = useState({
+    isGlobalLoading: true,
+    isSectionLoading: false,
+  });
 
   useEffect(() => {
     if (!isInitialized) {
       fetchAllData(isAuthenticated, isVerified);
     }
-  }, [isInitialized, fetchAllData, isAuthenticated, isVerified]);
-
-  const refreshAffinity = useCallback(async () => {
-    if (!uuid) return;
-
-    try {
-      let completedAnswerUuid: string | undefined = undefined;
-
-      if (!isAuthenticated || (user && !user.is_verified)) {
-        const { answers, conditionerAnswers } = useAtlasStore.getState();
-        const axisList = Object.entries(answers).map(([key, data]) => ({
-          uuid: key,
-          value: data.value,
-          margin_left: data.margin_left ?? 0,
-          margin_right: data.margin_right ?? 0,
-        }));
-        const conditionersList = Object.entries(conditionerAnswers).map(([key, value]) => ({
-          uuid: key,
-          value,
-        }));
-
-        try {
-          const snapshot = await AnswersService.answersCompletedGenerateCreate({
-            axis: axisList,
-            conditioners: conditionersList,
-          });
-          completedAnswerUuid = snapshot.uuid;
-        } catch (e) {
-          console.error('Error creating snapshot for affinity', e);
-          return;
-        }
-      }
-
-      const affinityData = await AnswersService.answersCompletedAffinityRetrieve(uuid, completedAnswerUuid);
-      setAffinity(affinityData.total_affinity);
-
-      const axMap: Record<string, { affinity: number | null; my_answer: AnswerData | null }> = {};
-      const compMap: Record<string, number | null> = {};
-      const secMap: Record<string, number | null> = {};
-
-      if (affinityData.complexities) {
-        affinityData.complexities.forEach((compAff: ComplexityAffinity) => {
-          if (compAff.complexity?.uuid) compMap[compAff.complexity.uuid] = compAff.affinity;
-          if (compAff.sections) {
-            compAff.sections.forEach(secAff => {
-              if (secAff.section?.uuid) secMap[secAff.section.uuid] = secAff.affinity;
-              if (secAff.axes) {
-                secAff.axes.forEach((item: AxisBreakdown) => {
-                  if (item.axis?.uuid) {
-                    axMap[item.axis.uuid] = {
-                      affinity: item.affinity,
-                      my_answer: item.my_answer
-                        ? {
-                            value: item.my_answer.value,
-                            margin_left: item.my_answer.margin_left,
-                            margin_right: item.my_answer.margin_right,
-                            is_indifferent: item.my_answer.is_indifferent ?? false,
-                          }
-                        : null,
-                    };
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-
-      setAxisAffinityMap(axMap);
-      setComplexityAffinityMap(compMap);
-      setSectionAffinityMap(secMap);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isAuthenticated, uuid, user]);
+  }, [isInitialized, isAuthenticated, isVerified, fetchAllData]);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoadingAnswer(true);
-        const data = await AnswersService.answersCompletedRetrieve(uuid);
-        setAnswerData(data);
-        await refreshAffinity();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingAnswer(false);
-      }
-    };
-
-    if (uuid) {
-      loadData();
-    }
-  }, [uuid, refreshAffinity]);
-
-  useEffect(() => {
-    if (complexities.length > 0 && !selectedComplexity) {
+    if (complexities.length > 0 && !state.selectedComplexity) {
       const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
-      setSelectedComplexity(sorted[0].uuid);
+      setState(prev => ({ ...prev, selectedComplexity: sorted[0].uuid }));
     }
-  }, [complexities, selectedComplexity]);
+  }, [complexities, state.selectedComplexity]);
 
-  const { answers: theirAxisAnswers, conditionerAnswers: theirConditionerAnswers } = useMemo(() => {
-    if (!answerData?.answers) return { answers: {}, conditionerAnswers: {} };
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      myAxisAnswers: myLocalAnswers,
+      myConditionerAnswers: myLocalConditionerAnswers,
+    }));
+  }, [myLocalAnswers, myLocalConditionerAnswers]);
 
-    const rawAxis = (answerData.answers.axis || []) as Array<{
-      uuid: string;
-      value: number | null;
-      margin_left?: number;
-      margin_right?: number;
-      is_indifferent?: boolean;
-    }>;
-    const rawConds = (answerData.answers.conditioners || []) as Array<{ uuid: string; value: string }>;
+  const combinedTargetAnswers = useMemo(() => {
+    const computedVirtuals: Record<string, string> = {};
+    const normTargetAxis: Record<string, AnswerData> = {};
 
-    const axisMap: Record<string, AnswerData> = {};
-    rawAxis.forEach(item => {
-      axisMap[item.uuid] = {
-        value: item.value,
-        margin_left: item.margin_left,
-        margin_right: item.margin_right,
-        is_indifferent: item.is_indifferent ?? item.value === null,
-      };
+    Object.entries(state.theirAxisAnswers).forEach(([k, v]) => {
+      normTargetAxis[normalizeUuid(k)] = v;
     });
-    const condMap: Record<string, string> = {};
-    rawConds.forEach(item => {
-      condMap[item.uuid] = item.value;
-    });
-    return { answers: axisMap, conditionerAnswers: condMap };
-  }, [answerData]);
 
-  const visibilitySource = useMemo(() => {
-    return {
-      axis: theirAxisAnswers,
-      cond: theirConditionerAnswers,
-    };
-  }, [theirAxisAnswers, theirConditionerAnswers]);
-
-  const virtualConditionerAnswers = useMemo(() => {
-    const computed: Record<string, string> = {};
     const allConditioners = Object.values(conditioners).flat();
-
-    const normSourceAxis: Record<string, AnswerData> = {};
-    Object.entries(visibilitySource.axis).forEach(([k, v]) => {
-      normSourceAxis[normalizeUuid(k)] = v;
-    });
 
     allConditioners.forEach(cond => {
       if (cond.type === TypeEnum.AXIS_RANGE && cond.source_axis_uuid) {
         const sourceUuid = normalizeUuid(cond.source_axis_uuid);
-        const axisAnswer = normSourceAxis[sourceUuid];
-        let result = 'false';
-
-        if (axisAnswer) {
-          if (axisAnswer.is_indifferent) {
-            result = 'true';
-          } else if (axisAnswer.value !== null) {
-            const val = axisAnswer.value;
-            const min = cond.axis_min_value ?? -Infinity;
-            const max = cond.axis_max_value ?? Infinity;
-            if (val > min && val <= max) result = 'true';
+        const ax = normTargetAxis[sourceUuid];
+        let res = 'false';
+        if (ax) {
+          if (ax.is_indifferent) res = 'true';
+          else if (ax.value !== null) {
+            if (ax.value > (cond.axis_min_value ?? -Infinity) && ax.value <= (cond.axis_max_value ?? Infinity)) {
+              res = 'true';
+            }
           }
         }
-        computed[normalizeUuid(cond.uuid)] = result;
+        computedVirtuals[normalizeUuid(cond.uuid)] = res;
       }
     });
-    return computed;
-  }, [conditioners, visibilitySource.axis]);
 
-  const combinedConditionerAnswers = useMemo(() => {
-    const normCond: Record<string, string> = {};
-    Object.entries(visibilitySource.cond).forEach(([k, v]) => {
-      normCond[normalizeUuid(k)] = v;
-    });
-    return { ...normCond, ...virtualConditionerAnswers };
-  }, [visibilitySource.cond, virtualConditionerAnswers]);
+    const normTargetCond: Record<string, string> = {};
+    Object.entries(state.theirConditionerAnswers).forEach(([k, v]) => (normTargetCond[normalizeUuid(k)] = v));
+
+    return { ...normTargetCond, ...computedVirtuals };
+  }, [state.theirAxisAnswers, state.theirConditionerAnswers, conditioners]);
 
   const visibilityChecker = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (rulesInput: any) => checkVisibility(rulesInput, combinedConditionerAnswers),
-    [combinedConditionerAnswers],
+    (rules: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return checkVisibility(rules as any, combinedTargetAnswers);
+    },
+    [combinedTargetAnswers],
   );
 
+  const updateAffinityCalculation = useCallback(
+    async (forceSourceUuid?: string) => {
+      try {
+        let sourceUuid = forceSourceUuid;
+
+        if (!sourceUuid && !isAuthenticated) {
+          const currentStore = useAtlasStore.getState();
+          const axisList = Object.entries(currentStore.answers).map(([uuid, data]) => ({
+            uuid,
+            value: data.value,
+            margin_left: data.margin_left ?? 0,
+            margin_right: data.margin_right ?? 0,
+          }));
+
+          const conditionersList = Object.entries(currentStore.conditionerAnswers).map(([uuid, value]) => ({
+            uuid,
+            value,
+          }));
+
+          try {
+            const snapshot = await AnswersService.answersCompletedGenerateCreate({
+              axis: axisList,
+              conditioners: conditionersList,
+            });
+            sourceUuid = snapshot.uuid;
+            setAnonymousUuid(snapshot.uuid);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+
+        if (!sourceUuid && !isAuthenticated && anonymousAnswerUuid) {
+          sourceUuid = anonymousAnswerUuid;
+        }
+
+        const affinityData = await AnswersService.answersCompletedAffinityRetrieve(targetUuid, sourceUuid);
+
+        const compMap: Record<string, number | null> = {};
+        const secMap: Record<string, number | null> = {};
+        const axMap: Record<string, AxisBreakdown> = {};
+        const extractedTheirAnswers: Record<string, AnswerData> = {};
+
+        if (affinityData.complexities) {
+          affinityData.complexities.forEach(c => {
+            if (c.complexity?.uuid) compMap[c.complexity.uuid] = c.affinity;
+            c.sections.forEach(s => {
+              if (s.section?.uuid) secMap[s.section.uuid] = s.affinity;
+              s.axes.forEach(a => {
+                if (a.axis?.uuid) {
+                  axMap[a.axis.uuid] = a;
+                  if (a.their_answer) {
+                    extractedTheirAnswers[a.axis.uuid] = {
+                      value: a.their_answer.value,
+                      margin_left: a.their_answer.margin_left,
+                      margin_right: a.their_answer.margin_right,
+                      is_indifferent: a.their_answer.is_indifferent,
+                    };
+                  }
+                }
+              });
+            });
+          });
+        }
+
+        setState(prev => ({
+          ...prev,
+          affinity: affinityData.total_affinity,
+          complexityAffinityMap: compMap,
+          sectionAffinityMap: secMap,
+          axisAffinityMap: axMap,
+          theirAxisAnswers: { ...prev.theirAxisAnswers, ...extractedTheirAnswers },
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [isAuthenticated, anonymousAnswerUuid, setAnonymousUuid, targetUuid],
+  );
+
+  const fetchData = useCallback(async () => {
+    if (!isInitialized) return;
+
+    if (isAuthenticated && !accessToken) {
+      return;
+    }
+
+    try {
+      const publicData = await AnswersService.answersCompletedRetrieve(targetUuid);
+
+      const theirAxis = publicData.answers?.axis_answers || {};
+      const theirCond = publicData.answers?.conditioners_answers || {};
+
+      if (Object.keys(theirAxis).length === 0 && Array.isArray(publicData.answers?.axis)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        publicData.answers.axis.forEach((item: any) => {
+          theirAxis[item.uuid] = item;
+        });
+      }
+
+      setState(prev => ({
+        ...prev,
+        answerData: publicData,
+        theirAxisAnswers: theirAxis,
+        theirConditionerAnswers: theirCond,
+      }));
+
+      await updateAffinityCalculation();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(prev => ({ ...prev, isGlobalLoading: false }));
+    }
+  }, [isInitialized, isAuthenticated, accessToken, targetUuid, updateAffinityCalculation]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
+    await saveLocalAnswer(axisUuid, data, isAuthenticated, isVerified);
+    await updateAffinityCalculation();
+  };
+
+  const handleDeleteAnswer = async (axisUuid: string) => {
+    await deleteLocalAnswer(axisUuid, isAuthenticated, isVerified);
+    await updateAffinityCalculation();
+  };
+
+  const handleSaveConditioner = async (condUuid: string, value: string) => {
+    await saveLocalConditionerAnswer(condUuid, value, isAuthenticated, isVerified);
+    await updateAffinityCalculation();
+  };
+
+  const handleDeleteConditioner = async (condUuid: string) => {
+    await deleteLocalConditionerAnswer(condUuid, isAuthenticated, isVerified);
+    await updateAffinityCalculation();
+  };
+
   const displaySections: IdeologySection[] = useMemo(() => {
-    const rawSections = selectedComplexity ? sections[selectedComplexity] || [] : [];
-    const rawConditioners = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
+    if (!state.selectedComplexity) return [];
+
+    const rawSections = sections[state.selectedComplexity] || [];
+    const rawConditioners = conditioners[state.selectedComplexity] || [];
+
     const filteredSections = rawSections.filter(section => visibilityChecker(section.condition_rules));
     const visibleConditioners = rawConditioners.filter(
       cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules),
@@ -238,123 +265,117 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
 
     if (visibleConditioners.length > 0) {
       const contextSection: IdeologySection = {
-        uuid: `context_${selectedComplexity}`,
-        name: contextSectionLabel,
+        uuid: `context_${state.selectedComplexity}`,
+        name: contextLabel,
         description: null,
         icon: 'info',
         condition_rules: [],
       };
       return [contextSection, ...filteredSections];
     }
+
     return filteredSections;
-  }, [selectedComplexity, sections, conditioners, visibilityChecker, contextSectionLabel]);
+  }, [state.selectedComplexity, sections, conditioners, visibilityChecker, contextLabel]);
 
   useEffect(() => {
     if (displaySections.length > 0) {
-      const isSelectedVisible = displaySections.some(s => s.uuid === selectedSection);
-      if (!selectedSection || !isSelectedVisible) {
-        setSelectedSection(displaySections[0].uuid);
+      const isSelectedVisible = displaySections.some(s => s.uuid === state.selectedSection);
+      if (!state.selectedSection || !isSelectedVisible) {
+        setState(prev => ({ ...prev, selectedSection: displaySections[0].uuid }));
       }
-    } else {
-      setSelectedSection(null);
     }
-  }, [displaySections, selectedSection]);
+  }, [displaySections, state.selectedSection]);
 
-  const { progressMap, sectionProgressMap } = useMemo(() => {
-    const cMap: Record<string, number> = {};
+  const isContextSelected = !!state.selectedSection && state.selectedSection.startsWith('context_');
+
+  const currentConditioners = useMemo(() => {
+    if (!state.selectedComplexity) return [];
+    const raw = conditioners[state.selectedComplexity] || [];
+    return raw.filter(cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules));
+  }, [state.selectedComplexity, conditioners, visibilityChecker]);
+
+  const currentAxes = useMemo(() => {
+    if (!state.selectedSection || isContextSelected) return [];
+    const rawAxes = axes[state.selectedSection] || [];
+    return rawAxes.filter(axis => visibilityChecker(axis.condition_rules));
+  }, [state.selectedSection, axes, visibilityChecker, isContextSelected]);
+
+  const { progressMap, sectionProgressMap, myProgressMap } = useMemo(() => {
+    const cMapTheir: Record<string, number> = {};
+    const cMapMy: Record<string, number> = {};
     const sMap: Record<string, number> = {};
 
     complexities.forEach(c => {
       const compSections = sections[c.uuid] || [];
       const compConditioners = conditioners[c.uuid] || [];
-      let totalItems = 0;
-      let answeredItems = 0;
+
+      let total = 0;
+      let myCount = 0;
+      let theirCount = 0;
 
       let contextTotal = 0;
-      let contextAnswered = 0;
+      let contextTheir = 0;
 
       compConditioners.forEach(cond => {
         if (cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules)) {
-          totalItems++;
+          total++;
           contextTotal++;
-          if (theirConditionerAnswers[cond.uuid]) {
-            answeredItems++;
-            contextAnswered++;
+          if (state.myConditionerAnswers[cond.uuid]) myCount++;
+          if (state.theirConditionerAnswers[cond.uuid]) {
+            theirCount++;
+            contextTheir++;
           }
         }
       });
 
       if (contextTotal > 0) {
-        sMap[`context_${c.uuid}`] = Math.round((contextAnswered / contextTotal) * 100);
+        sMap[`context_${c.uuid}`] = Math.round((contextTheir / contextTotal) * 100);
       } else {
         sMap[`context_${c.uuid}`] = 100;
       }
 
       compSections.forEach(sec => {
+        const secAxes = axes[sec.uuid] || [];
         let secTotal = 0;
-        let secAnswered = 0;
+        let secTheir = 0;
 
         if (visibilityChecker(sec.condition_rules)) {
-          const secAxes = axes[sec.uuid] || [];
-          secAxes.forEach(axis => {
-            if (visibilityChecker(axis.condition_rules)) {
+          secAxes.forEach(ax => {
+            if (visibilityChecker(ax.condition_rules)) {
               secTotal++;
-              totalItems++;
-              const ans = theirAxisAnswers[axis.uuid];
-              if (ans && (ans.value !== null || ans.is_indifferent)) {
-                secAnswered++;
-                answeredItems++;
+              total++;
+
+              const myAns = state.myAxisAnswers[ax.uuid];
+              if (myAns && (myAns.value !== null || myAns.is_indifferent)) myCount++;
+
+              const theirAns = state.theirAxisAnswers[ax.uuid];
+              if (theirAns && (theirAns.value !== null || theirAns.is_indifferent)) {
+                secTheir++;
+                theirCount++;
               }
             }
           });
         }
-        sMap[sec.uuid] = secTotal > 0 ? Math.round((secAnswered / secTotal) * 100) : 100;
+
+        sMap[sec.uuid] = secTotal > 0 ? Math.round((secTheir / secTotal) * 100) : 100;
       });
-      cMap[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
+
+      cMapTheir[c.uuid] = total > 0 ? Math.round((theirCount / total) * 100) : 100;
+      cMapMy[c.uuid] = total > 0 ? Math.round((myCount / total) * 100) : 0;
     });
-    return { progressMap: cMap, sectionProgressMap: sMap };
-  }, [complexities, sections, axes, theirAxisAnswers, conditioners, theirConditionerAnswers, visibilityChecker]);
 
-  const myProgressMap = useMemo(() => {
-    const map: Record<string, number> = {};
-
-    const { answers: myAnswersStore } = useAtlasStore.getState();
-
-    complexities.forEach(c => {
-      const compSections = sections[c.uuid] || [];
-      let totalItems = 0;
-      let answeredItems = 0;
-      compSections.forEach(sec => {
-        if (visibilityChecker(sec.condition_rules)) {
-          const secAxes = axes[sec.uuid] || [];
-          secAxes.forEach(axis => {
-            if (visibilityChecker(axis.condition_rules)) {
-              totalItems++;
-              const ans = myAnswersStore[axis.uuid];
-              if (ans && (ans.value !== null || ans.is_indifferent)) {
-                answeredItems++;
-              }
-            }
-          });
-        }
-      });
-      map[c.uuid] = totalItems > 0 ? Math.round((answeredItems / totalItems) * 100) : 100;
-    });
-    return map;
-  }, [complexities, sections, axes, visibilityChecker]);
-
-  const isContextSelected = !!selectedSection && selectedSection.startsWith('context_');
-
-  const currentConditioners = useMemo(() => {
-    const raw = selectedComplexity ? conditioners[selectedComplexity] || [] : [];
-    return raw.filter(cond => cond.type !== TypeEnum.AXIS_RANGE && visibilityChecker(cond.condition_rules));
-  }, [selectedComplexity, conditioners, visibilityChecker]);
-
-  const currentAxes = useMemo(() => {
-    if (!selectedSection || isContextSelected) return [];
-    const rawAxes = axes[selectedSection] || [];
-    return rawAxes.filter(axis => visibilityChecker(axis.condition_rules));
-  }, [selectedSection, axes, visibilityChecker, isContextSelected]);
+    return { progressMap: cMapTheir, sectionProgressMap: sMap, myProgressMap: cMapMy };
+  }, [
+    complexities,
+    sections,
+    axes,
+    conditioners,
+    state.myAxisAnswers,
+    state.myConditionerAnswers,
+    state.theirAxisAnswers,
+    state.theirConditionerAnswers,
+    visibilityChecker,
+  ]);
 
   const dependencyNameMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -367,140 +388,86 @@ export function usePublicAtlasController(uuid: string, contextSectionLabel: stri
     return map;
   }, [conditioners]);
 
-  const selectedComplexityObj = complexities.find(c => c.uuid === selectedComplexity);
-  const selectedProgress = selectedComplexity ? progressMap[selectedComplexity] || 0 : 0;
-
-  const handleSaveAnswer = async (axisUuid: string, data: AnswerUpdatePayload) => {
-    await saveAnswerToStore(axisUuid, data, isAuthenticated, isVerified);
-    await refreshAffinity();
-  };
-
-  const handleDeleteAnswer = async (axisUuid: string) => {
-    await deleteAnswerFromStore(axisUuid, isAuthenticated, isVerified);
-    await refreshAffinity();
-  };
-
-  const handleSaveConditioner = async (uuid: string, value: string) => {
-    await saveConditionerToStore(uuid, value, isAuthenticated, isVerified);
-  };
-
-  const effectiveAffinity = useMemo(() => {
-    if (affinity === null) return affinity;
-
-    const sortedComplexities = [...complexities].sort((a, b) => b.complexity - a.complexity);
-
-    for (const c of sortedComplexities) {
-      const theirProg = progressMap[c.uuid] || 0;
-      const myProg = myProgressMap[c.uuid] || 0;
-
-      if (theirProg === 100 && myProg === 100) {
-        return complexityAffinityMap[c.uuid] ?? affinity;
-      }
-    }
-
-    return affinity;
-  }, [affinity, complexities, progressMap, myProgressMap, complexityAffinityMap]);
-
-  const sortedComplexities = useMemo(() => {
-    return [...complexities].sort((a, b) => a.complexity - b.complexity);
-  }, [complexities]);
-
-  const navigationState = useMemo(() => {
-    const currentSectionIndex = displaySections.findIndex(s => s.uuid === selectedSection);
-    const currentCompIndex = sortedComplexities.findIndex(c => c.uuid === selectedComplexity);
-
-    const hasNextSection = currentSectionIndex < displaySections.length - 1;
-    const hasNextLevel = !hasNextSection && currentCompIndex < sortedComplexities.length - 1;
-    const hasPrevSection = currentSectionIndex > 0;
-    const hasPrevLevel = !hasPrevSection && currentCompIndex > 0;
-
-    return {
-      hasNextSection,
-      hasNextLevel,
-      hasPrevSection,
-      hasPrevLevel,
-      currentSectionIndex: currentSectionIndex !== -1 ? currentSectionIndex : 0,
-      totalSections: displaySections.length,
-      currentCompIndex,
-    };
-  }, [displaySections, selectedSection, sortedComplexities, selectedComplexity]);
-
-  const handleNext = useCallback(() => {
-    if (navigationState.hasNextSection) {
-      setSelectedSection(displaySections[navigationState.currentSectionIndex + 1].uuid);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (navigationState.hasNextLevel) {
-      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex + 1].uuid);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
-
-  const handlePrevious = useCallback(() => {
-    if (navigationState.hasPrevSection) {
-      setSelectedSection(displaySections[navigationState.currentSectionIndex - 1].uuid);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (navigationState.hasPrevLevel) {
-      setSelectedComplexity(sortedComplexities[navigationState.currentCompIndex - 1].uuid);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [navigationState, displaySections, sortedComplexities, setSelectedSection, setSelectedComplexity]);
-
-  const handleJumpToSection = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < displaySections.length) {
-        setSelectedSection(displaySections[index].uuid);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    },
-    [displaySections, setSelectedSection],
+  const sortedComplexities = useMemo(
+    () => [...complexities].sort((a, b) => a.complexity - b.complexity),
+    [complexities],
   );
+  const currentSectionIndex = displaySections.findIndex(s => s.uuid === state.selectedSection);
+  const currentCompIndex = sortedComplexities.findIndex(c => c.uuid === state.selectedComplexity);
+
+  const hasNextSection = currentSectionIndex < displaySections.length - 1;
+  const hasNextLevel = !hasNextSection && currentCompIndex < sortedComplexities.length - 1;
+  const hasPrevSection = currentSectionIndex > 0;
+  const hasPrevLevel = !hasPrevSection && currentCompIndex > 0;
+
+  const handleNext = () => {
+    if (hasNextSection) setState(prev => ({ ...prev, selectedSection: displaySections[currentSectionIndex + 1].uuid }));
+    else if (hasNextLevel)
+      setState(prev => ({ ...prev, selectedComplexity: sortedComplexities[currentCompIndex + 1].uuid }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrevious = () => {
+    if (hasPrevSection) setState(prev => ({ ...prev, selectedSection: displaySections[currentSectionIndex - 1].uuid }));
+    else if (hasPrevLevel)
+      setState(prev => ({ ...prev, selectedComplexity: sortedComplexities[currentCompIndex - 1].uuid }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleJumpToSection = (index: number) => {
+    if (index >= 0 && index < displaySections.length) {
+      setState(prev => ({ ...prev, selectedSection: displaySections[index].uuid }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const hasLocalDataForMemo = Object.keys(myLocalAnswers).length > 0;
+
+  const myProgressMapMemo = useMemo(() => {
+    const map: Record<string, number> = {};
+    complexities.forEach(c => (map[c.uuid] = hasLocalDataForMemo ? myProgressMap[c.uuid] || 0 : 0));
+    return map;
+  }, [complexities, hasLocalDataForMemo, myProgressMap]);
+
+  const handlers = {
+    selectComplexity: (uuid: string) => setState(prev => ({ ...prev, selectedComplexity: uuid })),
+    selectSection: (uuid: string) => setState(prev => ({ ...prev, selectedSection: uuid })),
+    next: handleNext,
+    previous: handlePrevious,
+    jumpToSection: handleJumpToSection,
+    saveAnswer: handleSaveAnswer,
+    deleteAnswer: handleDeleteAnswer,
+    saveConditioner: handleSaveConditioner,
+    deleteConditioner: handleDeleteConditioner,
+  };
 
   return {
     state: {
+      ...state,
       complexities,
-      selectedComplexity,
-      selectedSection,
       displaySections,
-      currentConditioners,
       currentAxes,
-      myAxisAnswers,
-      myConditionerAnswers,
-      theirAxisAnswers,
-      theirConditionerAnswers,
-      answers: theirAxisAnswers,
-      axisAffinityMap,
-      complexityAffinityMap,
-      sectionAffinityMap,
+      currentConditioners,
       progressMap,
       sectionProgressMap,
-      myProgressMap,
-      selectedComplexityObj,
-      selectedProgress,
+      myProgressMap: myProgressMapMemo,
       dependencyNameMap,
       isContextSelected,
-      answerData,
-      affinity: effectiveAffinity,
+      selectedComplexityObj: complexities.find(c => c.uuid === state.selectedComplexity),
+      selectedProgress: 100,
+
       navigation: {
-        showNext: navigationState.hasNextSection || navigationState.hasNextLevel,
-        showPrevious: navigationState.hasPrevSection || navigationState.hasPrevLevel,
-        isNextLevel: navigationState.hasNextLevel,
-        currentIndex: navigationState.currentSectionIndex,
-        totalSteps: navigationState.totalSections,
+        showNext: hasNextSection || hasNextLevel,
+        showPrevious: hasPrevSection || hasPrevLevel,
+        isNextLevel: hasNextLevel,
+        currentIndex: currentSectionIndex,
+        totalSteps: displaySections.length,
       },
     },
     loading: {
-      isGlobalLoading: (!isInitialized && complexities.length === 0) || isLoadingAnswer,
-      isSectionLoading: false,
+      ...loading,
+      isGlobalLoading: loading.isGlobalLoading || (!isInitialized && complexities.length === 0),
     },
-    actions: {
-      selectComplexity: setSelectedComplexity,
-      selectSection: setSelectedSection,
-      saveAnswer: handleSaveAnswer,
-      deleteAnswer: handleDeleteAnswer,
-      saveConditioner: handleSaveConditioner,
-      next: handleNext,
-      previous: handlePrevious,
-      jumpToSection: handleJumpToSection,
-    },
+    actions: handlers,
   };
 }

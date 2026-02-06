@@ -29,10 +29,13 @@ export function useAxisInteraction({ axisUuid, answerData, onSave, onDelete, rea
 
   useEffect(() => {
     if (answerData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setValue(prev => (prev !== answerData.value ? (answerData.value ?? 0) : prev));
+      const newValue = answerData.value ?? 0;
+      const newIndifferent = answerData.is_indifferent ?? false;
 
-      setIsIndifferent(prev => (prev !== answerData.is_indifferent ? (answerData.is_indifferent ?? false) : prev));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setValue(prev => (prev !== newValue ? newValue : prev));
+
+      setIsIndifferent(prev => (prev !== newIndifferent ? newIndifferent : prev));
 
       const newMl = answerData.margin_left;
       const newMr = answerData.margin_right;
@@ -50,6 +53,12 @@ export function useAxisInteraction({ axisUuid, answerData, onSave, onDelete, rea
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         setMarginRight(isMobile ? 35 : 25);
       }
+    } else {
+      setValue(0);
+      setIsIndifferent(false);
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      setMarginLeft(isMobile ? 35 : 25);
+      setMarginRight(isMobile ? 35 : 25);
     }
   }, [answerData]);
 

@@ -1,11 +1,16 @@
 import { AuthTemplate } from '@/components/templates/AuthTemplate';
-import { ResetPasswordForm } from '@/components/organisms/ResetPasswordForm';
+import { ResetPasswordForm } from '@/components/organisms/auth/ResetPasswordForm';
+import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Restablecer Contraseña | Ideological Atlas',
-  description: 'Establece una nueva contraseña segura para tu cuenta.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Auth' });
+  return {
+    title: `${t('reset_password_title')} | Ideological Atlas`,
+    description: t('reset_password_subtitle'),
+  };
+}
 
 export default async function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;

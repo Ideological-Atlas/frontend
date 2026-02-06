@@ -22,10 +22,16 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-hover: var(--accent-hover);
   --color-accent-strong: var(--strong-accent);
+  --color-accent-strong-hover: var(--strong-accent-hover);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-hover: var(--destructive-hover);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-gold: var(--gold);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -82,8 +88,11 @@
     --destructive: #ef4444;
     --destructive-hover: #dc2626;
     --destructive-foreground: #ffffff;
+    --warning: #f59e0b;
+    --warning-foreground: #ffffff;
+    --gold: #fbbf24;
     --strong-accent: #3476d8;
-    --strong-accent-hover: #0d34ae;
+    --strong-accent-hover: #1d4ed8;
     --strong-accent-foreground: #ffffff;
     --other-user: #8b5cf6;
     --other-user-strong: #c8f65c;
@@ -125,8 +134,11 @@
     --destructive: #7f1d1d;
     --destructive-hover: #991b1b;
     --destructive-foreground: #f8fafc;
+    --warning: #d97706;
+    --warning-foreground: #ffffff;
+    --gold: #fbbf24;
     --strong-accent: #3476d8;
-    --strong-accent-hover: #0d34ae;
+    --strong-accent-hover: #1d4ed8;
     --strong-accent-foreground: #ffffff;
     --other-user: #8b5cf6;
     --other-user-strong: #c8f65c;
@@ -188,11 +200,13 @@
 ::view-transition-new(root) {
   animation: wipe-in-from-left 0.7s cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 9999;
+  mix-blend-mode: normal;
 }
 
 ::view-transition-old(root) {
   animation: none;
   z-index: 1;
+  mix-blend-mode: normal;
 }
 
 :root.back-transition ::view-transition-new(root) {
@@ -207,6 +221,7 @@
 ::view-transition-group(hero-about-image) {
   animation-duration: 0.7s;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10000;
 }
 
 .driver-popover.driverjs-theme {

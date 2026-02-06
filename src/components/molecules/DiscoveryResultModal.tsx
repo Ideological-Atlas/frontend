@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import { clsx } from 'clsx';
 import { Button } from '@/components/atoms/Button';
 import { Link } from '@/components/atoms/SmartLink';
 import type { IdeologyList } from '@/lib/client/models/IdeologyList';
+import { DiscoveryHeader } from './DiscoveryHeader';
+import { PerspectiveSelector, type PerspectiveType } from './PerspectiveSelector';
+import { ExpandableDescription } from './ExpandableDescription';
 
 interface DiscoveryResultModalProps {
   isOpen: boolean;
@@ -16,36 +17,11 @@ interface DiscoveryResultModalProps {
   affinity: number;
 }
 
-type TabType = 'neutral' | 'supporter' | 'detractor';
-
 export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: DiscoveryResultModalProps) {
   const t = useTranslations('Atlas');
-  const tEnc = useTranslations('Encyclopedia');
-  const [activeTab, setActiveTab] = useState<TabType>('neutral');
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<PerspectiveType>('neutral');
 
   if (!winner) return null;
-
-  const tabs: { id: TabType; icon: string; colorClass: string; activeBg: string }[] = [
-    {
-      id: 'supporter',
-      icon: 'thumb_up',
-      colorClass: 'text-affinity-identical',
-      activeBg: 'bg-affinity-identical/10 ring-1 ring-affinity-identical/20',
-    },
-    {
-      id: 'neutral',
-      icon: 'balance',
-      colorClass: 'text-affinity-compatible',
-      activeBg: 'bg-affinity-compatible/10 ring-1 ring-affinity-compatible/20',
-    },
-    {
-      id: 'detractor',
-      icon: 'thumb_down',
-      colorClass: 'text-affinity-opposite',
-      activeBg: 'bg-affinity-opposite/10 ring-1 ring-affinity-opposite/20',
-    },
-  ];
 
   const currentDescription =
     activeTab === 'neutral'
@@ -71,33 +47,7 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
             exit={{ opacity: 0, scale: 0.8, y: 50 }}
             className="bg-card border-border relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl border shadow-2xl"
           >
-            <div className="relative h-40 w-full shrink-0 overflow-hidden bg-zinc-900">
-              <div className="absolute inset-0 opacity-60" style={{ backgroundColor: winner.color || '#333' }} />
-              {winner.flag && (
-                <Image
-                  src={winner.flag}
-                  alt={winner.name}
-                  fill
-                  className="object-cover opacity-50 mix-blend-overlay"
-                  unoptimized
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-
-              <div className="absolute bottom-6 left-0 w-full text-center">
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-white"
-                >
-                  <span className="material-symbols-outlined mb-2 text-5xl text-yellow-400 drop-shadow-lg">
-                    emoji_events
-                  </span>
-                  <h2 className="text-3xl font-black tracking-tight drop-shadow-md">{t('discovery_modal_title')}</h2>
-                </motion.div>
-              </div>
-            </div>
+            <DiscoveryHeader winner={winner} />
 
             <div className="flex flex-1 flex-col overflow-y-auto p-6 text-center md:p-8">
               <p className="text-muted-foreground mb-4 text-sm font-medium tracking-widest uppercase">
@@ -105,72 +55,15 @@ export function DiscoveryResultModal({ isOpen, onClose, winner, affinity }: Disc
               </p>
 
               <h1 className="text-foreground mb-2 text-4xl font-black">{winner.name}</h1>
+
               <div className="bg-primary/10 text-primary mx-auto mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm font-bold">
                 <span className="material-symbols-outlined text-lg">verified</span>
                 {Math.round(affinity)}% {t('affinity_score')}
               </div>
 
-              <div className="bg-secondary/50 mb-6 flex w-full gap-1 rounded-lg p-1">
-                {tabs.map(tab => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={e => {
-                        e.stopPropagation();
-                        setActiveTab(tab.id);
-                        setIsExpanded(false);
-                      }}
-                      className={clsx(
-                        'relative flex h-9 flex-1 items-center justify-center rounded-md transition-all',
-                        isActive ? tab.activeBg : 'hover:bg-background/50 text-muted-foreground',
-                      )}
-                      title={tEnc(`tab_${tab.id}`)}
-                    >
-                      <span
-                        className={clsx(
-                          'material-symbols-outlined text-[20px]',
-                          isActive ? tab.colorClass : 'opacity-70',
-                        )}
-                      >
-                        {tab.icon}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              <PerspectiveSelector activeTab={activeTab} onSelect={setActiveTab} />
 
-              <div className="relative mb-6 w-full">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div
-                      className={clsx(
-                        'relative transition-all duration-300',
-                        !isExpanded && 'max-h-[140px] overflow-hidden md:max-h-none md:overflow-visible',
-                      )}
-                    >
-                      <p className="text-muted-foreground text-base leading-relaxed whitespace-pre-line">
-                        {currentDescription || tEnc('no_description')}
-                      </p>
-                      {!isExpanded && (
-                        <div className="from-card absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t to-transparent md:hidden" />
-                      )}
-                    </div>
-                    <button
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      className="text-primary mt-2 text-xs font-bold tracking-wider uppercase hover:underline md:hidden"
-                    >
-                      {isExpanded ? t('read_less') : t('read_more')}
-                    </button>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+              <ExpandableDescription text={currentDescription} id={activeTab} />
 
               <div className="mt-auto flex w-full flex-col gap-3">
                 <Link href={`/encyclopedia/${winner.uuid}/definitions`} className="w-full">

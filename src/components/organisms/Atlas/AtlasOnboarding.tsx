@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { driver, type DriveStep } from 'driver.js';
+import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -9,278 +9,89 @@ import { useAtlasStore } from '@/store/useAtlasStore';
 import { UsersService } from '@/lib/client/services/UsersService';
 import { Button } from '@/components/atoms/Button';
 import { AnimatePresence, motion } from 'framer-motion';
+import { getTutorialSteps } from '@/hooks/features/atlas/useAtlasTutorialSteps';
 
 export function AtlasOnboarding() {
   const t = useTranslations('Onboarding');
-  const { user, isAuthenticated, setUser } = useAuthStore();
-  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
-  const driverObj = useRef<ReturnType<typeof driver> | null>(null);
+  const tAtlas = useTranslations('Atlas');
 
-  const handleComplete = useCallback(async () => {
-    if (isAuthenticated && user && !user.atlas_onboarding_completed) {
-      try {
-        const updated = await UsersService.mePartialUpdate({
-          atlas_onboarding_completed: true,
-        });
-        setUser(updated);
-      } catch (error) {
-        console.error('Error updating onboarding status', error);
-      }
-    }
-    if (!isAuthenticated) {
-      localStorage.setItem('atlas_guest_prompt_seen', 'true');
-    }
-  }, [isAuthenticated, user, setUser]);
+  const { user, isAuthenticated, setUser } = useAuthStore();
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+
+  const driverObj = useRef<ReturnType<typeof driver> | null>(null);
 
   const getFirstAxisUuid = useCallback(() => {
     const { complexities, sections, axes } = useAtlasStore.getState();
     try {
       if (complexities.length > 0) {
-        const sortedComplexities = [...complexities].sort((a, b) => a.complexity - b.complexity);
-        const firstCompId = sortedComplexities[0].uuid;
-        const compSections = sections[firstCompId];
-
-        if (compSections && compSections.length > 0) {
-          const firstSecId = compSections[0].uuid;
-          const secAxes = axes[firstSecId];
-          if (secAxes && secAxes.length > 0) {
-            return secAxes[0].uuid;
-          }
+        const sorted = [...complexities].sort((a, b) => a.complexity - b.complexity);
+        const firstComp = sorted[0].uuid;
+        const compSecs = sections[firstComp];
+        if (compSecs && compSecs.length > 0) {
+          const firstSec = compSecs[0].uuid;
+          const secAxes = axes[firstSec];
+          if (secAxes && secAxes.length > 0) return secAxes[0].uuid;
         }
       }
-      const allAxes = Object.values(axes).flat();
-      if (allAxes.length > 0) return allAxes[0].uuid;
+      const all = Object.values(axes).flat();
+      if (all.length > 0) return all[0].uuid;
     } catch (e) {
-      console.error('Error buscando axis UUID', e);
+      console.error(e);
     }
     return null;
   }, []);
 
-  const simulateAxisMove = useCallback(() => {
-    const axisUuid = getFirstAxisUuid();
-    if (axisUuid) {
-      const { saveAnswer } = useAtlasStore.getState();
-      const { isAuthenticated, user } = useAuthStore.getState();
-      const isVerified = user?.is_verified ?? false;
-      saveAnswer(
-        axisUuid,
-        { value: 85, margin_left: 50, margin_right: 10, is_indifferent: false },
-        isAuthenticated,
-        isVerified,
-      );
-    }
-  }, [getFirstAxisUuid]);
+  const simulateAction = useCallback(
+    (type: 'move' | 'margin' | 'reset') => {
+      const uuid = getFirstAxisUuid();
+      if (!uuid) return;
+      const authState = useAuthStore.getState();
+      const isVerified = authState.user?.is_verified ?? false;
 
-  const simulateMarginMove = useCallback(() => {
-    const axisUuid = getFirstAxisUuid();
-    if (axisUuid) {
-      const { saveAnswer } = useAtlasStore.getState();
-      const { isAuthenticated, user } = useAuthStore.getState();
-      const isVerified = user?.is_verified ?? false;
-      saveAnswer(
-        axisUuid,
-        { value: -60, margin_left: 20, margin_right: 20, is_indifferent: false },
-        isAuthenticated,
-        isVerified,
-      );
-    }
-  }, [getFirstAxisUuid]);
+      if (type === 'move') {
+        useAtlasStore
+          .getState()
+          .saveAnswer(
+            uuid,
+            { value: 85, margin_left: 50, margin_right: 10, is_indifferent: false },
+            authState.isAuthenticated,
+            isVerified,
+          );
+      } else if (type === 'margin') {
+        useAtlasStore
+          .getState()
+          .saveAnswer(
+            uuid,
+            { value: -60, margin_left: 20, margin_right: 20, is_indifferent: false },
+            authState.isAuthenticated,
+            isVerified,
+          );
+      } else {
+        useAtlasStore.getState().deleteAnswer(uuid, authState.isAuthenticated, isVerified);
+      }
+    },
+    [getFirstAxisUuid],
+  );
 
   const toggleHeaderDescription = useCallback((action: 'expand' | 'collapse') => {
     const btn = document.getElementById('atlas-header-toggle');
     if (btn) {
       const currentLabel = btn.getAttribute('aria-label');
       const isExpanded = currentLabel === 'Collapse description';
-
       if ((action === 'expand' && !isExpanded) || (action === 'collapse' && isExpanded)) {
         btn.click();
-
-        setTimeout(() => {
-          if (driverObj.current) {
-            driverObj.current.refresh();
-          }
-        }, 400);
+        setTimeout(() => driverObj.current?.refresh(), 400);
       }
     }
   }, []);
 
-  const resetSimulation = useCallback(() => {
-    const axisUuid = getFirstAxisUuid();
-    if (axisUuid) {
-      const { deleteAnswer } = useAtlasStore.getState();
-      const { isAuthenticated, user } = useAuthStore.getState();
-      const isVerified = user?.is_verified ?? false;
-      deleteAnswer(axisUuid, isAuthenticated, isVerified);
-    }
-  }, [getFirstAxisUuid]);
-
   const startTour = useCallback(() => {
-    if (driverObj.current && driverObj.current.isActive()) return;
+    if (driverObj.current?.isActive()) return;
 
-    const steps: DriveStep[] = [
-      {
-        popover: {
-          title: t('tour.welcome.title'),
-          description: t('tour.welcome.desc'),
-        },
-      },
-      {
-        element: '#atlas-sidebar',
-        popover: {
-          title: t('tour.levels.title'),
-          description: t('tour.levels.desc'),
-          side: 'right',
-          align: 'start',
-        },
-      },
-      {
-        element: '#atlas-progress-card',
-        popover: {
-          title: t('tour.progress.title'),
-          description: t('tour.progress.desc'),
-          side: 'right',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-header',
-        popover: {
-          title: t('tour.header.title'),
-          description: t.raw('tour.header.desc') as string,
-          side: 'bottom',
-          align: 'center',
-        },
-        onHighlightStarted: () => {
-          toggleHeaderDescription('expand');
-        },
-      },
-      {
-        element: '#atlas-header-toggle',
-        popover: {
-          title: t('tour.header_toggle.title'),
-          description: t('tour.header_toggle.desc'),
-          side: 'bottom',
-          align: 'center',
-        },
-        onHighlightStarted: () => {
-          toggleHeaderDescription('collapse');
-        },
-      },
-      {
-        element: '#atlas-sections',
-        popover: {
-          title: t('tour.sections.title'),
-          description: t('tour.sections.desc'),
-          side: 'bottom',
-          align: 'start',
-        },
-      },
-      {
-        element: '#atlas-section-help-0',
-        popover: {
-          title: t('tour.section_help.title'),
-          description: t('tour.section_help.desc'),
-          side: 'bottom',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-first-axis',
-        popover: {
-          title: t('tour.axis.title'),
-          description: t('tour.axis.desc'),
-          side: 'top',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-axis-title',
-        popover: {
-          title: t('tour.axis_title.title'),
-          description: t('tour.axis_title.desc'),
-          side: 'top',
-          align: 'start',
-        },
-      },
-      {
-        element: '#atlas-axis-help',
-        popover: {
-          title: t('tour.axis_help.title'),
-          description: t('tour.axis_help.desc'),
-          side: 'right',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-axis-indifferent',
-        popover: {
-          title: t('tour.axis_indifferent.title'),
-          description: t('tour.axis_indifferent.desc'),
-          side: 'left',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-axis-slider',
-        popover: {
-          title: t('tour.slider_value.title'),
-          description: t('tour.slider_value.desc'),
-          side: 'top',
-          align: 'center',
-        },
-        onHighlightStarted: () => {
-          setTimeout(() => simulateAxisMove(), 500);
-        },
-      },
-      {
-        element: '#atlas-axis-slider',
-        popover: {
-          title: t('tour.slider_margin.title'),
-          description: t('tour.slider_margin.desc'),
-          side: 'bottom',
-          align: 'center',
-        },
-        onHighlightStarted: () => {
-          setTimeout(() => simulateMarginMove(), 500);
-        },
-      },
-      {
-        element: '#atlas-progress-card',
-        popover: {
-          title: t('tour.complete_level.title'),
-          description: t('tour.complete_level.desc'),
-          side: 'right',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-discovery-btn',
-        popover: {
-          title: t('tour.discovery.title'),
-          description: t('tour.discovery.desc'),
-          side: 'right',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-share-btn',
-        popover: {
-          title: t('tour.share.title'),
-          description: t('tour.share.desc'),
-          side: 'top',
-          align: 'center',
-        },
-      },
-      {
-        element: '#atlas-view-container',
-        popover: {
-          title: t('tour.finish.title'),
-          description: t('tour.finish.desc'),
-          side: 'bottom',
-          align: 'center',
-        },
-      },
-    ];
+    const steps = getTutorialSteps(t, {
+      onToggleHeader: toggleHeaderDescription,
+      onSimulateAction: simulateAction,
+    });
 
     driverObj.current = driver({
       showProgress: true,
@@ -291,90 +102,128 @@ export function AtlasOnboarding() {
       nextBtnText: t('buttons.next'),
       prevBtnText: t('buttons.prev'),
       progressText: '{{current}} / {{total}}',
-      steps: steps,
+      steps,
       onDestroyStarted: () => {
-        resetSimulation();
-        handleComplete();
+        simulateAction('reset');
+        if (isAuthenticated && user && !user.atlas_onboarding_completed) {
+          UsersService.mePartialUpdate({ atlas_onboarding_completed: true })
+            .then(updated => setUser(updated))
+            .catch(console.error);
+        }
         driverObj.current?.destroy();
       },
     });
 
     driverObj.current.drive();
-  }, [t, handleComplete, simulateAxisMove, simulateMarginMove, toggleHeaderDescription, resetSimulation]);
+  }, [t, isAuthenticated, user, setUser, simulateAction, toggleHeaderDescription]);
 
   useEffect(() => {
-    const handleStartTour = () => startTour();
-    window.addEventListener('start-atlas-tour', handleStartTour);
+    const handleManualStart = () => startTour();
+    window.addEventListener('start-atlas-tour', handleManualStart);
 
-    const handleGuestWarningDismissed = () => {
-      const hasSeenGuestPrompt = localStorage.getItem('atlas_guest_prompt_seen');
-      if (!hasSeenGuestPrompt) {
-        setTimeout(() => setShowGuestPrompt(true), 500);
-      }
-    };
-    window.addEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
-
-    const handleUnverifiedWarningDismissed = () => {
-      setTimeout(() => startTour(), 300);
-    };
-    window.addEventListener('unverified-warning-dismissed', handleUnverifiedWarningDismissed);
-
-    if (isAuthenticated && user) {
-      if (user.atlas_onboarding_completed === false) {
-        const isUnverified = !user.is_verified;
-        const hasSeenUnverifiedWarning = sessionStorage.getItem('atlas_unverified_warning_seen');
-
-        if (isUnverified && !hasSeenUnverifiedWarning) {
-          console.log('Waiting for not verified message closed...');
-        } else {
-          startTour();
+    const checkOnboardingStatus = async () => {
+      if (isAuthenticated && user) {
+        if (user.atlas_onboarding_completed === false) {
+          setShowWelcomeModal(true);
+        }
+      } else if (!isAuthenticated) {
+        const hasSeenWelcome = localStorage.getItem('atlas_welcome_seen');
+        if (!hasSeenWelcome) {
+          setShowWelcomeModal(true);
         }
       }
-    }
+    };
+
+    const timer = setTimeout(() => checkOnboardingStatus(), 800);
 
     return () => {
-      window.removeEventListener('start-atlas-tour', handleStartTour);
-      window.removeEventListener('guest-warning-dismissed', handleGuestWarningDismissed);
-      window.removeEventListener('unverified-warning-dismissed', handleUnverifiedWarningDismissed);
-      if (driverObj.current) {
-        driverObj.current.destroy();
-      }
+      clearTimeout(timer);
+      window.removeEventListener('start-atlas-tour', handleManualStart);
+      if (driverObj.current) driverObj.current.destroy();
     };
   }, [isAuthenticated, user, startTour]);
 
+  const markAsSeen = () => {
+    if (isAuthenticated) {
+      UsersService.mePartialUpdate({ atlas_onboarding_completed: true })
+        .then(updated => setUser(updated))
+        .catch(console.error);
+    } else {
+      localStorage.setItem('atlas_welcome_seen', 'true');
+    }
+  };
+
+  const handleStartTutorial = () => {
+    markAsSeen();
+    setShowWelcomeModal(false);
+    setTimeout(() => startTour(), 300);
+  };
+
+  const handleSkipTutorial = () => {
+    markAsSeen();
+    setShowWelcomeModal(false);
+  };
+
   return (
-    <>
-      <AnimatePresence>
-        {showGuestPrompt && !isAuthenticated && (
+    <AnimatePresence>
+      {showWelcomeModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
           <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 right-0 left-0 z-[100] mx-auto w-full max-w-md px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowWelcomeModal(false)}
+          />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="bg-card text-card-foreground border-border relative w-full max-w-sm overflow-hidden rounded-2xl border p-6 shadow-2xl"
           >
-            <div className="bg-card text-card-foreground border-border flex items-center justify-between gap-4 rounded-xl border p-4 shadow-xl">
-              <div className="flex flex-col gap-1">
-                <span className="font-bold">{t('guest_prompt.title')}</span>
-                <span className="text-muted-foreground text-xs">{t('guest_prompt.subtitle')}</span>
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-primary/10 text-primary mb-5 flex h-16 w-16 items-center justify-center rounded-full">
+                <span className="material-symbols-outlined text-[32px]">school</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="ghost" onClick={() => setShowGuestPrompt(false)}>
-                  {t('guest_prompt.no')}
-                </Button>
+
+              <h2 className="text-foreground mb-2 text-2xl font-black tracking-tight">
+                {tAtlas('welcome_modal.title')}
+              </h2>
+
+              <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+                {tAtlas('welcome_modal.description')}
+              </p>
+
+              {!isAuthenticated && (
+                <div className="bg-secondary/50 mb-6 w-full rounded-lg p-3 text-xs font-medium text-amber-600 dark:text-amber-500">
+                  <span className="material-symbols-outlined mr-1 inline-block align-middle text-[14px]">warning</span>
+                  {tAtlas('welcome_modal.guest_note')}
+                </div>
+              )}
+
+              <div className="flex w-full flex-col gap-3">
                 <Button
-                  size="sm"
-                  onClick={() => {
-                    setShowGuestPrompt(false);
-                    startTour();
-                  }}
+                  variant="primary"
+                  size="lg"
+                  onClick={handleStartTutorial}
+                  className="shadow-primary/20 w-full shadow-lg"
                 >
-                  {t('guest_prompt.yes')}
+                  {tAtlas('welcome_modal.start_btn')}
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  onClick={handleSkipTutorial}
+                  className="text-muted-foreground hover:text-foreground w-full"
+                >
+                  {tAtlas('welcome_modal.skip_btn')}
                 </Button>
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }
