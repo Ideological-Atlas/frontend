@@ -37,7 +37,7 @@ export function SectionNavigation({
         {showPrevious ? (
           <Button variant="secondary" onClick={onPrevious} className="h-10 gap-2 px-5 text-xs font-bold">
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            {t('previous_label') || 'Anterior'}
+            {t('previous_label')}
           </Button>
         ) : (
           <div />
@@ -79,7 +79,7 @@ export function SectionNavigation({
             onClick={onNext}
             className={clsx('h-10 gap-2 px-5 text-xs font-bold', isNextLevel && 'shadow-primary/20 shadow-lg')}
           >
-            {isNextLevel ? t('next_level_label') || 'Siguiente Nivel' : t('next_section_label') || 'Siguiente Sección'}
+            {isNextLevel ? t('next_level_label') : t('next_section_label')}
             <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
           </Button>
         )}

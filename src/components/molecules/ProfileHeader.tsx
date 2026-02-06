@@ -46,7 +46,7 @@ export function ProfileHeader({ user, affinity, isPublic, createdDate }: Profile
   const isOwnProfile = user && authUser?.uuid === user.uuid;
 
   const initial = isAnonymous ? '?' : user.username ? user.username.substring(0, 2).toUpperCase() : '??';
-  const displayName = isAnonymous ? t('anonymous_user') || 'Usuario Anónimo' : `@${user.username}`;
+  const displayName = isAnonymous ? t('anonymous_user') : `@${user.username}`;
   const displayBio =
     !isAnonymous && user.bio ? (user.bio.length > 255 ? user.bio.substring(0, 255) + '...' : user.bio) : null;
 

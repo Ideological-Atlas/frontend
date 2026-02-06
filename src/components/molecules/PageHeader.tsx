@@ -38,7 +38,7 @@ export function PageHeader({ title, description, affinity, variant = 'default' }
                   affinityStyle.solidClass,
                 )}
               >
-                {Math.round(affinity)}% {t('affinity_short_label') || 'Afinidad'}
+                {Math.round(affinity)}% {t('affinity_short_label')}
               </div>
 
               <span className={clsx('text-sm font-black tracking-widest uppercase', affinityStyle.colorClass)}>

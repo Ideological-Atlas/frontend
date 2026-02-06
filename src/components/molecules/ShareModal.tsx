@@ -43,7 +43,7 @@ export function ShareModal({ isOpen, onClose, shareUrl }: ShareModalProps) {
             className="bg-card border-border relative w-full max-w-lg overflow-hidden rounded-2xl border shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-white/5 p-6">
-              <h2 className="text-foreground text-xl font-bold">{t('share_posture_title') || 'Compartir Postura'}</h2>
+              <h2 className="text-foreground text-xl font-bold">{t('share_posture_title')}</h2>
               <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>

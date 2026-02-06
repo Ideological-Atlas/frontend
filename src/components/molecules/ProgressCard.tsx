@@ -67,7 +67,7 @@ export function ProgressCard({
             disabled={isLoading}
           >
             <span className="material-symbols-outlined mr-2 text-[18px]">share</span>
-            {t('share_button') || 'Compartir'}
+            {t('share_button')}
           </Button>
         </div>
       )}
