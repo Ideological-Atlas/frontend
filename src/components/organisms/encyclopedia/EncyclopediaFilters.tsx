@@ -86,7 +86,7 @@ export function EncyclopediaFilters({
             className={showFilters ? 'bg-primary/20 border-primary' : ''}
           >
             <span className="material-symbols-outlined mr-2">filter_list</span>
-            {tCommon('filters') || 'Filtros'}
+            {tCommon('filters')}
           </Button>
           <div className="min-w-[180px]">
             <Dropdown
@@ -111,36 +111,36 @@ export function EncyclopediaFilters({
             className="bg-card border-border grid grid-cols-1 gap-4 rounded-2xl border p-6 shadow-2xl md:grid-cols-2 lg:grid-cols-4"
           >
             <Dropdown
-              label={tCommon('country') || 'País'}
-              value={options.countries.find(c => c.id === filters.country)?.name || tCommon('all') || 'Todos'}
-              options={[tCommon('all') || 'Todos', ...options.countries.map(c => c.name)]}
+              label={tCommon('country')}
+              value={options.countries.find(c => c.id === filters.country)?.name || tCommon('all')}
+              options={[tCommon('all'), ...options.countries.map(c => c.name)]}
               onChange={val => {
                 const c = options.countries.find(x => x.name === val);
                 onFilterChange.country(c ? c.id : null);
               }}
             />
             <Dropdown
-              label={tCommon('region') || 'Región'}
-              value={options.regions.find(r => r.id === filters.region)?.name || tCommon('all') || 'Todos'}
-              options={[tCommon('all') || 'Todos', ...options.regions.map(r => r.name)]}
+              label={tCommon('region')}
+              value={options.regions.find(r => r.id === filters.region)?.name || tCommon('all')}
+              options={[tCommon('all'), ...options.regions.map(r => r.name)]}
               onChange={val => {
                 const r = options.regions.find(x => x.name === val);
                 onFilterChange.region(r ? r.id : null);
               }}
             />
             <Dropdown
-              label={tCommon('religion') || 'Religión'}
-              value={options.religions.find(r => r.uuid === filters.religion)?.name || tCommon('all') || 'Todos'}
-              options={[tCommon('all') || 'Todos', ...options.religions.map(r => r.name)]}
+              label={tCommon('religion')}
+              value={options.religions.find(r => r.uuid === filters.religion)?.name || tCommon('all')}
+              options={[tCommon('all'), ...options.religions.map(r => r.name)]}
               onChange={val => {
                 const r = options.religions.find(x => x.name === val);
                 onFilterChange.religion(r ? r.uuid : null);
               }}
             />
             <Dropdown
-              label={tCommon('tag') || 'Etiqueta'}
-              value={options.tags.find(tag => tag.uuid === filters.tag)?.name || tCommon('all') || 'Todos'}
-              options={[tCommon('all') || 'Todos', ...options.tags.map(tag => tag.name)]}
+              label={tCommon('tag')}
+              value={options.tags.find(tag => tag.uuid === filters.tag)?.name || tCommon('all')}
+              options={[tCommon('all'), ...options.tags.map(tag => tag.name)]}
               onChange={val => {
                 const tag = options.tags.find(x => x.name === val);
                 onFilterChange.tag(tag ? tag.uuid : null);
@@ -149,7 +149,7 @@ export function EncyclopediaFilters({
             <div className="flex justify-end lg:col-span-4">
               <Button variant="ghost" size="sm" onClick={onClear} className="text-xs">
                 <span className="material-symbols-outlined mr-1 text-sm">restart_alt</span>
-                {tCommon('clear_filters') || 'Limpiar Filtros'}
+                {tCommon('clear_filters')}
               </Button>
             </div>
           </motion.div>

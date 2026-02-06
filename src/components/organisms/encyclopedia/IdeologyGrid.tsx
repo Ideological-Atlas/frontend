@@ -49,7 +49,7 @@ export function IdeologyGrid({
         </div>
         <p className="text-muted-foreground font-medium">{t('no_results')}</p>
         <Button variant="outline" size="sm" onClick={onClearFilters}>
-          {tCommon('show_all') || 'Mostrar todo'}
+          {tCommon('show_all')}
         </Button>
       </div>
     );
