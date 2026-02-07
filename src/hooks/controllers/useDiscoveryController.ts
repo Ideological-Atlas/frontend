@@ -19,6 +19,9 @@ export function useDiscoveryController() {
   const [winner, setWinner] = useState<IdeologyList | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [progress, setProgress] = useState(0);
+  const [isCalculating, setIsCalculating] = useState(true);
+
   const getRelevantScore = useCallback((affinityData?: IdeologyAffinity) => {
     if (!affinityData) return 0;
 
@@ -48,6 +51,9 @@ export function useDiscoveryController() {
 
     const init = async () => {
       try {
+        setIsCalculating(true);
+        setProgress(0);
+
         const ideologiesResponse = await IdeologiesService.ideologiesList(undefined, 100);
         if (!mounted) return;
 
@@ -92,6 +98,12 @@ export function useDiscoveryController() {
         const total = ideologiesResponse.results.length;
         let currentAffinitiesRef: Record<string, IdeologyAffinity> = {};
 
+        if (total === 0) {
+          setIsCalculating(false);
+          setProgress(100);
+          return;
+        }
+
         ideologiesResponse.results.forEach(ideology => {
           IdeologiesService.ideologiesAffinityRetrieve(ideology.uuid, completedAnswerUuid)
             .then(affinityData => {
@@ -105,8 +117,10 @@ export function useDiscoveryController() {
 
               setLoadingMap(prev => ({ ...prev, [ideology.uuid]: false }));
               completedCount++;
+              setProgress(Math.round((completedCount / total) * 100));
 
               if (completedCount === total) {
+                setIsCalculating(false);
                 setTimeout(() => finishDiscovery(ideologiesResponse.results, currentAffinitiesRef), 500);
               }
             })
@@ -115,8 +129,10 @@ export function useDiscoveryController() {
               if (!mounted) return;
               setLoadingMap(prev => ({ ...prev, [ideology.uuid]: false }));
               completedCount++;
+              setProgress(Math.round((completedCount / total) * 100));
 
               if (completedCount === total) {
+                setIsCalculating(false);
                 setTimeout(() => finishDiscovery(ideologiesResponse.results, currentAffinitiesRef), 500);
               }
             });
@@ -124,6 +140,7 @@ export function useDiscoveryController() {
       } catch (error) {
         console.error(error);
         setIsGlobalLoading(false);
+        setIsCalculating(false);
       }
     };
 
@@ -175,6 +192,8 @@ export function useDiscoveryController() {
       winner,
       isModalOpen,
       getRelevantScore,
+      progress,
+      isCalculating,
     },
     actions: {
       closeModal: () => setIsModalOpen(false),
