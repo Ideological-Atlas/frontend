@@ -118,12 +118,19 @@ export function useAxisInteraction({ axisUuid, answerData, onSave, onDelete, rea
 
       const maxMarginLeft = value + 100;
       const maxMarginRight = 100 - value;
-      const safeMargin = Math.min(targetMargin, maxMarginLeft, maxMarginRight);
 
-      setMarginLeft(safeMargin);
-      setMarginRight(safeMargin);
+      const newMarginLeft = Math.min(targetMargin, maxMarginLeft);
+      const newMarginRight = Math.min(targetMargin, maxMarginRight);
 
-      commitSave({ value, margin_left: safeMargin, margin_right: safeMargin, is_indifferent: false });
+      setMarginLeft(newMarginLeft);
+      setMarginRight(newMarginRight);
+
+      commitSave({
+        value,
+        margin_left: newMarginLeft,
+        margin_right: newMarginRight,
+        is_indifferent: false,
+      });
     },
     [readOnly, value, commitSave],
   );
