@@ -25,10 +25,6 @@ export function useDiscoveryController() {
   const getRelevantScore = useCallback((affinityData?: IdeologyAffinity) => {
     if (!affinityData) return 0;
 
-    if (affinityData.total_affinity !== null && affinityData.total_affinity !== undefined) {
-      return affinityData.total_affinity;
-    }
-
     if (affinityData.complexities && affinityData.complexities.length > 0) {
       const sortedByComplexity = [...affinityData.complexities].sort((a, b) => {
         const levelA = a.complexity?.complexity ?? -1;
@@ -38,9 +34,13 @@ export function useDiscoveryController() {
 
       const bestMatch = sortedByComplexity.find(c => c.affinity !== null && c.affinity !== undefined);
 
-      if (bestMatch) {
-        return bestMatch.affinity ?? 0;
+      if (bestMatch && bestMatch.affinity !== null && bestMatch.affinity !== undefined) {
+        return bestMatch.affinity;
       }
+    }
+
+    if (affinityData.total_affinity !== null && affinityData.total_affinity !== undefined) {
+      return affinityData.total_affinity;
     }
 
     return 0;

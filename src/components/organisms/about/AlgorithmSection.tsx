@@ -16,27 +16,48 @@ export function AlgorithmSection() {
           description={t('algorithm.indifference_desc')}
           icon="sentiment_neutral"
           delay={0.1}
+          formula={
+            <div className="flex flex-col gap-1 text-center">
+              <span>{t('algorithm.indifference_formula_both')}</span>
+              <span>{t('algorithm.indifference_formula_one')}</span>
+            </div>
+          }
         />
         <AlgorithmCard
           title={t('algorithm.quadratic_title')}
           description={t('algorithm.quadratic_desc')}
           icon="function"
           delay={0.2}
-          formula={<span>A = 50 * (1 - g/200)²</span>}
+          formula={
+            <div className="flex flex-col gap-1 text-[10px]">
+              <span>Overlap: A = 50 + 50(1 - r)²</span>
+              <span>Gap: A = 50(1 - r)²</span>
+            </div>
+          }
         />
         <AlgorithmCard
-          title={t('algorithm.phases_title')}
-          description={t('algorithm.phases_gap')}
-          icon="join_inner"
+          title={t('algorithm.modifiers_title')}
+          description={t('algorithm.modifiers_desc')}
+          icon="tune"
           delay={0.3}
-          formula={<span>Gap vs Overlap Logic</span>}
+          formula={
+            <div className="flex flex-col gap-1 text-center">
+              <span>{t('algorithm.modifiers_formula_base')}</span>
+              <span className="opacity-70">Max: +20 / -25</span>
+            </div>
+          }
         />
       </div>
 
       <AggregationFlow
         title={t('algorithm.aggregation_title')}
         description={t('algorithm.aggregation_desc')}
-        steps={['Axis', 'Section', 'Complexity', 'Global']}
+        steps={[
+          t('algorithm.step_axis'),
+          t('algorithm.step_section'),
+          t('algorithm.step_complexity'),
+          t('algorithm.step_global'),
+        ]}
       />
     </section>
   );
