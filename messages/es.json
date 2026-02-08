@@ -410,16 +410,23 @@
       "quote": "La política no es una línea, es un mapa infinito."
     },
     "algorithm": {
-      "title": "El Algoritmo",
-      "subtitle": "Transparencia total en el cálculo de afinidades.",
-      "indifference_title": "Gestión de la Indiferencia",
-      "indifference_desc": "El sistema distingue entre una postura neutral y la falta de opinión sobre un tema.",
-      "quadratic_title": "Error Cuadrático",
-      "quadratic_desc": "Utilizamos funciones cuadráticas para penalizar de forma justa las desviaciones ideológicas.",
-      "phases_title": "Cálculo por Fases",
-      "phases_gap": "Análisis granular de huecos y solapamientos entre respuestas.",
-      "aggregation_title": "Agregación de Datos",
-      "aggregation_desc": "Cómo los ejes se combinan en secciones y niveles de complejidad."
+      "title": "Algoritmo de Afinidad",
+      "subtitle": "Cómo calculamos la coincidencia ideológica",
+      "indifference_title": "Lógica de Indiferencia",
+      "indifference_desc": "La indiferencia define flexibilidad. Si ambos usuarios son indiferentes, la afinidad es total (100%). Si solo uno lo es, se aplica una puntuación parcial del 75%.",
+      "indifference_formula_both": "Ambos: 100%",
+      "indifference_formula_one": "Uno solo: 75%",
+      "quadratic_title": "Cálculo Cuadrático",
+      "quadratic_desc": "Basado en la superposición de rangos. Si hay contacto (Overlap), escala de 50 a 100. Si hay separación (Gap), decae de 50 a 0 cuadráticamente.",
+      "modifiers_title": "Modificadores de Contexto",
+      "modifiers_desc": "Los condicionantes ajustan la nota base del nivel. Coincidencia (+5), Indiferencia (+2.5) o Divergencia (-5). Límites de +20 / -25.",
+      "modifiers_formula_base": "Base ± Modificadores",
+      "aggregation_title": "Flujo de Agregación",
+      "aggregation_desc": "El cálculo asciende desde los ejes hasta la afinidad total.",
+      "step_axis": "Eje",
+      "step_section": "Sección",
+      "step_complexity": "Nivel",
+      "step_global": "Total"
     },
     "contribute": {
       "title": "Contribuye al Atlas",
