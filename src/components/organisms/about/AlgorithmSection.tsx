@@ -43,7 +43,7 @@ export function AlgorithmSection() {
           formula={
             <div className="flex flex-col gap-1 text-center">
               <span>{t('algorithm.modifiers_formula_base')}</span>
-              <span className="opacity-70">Max: +20 / -25</span>
+              <span className="opacity-70">Max: +15 / -20</span>
             </div>
           }
         />
