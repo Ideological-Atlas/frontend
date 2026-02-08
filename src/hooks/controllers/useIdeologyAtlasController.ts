@@ -44,6 +44,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
   >({});
   const [complexityAffinityMap, setComplexityAffinityMap] = useState<Record<string, number | null>>({});
   const [sectionAffinityMap, setSectionAffinityMap] = useState<Record<string, number | null>>({});
+  const [totalAffinity, setTotalAffinity] = useState<number | null>(null);
 
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -91,6 +92,18 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
       const axMap: Record<string, { affinity: number | null; my_answer: AnswerData | null }> = {};
       const compMap: Record<string, number | null> = {};
       const secMap: Record<string, number | null> = {};
+
+      let bestAffinity = affinityData.total_affinity ?? null;
+      if (affinityData.complexities && affinityData.complexities.length > 0) {
+        const sorted = [...affinityData.complexities].sort(
+          (a, b) => (b.complexity?.complexity ?? 0) - (a.complexity?.complexity ?? 0),
+        );
+        const match = sorted.find(c => c.affinity !== null && c.affinity !== undefined);
+        if (match && match.affinity !== null && match.affinity !== undefined) {
+          bestAffinity = match.affinity;
+        }
+      }
+      setTotalAffinity(bestAffinity);
 
       if (affinityData.complexities) {
         affinityData.complexities.forEach(compAff => {
@@ -537,6 +550,7 @@ export function useIdeologyAtlasController(ideologyUuid: string, contextSectionL
       complexityAffinityMap,
       sectionAffinityMap,
       dependencyNameMap,
+      totalAffinity,
       isContextSelected,
       isSuperUser,
       selectedComplexityObj: complexities.find(c => c.uuid === selectedComplexity),

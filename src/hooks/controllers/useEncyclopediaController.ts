@@ -111,17 +111,16 @@ export function useEncyclopediaController() {
   }, [debouncedSearch, selectedCountry, selectedRegion, selectedReligion, selectedTag]);
 
   const calculateBestAffinity = useCallback((data: IdeologyAffinity): number | null => {
-    if (data.total_affinity !== null && data.total_affinity !== undefined) {
-      return data.total_affinity;
-    }
     if (data.complexities && data.complexities.length > 0) {
       const sorted = [...data.complexities].sort(
         (a, b) => (b.complexity?.complexity ?? 0) - (a.complexity?.complexity ?? 0),
       );
       const match = sorted.find(c => c.affinity !== null && c.affinity !== undefined);
-      return match?.affinity ?? null;
+      if (match && match.affinity !== null && match.affinity !== undefined) {
+        return match.affinity;
+      }
     }
-    return null;
+    return data.total_affinity ?? null;
   }, []);
 
   useEffect(() => {

@@ -444,16 +444,23 @@
       "quote": "Politics is not a line, it's an infinite map."
     },
     "algorithm": {
-      "title": "The Algorithm",
-      "subtitle": "Total transparency in affinity calculations.",
-      "indifference_title": "Managing Indifference",
-      "indifference_desc": "The system distinguishes between a neutral stance and a lack of opinion on a topic.",
-      "quadratic_title": "Quadratic Error",
-      "quadratic_desc": "We use quadratic functions to fairly penalize ideological deviations.",
-      "phases_title": "Phase Calculation",
-      "phases_gap": "Granular analysis of gaps and overlaps between answers.",
-      "aggregation_title": "Data Aggregation",
-      "aggregation_desc": "How axes combine into sections and complexity levels."
+      "title": "Affinity Algorithm",
+      "subtitle": "How we calculate ideological matching",
+      "indifference_title": "Indifference Logic",
+      "indifference_desc": "Indifference defines flexibility. If both users are indifferent, affinity is total (100%). If only one is, a partial score of 75% applies.",
+      "indifference_formula_both": "Both: 100%",
+      "indifference_formula_one": "Only one: 75%",
+      "quadratic_title": "Quadratic Calculation",
+      "quadratic_desc": "Based on range overlap. If there is contact (Overlap), it scales from 50 to 100. If there is separation (Gap), it decays from 50 to 0 quadratically.",
+      "modifiers_title": "Context Modifiers",
+      "modifiers_desc": "Conditioners adjust the base level score. Match (+5), Indifference (+2.5), or Divergence (-5). Limits of +20 / -25.",
+      "modifiers_formula_base": "Base ± Modifiers",
+      "aggregation_title": "Aggregation Flow",
+      "aggregation_desc": "Calculation ascends from individual axes to total affinity.",
+      "step_axis": "Axis",
+      "step_section": "Section",
+      "step_complexity": "Level",
+      "step_global": "Total"
     },
     "contribute": {
       "title": "Contribute to the Atlas",
