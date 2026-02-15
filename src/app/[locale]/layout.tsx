@@ -55,7 +55,7 @@ export default async function LocaleLayout({
             data-name="BMC-Widget"
             data-cfasync="false"
             data-id="martingaldk"
-            data-description="Support me on Buy me a coffee!"
+            data-description="Support me on Buy me a book!"
             data-message=""
             data-color="#FF813F"
             data-position="Right"

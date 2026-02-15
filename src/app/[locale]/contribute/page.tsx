@@ -12,56 +12,52 @@ export default function ContributePage() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
 
   return (
-    <div className="container mx-auto px-4 py-20 md:py-32 max-w-7xl">
+    <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32">
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="flex flex-col items-center justify-center gap-12"
       >
-        <motion.div variants={item} className="text-center space-y-4 max-w-2xl">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-purple-600 pb-2">
+        <motion.div variants={item} className="max-w-2xl space-y-4 text-center">
+          <h1 className="bg-gradient-to-r from-[var(--primary)] to-purple-600 bg-clip-text pb-2 text-4xl font-black tracking-tight text-transparent md:text-6xl">
             {t('hero_title')}
           </h1>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            {t('hero_subtitle')}
-          </p>
+          <p className="text-muted-foreground text-xl leading-relaxed">{t('hero_subtitle')}</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full max-w-5xl items-start">
+        <div className="grid w-full max-w-5xl grid-cols-1 items-start gap-12 lg:grid-cols-2">
           {/* Left Column: Info */}
           <motion.div variants={item} className="space-y-8">
-            <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
-              <h2 className="text-2xl font-bold mb-4">{t('why_contribute_title')}</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                {t('why_contribute_desc')}
-              </p>
+            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm">
+              <h2 className="mb-4 text-2xl font-bold">{t('why_contribute_title')}</h2>
+              <p className="text-muted-foreground mb-6 leading-relaxed">{t('why_contribute_desc')}</p>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
-              <h3 className="text-xl font-bold mb-6">{t('cost_breakdown')}</h3>
+            <div className="bg-card border-border rounded-2xl border p-8 shadow-sm">
+              <h3 className="mb-6 text-xl font-bold">{t('cost_breakdown')}</h3>
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary/50">
+                <div className="bg-secondary/50 flex items-center gap-4 rounded-lg p-3">
                   <span className="material-symbols-outlined text-primary text-2xl">dns</span>
                   <span className="font-medium">{t('servers')}</span>
                 </div>
-                <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary/50">
+                <div className="bg-secondary/50 flex items-center gap-4 rounded-lg p-3">
                   <span className="material-symbols-outlined text-primary text-2xl">code</span>
                   <span className="font-medium">{t('development')}</span>
                 </div>
-                <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary/50">
-                  <span className="material-symbols-outlined text-primary text-2xl">coffee</span>
+                <div className="bg-secondary/50 flex items-center gap-4 rounded-lg p-3">
+                  <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
                   <span className="font-medium">{t('coffee')}</span>
                 </div>
               </div>
@@ -69,21 +65,20 @@ export default function ContributePage() {
           </motion.div>
 
           {/* Right Column: Donation */}
-          <motion.div variants={item} className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[var(--primary)] to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-            <div className="relative bg-card border border-border rounded-2xl p-8 shadow-xl flex flex-col items-center text-center space-y-8">
-              
-              <div className="space-y-4 w-full flex flex-col items-center">
+          <motion.div variants={item} className="group relative">
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[var(--primary)] to-purple-600 opacity-25 blur transition duration-1000 group-hover:opacity-50"></div>
+            <div className="bg-card border-border relative flex flex-col items-center space-y-8 rounded-2xl border p-8 text-center shadow-xl">
+              <div className="flex w-full flex-col items-center space-y-4">
                 <h3 className="text-2xl font-bold">{t('one_time_donation')}</h3>
-                <a 
-                  href="https://www.buymeacoffee.com/martingaldk" 
-                  target="_blank" 
+                <a
+                  href="https://www.buymeacoffee.com/martingaldk"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:scale-105 transition-transform duration-200"
+                  className="transition-transform duration-200 hover:scale-105"
                 >
-                  <img 
-                    src="https://img.buymeacoffee.com/button-api/?text=Buy me a book&emoji=📖&slug=martingaldk&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" 
-                    alt="Buy me a coffee" 
+                  <img
+                    src="https://img.buymeacoffee.com/button-api/?text=Buy me a book&emoji=📖&slug=martingaldk&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
+                    alt="Buy me a book"
                     className="h-14"
                   />
                 </a>
@@ -91,32 +86,23 @@ export default function ContributePage() {
 
               <div className="relative w-full py-4">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border"></span>
+                  <span className="border-border w-full border-t"></span>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground font-medium tracking-widest">Or</span>
+                  <span className="bg-card text-muted-foreground px-2 font-medium tracking-widest">Or</span>
                 </div>
               </div>
 
-              <div className="space-y-4 w-full flex flex-col items-center">
-                <h3 className="text-lg font-medium text-muted-foreground">{t('scan_qr')}</h3>
-                <div className="p-4 bg-white rounded-xl shadow-inner inline-block">
-                  <Image 
-                    src="/qr-code.png" 
-                    alt="Donate QR Code" 
-                    width={200} 
-                    height={200}
-                    className="rounded-lg"
-                  />
+              <div className="flex w-full flex-col items-center space-y-4">
+                <h3 className="text-muted-foreground text-lg font-medium">{t('scan_qr')}</h3>
+                <div className="inline-block rounded-xl bg-white p-4 shadow-inner">
+                  <Image src="/qr-code.png" alt="Donate QR Code" width={200} height={200} className="rounded-lg" />
                 </div>
               </div>
 
               <div className="pt-4 text-center">
-                 <p className="text-sm font-medium text-primary">
-                   {t('thank_you')}
-                 </p>
+                <p className="text-primary text-sm font-medium">{t('thank_you')}</p>
               </div>
-
             </div>
           </motion.div>
         </div>
