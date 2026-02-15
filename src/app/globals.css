@@ -112,6 +112,24 @@
     --affinity-opposite: #dc2626;
   }
 
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'liga';
+  }
+
   .dark {
     --primary: #338f39;
     --primary-hover: #2e8033;
@@ -352,4 +370,17 @@
   animation-duration: 0.7s;
   animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 10000;
+}
+
+@media (max-width: 768px) {
+  #bmc-wbtn {
+    transform: scale(0.75) !important;
+    transform-origin: bottom right !important;
+  }
+
+  #bmc-wbtn + div,
+  .bmc-btn-container + div {
+    max-height: 70vh !important;
+    max-width: 90vw !important;
+  }
 }
