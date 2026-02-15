@@ -30,7 +30,8 @@
     "features": "Features",
     "explore": "Explore",
     "about": "About",
-    "encyclopedia": "Encyclopedia"
+    "encyclopedia": "Encyclopedia",
+    "contribute": "Contribute"
   },
   "Hero": {
     "title": "Discover your true ideological position",
@@ -478,6 +479,19 @@
       "role_translate": "Translation",
       "role_translate_desc": "Making the Atlas accessible to everyone."
     }
+  },
+  "ContributePage": {
+    "hero_title": "Support the Mission",
+    "hero_subtitle": "Help us keep the servers running and the project independent.",
+    "why_contribute_title": "Why Contribute?",
+    "why_contribute_desc": "Ideological Atlas is an open-source project maintained by the community. Your donation helps cover server costs, domain renewals, and development time.",
+    "cost_breakdown": "Where does the money go?",
+    "servers": "Servers & Hosting",
+    "development": "Development & Maintenance",
+    "coffee": "Coffee for the devs",
+    "thank_you": "Thank you for your support!",
+    "one_time_donation": "One-time Donation",
+    "scan_qr": "Scan to Donate"
   },
   "Onboarding": {
     "tour": {

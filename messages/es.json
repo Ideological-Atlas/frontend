@@ -30,7 +30,8 @@
     "features": "Características",
     "explore": "Explorar",
     "about": "Acerca de",
-    "encyclopedia": "Enciclopedia"
+    "encyclopedia": "Enciclopedia",
+    "contribute": "Contribuir"
   },
   "Hero": {
     "title": "Descubre tu verdadera posición ideológica",
@@ -444,6 +445,19 @@
       "role_translate": "Traducción",
       "role_translate_desc": "Haciendo el Atlas accesible a todo el mundo."
     }
+  },
+  "ContributePage": {
+    "hero_title": "Apoya la Misión",
+    "hero_subtitle": "Ayúdanos a mantener los servidores funcionando y el proyecto independiente.",
+    "why_contribute_title": "¿Por qué contribuir?",
+    "why_contribute_desc": "El Atlas Ideológico es un proyecto de código abierto mantenido por la comunidad. Tu donación ayuda a cubrir los costos del servidor, renovaciones de dominio y tiempo de desarrollo.",
+    "cost_breakdown": "¿A dónde va el dinero?",
+    "servers": "Servidores y Hosting",
+    "development": "Desarrollo y Mantenimiento",
+    "coffee": "Café para los desarrolladores",
+    "thank_you": "¡Gracias por tu apoyo!",
+    "one_time_donation": "Donación puntual",
+    "scan_qr": "Escanea para Donar"
   },
   "Legal": {
     "privacy_policy_title": "Política de Privacidad",
