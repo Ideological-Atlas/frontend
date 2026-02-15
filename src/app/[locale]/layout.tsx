@@ -57,7 +57,7 @@ export default async function LocaleLayout({
             data-id="martingaldk"
             data-description="Support me on Buy me a book!"
             data-message="Help support this project!"
-            data-color="#5F7FFF"
+            data-color="#16a34a"
             data-position="Right"
             data-x_margin="18"
             data-y_margin="18"
