@@ -58,6 +58,7 @@ export function Header() {
     { key: 'features', href: `/${locale}/features` },
     { key: 'encyclopedia', href: `/${locale}/encyclopedia` },
     { key: 'about', href: `/${locale}/about` },
+    { key: 'contribute', href: `/${locale}/contribute` },
   ];
 
   return (
