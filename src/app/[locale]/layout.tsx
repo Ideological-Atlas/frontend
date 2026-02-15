@@ -5,6 +5,7 @@ import { AppLayout } from '@/providers/AppLayout';
 import { I18nProvider } from '@/providers/I18nProvider';
 import { GoogleAuthProvider } from '@/providers/GoogleAuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { BuyMeACoffeeWidget } from '@/components/atoms/BuyMeACoffeeWidget';
 import { ViewTransitions } from 'next-view-transitions';
 import { Toaster } from 'sonner';
 import 'material-symbols/outlined.css';
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
               </GoogleAuthProvider>
             </ApiConfigProvider>
           </I18nProvider>
+          <BuyMeACoffeeWidget />
         </body>
       </html>
     </ViewTransitions>
