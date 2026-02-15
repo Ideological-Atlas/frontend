@@ -76,10 +76,12 @@ export default function ContributePage() {
                   rel="noopener noreferrer"
                   className="transition-transform duration-200 hover:scale-105"
                 >
-                  <img
+                  <Image
                     src="https://img.buymeacoffee.com/button-api/?text=Buy me a book&emoji=📖&slug=martingaldk&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
                     alt="Buy me a book"
-                    className="h-14"
+                    width={217}
+                    height={56}
+                    unoptimized
                   />
                 </a>
               </div>

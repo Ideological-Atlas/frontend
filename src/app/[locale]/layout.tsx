@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { Inter } from 'next/font/google';
 import { ApiConfigProvider } from '@/providers/ApiConfigProvider';
 import { AppLayout } from '@/providers/AppLayout';
 import { I18nProvider } from '@/providers/I18nProvider';
 import { GoogleAuthProvider } from '@/providers/GoogleAuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { BuyMeACoffeeWidget } from '@/components/atoms/BuyMeACoffeeWidget';
 import { ViewTransitions } from 'next-view-transitions';
 import { Toaster } from 'sonner';
 import 'material-symbols/outlined.css';
@@ -49,20 +49,7 @@ export default async function LocaleLayout({
               </GoogleAuthProvider>
             </ApiConfigProvider>
           </I18nProvider>
-          <Script
-            id="bmc-widget"
-            src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-            data-name="BMC-Widget"
-            data-cfasync="false"
-            data-id="martingaldk"
-            data-description="Support me on Buy me a book!"
-            data-message="Help support this project!"
-            data-color="#16a34a"
-            data-position="Right"
-            data-x_margin="18"
-            data-y_margin="18"
-            strategy="afterInteractive"
-          />
+          <BuyMeACoffeeWidget />
         </body>
       </html>
     </ViewTransitions>
