@@ -56,12 +56,12 @@ export default async function LocaleLayout({
             data-cfasync="false"
             data-id="martingaldk"
             data-description="Support me on Buy me a book!"
-            data-message=""
-            data-color="#FF813F"
+            data-message="Help support this project!"
+            data-color="#5F7FFF"
             data-position="Right"
             data-x_margin="18"
             data-y_margin="18"
-            strategy="lazyOnload"
+            strategy="afterInteractive"
           />
         </body>
       </html>
