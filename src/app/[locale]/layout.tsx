@@ -8,7 +8,6 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import { BuyMeACoffeeWidget } from '@/components/atoms/BuyMeACoffeeWidget';
 import { ViewTransitions } from 'next-view-transitions';
 import { Toaster } from 'sonner';
-import 'material-symbols/outlined.css';
 import '@/app/globals.css';
 
 export const runtime = 'edge';
@@ -38,6 +37,13 @@ export default async function LocaleLayout({
   return (
     <ViewTransitions>
       <html lang={locale} suppressHydrationWarning>
+        <head>
+          {/* eslint-disable-next-line @next/next/no-page-custom-font, @next/next/google-font-display */}
+          <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=block"
+            rel="stylesheet"
+          />
+        </head>
         <body className={`${inter.variable} bg-background text-foreground overflow-x-hidden font-sans`}>
           <I18nProvider locale={locale}>
             <ApiConfigProvider>
